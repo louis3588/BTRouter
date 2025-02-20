@@ -1,11 +1,17 @@
-import HelloWorld from "./components/HelloWorld";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import DashboardLayout from "./components/DashboardLayout";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
-  return (
-      <div>
-        <HelloWorld />
-      </div>
-  );
+    return (
+        <Router>
+            <Routes>
+                <Route path="/" element={<DashboardLayout />}>
+                    <Route index element={<Dashboard />} />
+                </Route>
+            </Routes>
+        </Router>
+    );
 }
 
 export default App;
