@@ -22,6 +22,15 @@ const RouterRequestForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate mandatory fields
+    for (const key in formData) {
+      if (formData[key] === '' && key !== 'additionalInfo') {
+        setMessage(`Please fill in the ${key} field.`);
+        return;
+      }
+    }
+    
     try {
       const response = await fetch('http://localhost:8080/api/orders', {
         method: 'POST',
@@ -30,6 +39,18 @@ const RouterRequestForm = () => {
       });
       if (response.ok) {
         setMessage('Order submitted successfully!');
+        setFormData({
+          routerType: '',
+          numRouters: 1,
+          siteName: '',
+          siteAddress: '',
+          city: '',
+          postcode: '',
+          email: '',
+          phone: '',
+          priority: 'Low',
+          additionalInfo: ''
+        });
       } else {
         setMessage('Error submitting order.');
       }
