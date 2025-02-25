@@ -5,24 +5,50 @@ import {
     Button,
     Typography,
     Link,
-    Alert
+    Alert,
+    InputAdornment,
+    IconButton
 } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContainer, AuthCard, Logo } from '../../styles/authStyles';
 import btLogo from '../../assets/BT_logo_2019.png';
 
-// Login component handles user authentication
 const Login = () => {
     const navigate = useNavigate();
-    // State for form inputs and error handling
     const [formData, setFormData] = useState({
         email: '',
         password: ''
     });
-    const [error, setError] = useState('');
+    const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [serverError, setServerError] = useState('');
 
-    // Handle form submission and API call
+    const validateForm = () => {
+        const newErrors = {};
+        // Email validation
+        if (!formData.email) {
+            newErrors.email = 'Email is required';
+        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)) {
+            newErrors.email = 'Invalid email address';
+        }
+
+        // Password validation
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setServerError('');
+
+        if (!validateForm()) {
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:8080/api/auth/login', {
                 method: 'POST',
@@ -32,29 +58,42 @@ const Login = () => {
                 body: JSON.stringify(formData),
             });
 
+            const data = await response.json();
+
             if (response.ok) {
-                const data = await response.json();
                 localStorage.setItem('token', data.token);
                 navigate('/home');
             } else {
-                const data = await response.json();
-                setError(data.message || 'Login failed');
+                setServerError(data.message || 'Login failed');
             }
         } catch (error) {
-            setError('Network error occurred');
+            setServerError('Network error occurred');
+        }
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+        // Clear error when user starts typing
+        if (errors[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: ''
+            }));
         }
     };
 
     return (
         <AuthContainer>
             <Logo src={btLogo} alt="BT Logo" />
-            {/* Login form card */}
             <AuthCard elevation={3}>
                 <Typography variant="h5" gutterBottom>
                     Login
                 </Typography>
                 <form onSubmit={handleSubmit} style={{ width: '100%' }}>
-                    {/* Email input field */}
                     <TextField
                         margin="normal"
                         required
@@ -65,30 +104,42 @@ const Login = () => {
                         autoComplete="email"
                         autoFocus
                         value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        error={!!error}
+                        onChange={handleChange}
+                        error={!!errors.email}
+                        helperText={errors.email}
                     />
-                    {/* Password input field */}
                     <TextField
                         margin="normal"
                         required
                         fullWidth
                         name="password"
                         label="Password"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         id="password"
                         autoComplete="current-password"
                         value={formData.password}
-                        onChange={(e) => setFormData({...formData, password: e.target.value})}
-                        error={!!error}
+                        onChange={handleChange}
+                        error={!!errors.password}
+                        helperText={errors.password}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        edge="end"
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
-                    {/* Error message display */}
-                    {error && (
+                    {serverError && (
                         <Alert severity="error" sx={{ mt: 2 }}>
-                            {error}
+                            {serverError}
                         </Alert>
                     )}
-                    {/* Submit button */}
                     <Button
                         type="submit"
                         fullWidth
@@ -104,7 +155,6 @@ const Login = () => {
                     >
                         Login
                     </Button>
-                    {/* Registration link */}
                     <Typography align="center">
                         Don't have an account?{' '}
                         <Link

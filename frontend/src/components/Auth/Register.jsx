@@ -5,8 +5,11 @@ import {
     Button,
     Typography,
     Link,
-    Alert
+    Alert,
+    InputAdornment,
+    IconButton
 } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContainer, AuthCard, Logo } from '../../styles/authStyles';
 import btLogo from '../../assets/BT_logo_2019.png';
 
@@ -18,10 +21,53 @@ const Register = () => {
         email: '',
         password: ''
     });
-    const [error, setError] = useState('');
+    const [errors, setErrors] = useState({});
+    const [showPassword, setShowPassword] = useState(false);
+    const [serverError, setServerError] = useState('');
+
+    const validateForm = () => {
+        const newErrors = {};
+
+        // First Name validation
+        if (!formData.firstName.trim()) {
+            newErrors.firstName = 'First name is required';
+        } else if (!/^[a-zA-Z\s-']{2,}$/.test(formData.firstName)) {
+            newErrors.firstName = 'First name must contain only letters, spaces, hyphens, or apostrophes';
+        }
+
+        // Last Name validation
+        if (!formData.lastName.trim()) {
+            newErrors.lastName = 'Last name is required';
+        } else if (!/^[a-zA-Z\s-']{2,}$/.test(formData.lastName)) {
+            newErrors.lastName = 'Last name must contain only letters, spaces, hyphens, or apostrophes';
+        }
+
+        // Email validation
+        if (!formData.email) {
+            newErrors.email = 'Email is required';
+        } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)) {
+            newErrors.email = 'Invalid email address';
+        }
+
+        // Password validation
+        if (!formData.password) {
+            newErrors.password = 'Password is required';
+        } else if (!/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,}$/.test(formData.password)) {
+            newErrors.password = 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setServerError('');
+
+        if (!validateForm()) {
+            return;
+        }
+
         try {
             const response = await fetch('http://localhost:8080/api/auth/register', {
                 method: 'POST',
@@ -31,16 +77,30 @@ const Register = () => {
                 body: JSON.stringify(formData),
             });
 
+            const data = await response.json();
+
             if (response.ok) {
-                const data = await response.json();
-                localStorage.setItem('token', data.token);
                 navigate('/login');
             } else {
-                const data = await response.json();
-                setError(data.message || 'Registration failed');
+                setServerError(data.message || 'Registration failed');
             }
         } catch (error) {
-            setError('Network error occurred');
+            setServerError('Network error occurred');
+        }
+    };
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+        // Clear error when user starts typing
+        if (errors[name]) {
+            setErrors(prev => ({
+                ...prev,
+                [name]: ''
+            }));
         }
     };
 
@@ -61,8 +121,9 @@ const Register = () => {
                         name="firstName"
                         autoFocus
                         value={formData.firstName}
-                        onChange={(e) => setFormData({...formData, firstName: e.target.value})}
-                        error={!!error}
+                        onChange={handleChange}
+                        error={!!errors.firstName}
+                        helperText={errors.firstName}
                     />
                     <TextField
                         margin="normal"
@@ -72,8 +133,9 @@ const Register = () => {
                         label="Last Name"
                         name="lastName"
                         value={formData.lastName}
-                        onChange={(e) => setFormData({...formData, lastName: e.target.value})}
-                        error={!!error}
+                        onChange={handleChange}
+                        error={!!errors.lastName}
+                        helperText={errors.lastName}
                     />
                     <TextField
                         margin="normal"
@@ -84,8 +146,9 @@ const Register = () => {
                         name="email"
                         autoComplete="email"
                         value={formData.email}
-                        onChange={(e) => setFormData({...formData, email: e.target.value})}
-                        error={!!error}
+                        onChange={handleChange}
+                        error={!!errors.email}
+                        helperText={errors.email}
                     />
                     <TextField
                         margin="normal"
@@ -93,16 +156,30 @@ const Register = () => {
                         fullWidth
                         name="password"
                         label="Password"
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         id="password"
                         autoComplete="new-password"
                         value={formData.password}
-                        onChange={(e) => setFormData({...formData, password: e.target.value})}
-                        error={!!error}
+                        onChange={handleChange}
+                        error={!!errors.password}
+                        helperText={errors.password}
+                        InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        edge="end"
+                                    >
+                                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            ),
+                        }}
                     />
-                    {error && (
+                    {serverError && (
                         <Alert severity="error" sx={{ mt: 2 }}>
-                            {error}
+                            {serverError}
                         </Alert>
                     )}
                     <Button
