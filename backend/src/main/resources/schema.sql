@@ -94,3 +94,43 @@ CREATE TABLE RequestedRouters (
                                       ON DELETE RESTRICT
                                       ON UPDATE CASCADE
 );
+
+CREATE TABLE Orders (
+                        OrderID INT AUTO_INCREMENT PRIMARY KEY,
+                        UserID INT NOT NULL,
+                        OrderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        EstimatedDelivery TIMESTAMP DEFAULT NULL,
+                        DeliveryMethod VARCHAR(255) NOT NULL DEFAULT 'Standard Delivery',
+                        Status ENUM('Processing', 'Confirmed', 'In Production', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled') DEFAULT 'Processing',
+                        ShippingAddress TEXT NOT NULL,
+                        TotalPrice DECIMAL(10,2) DEFAULT NULL,
+
+                        FOREIGN KEY (UserID) REFERENCES users(id)
+                            ON DELETE CASCADE
+                            ON UPDATE CASCADE
+);
+
+CREATE TABLE OrderItems (
+                            OrderItemID INT AUTO_INCREMENT PRIMARY KEY,
+                            OrderID INT NOT NULL,
+                            RouterPresetID INT DEFAULT NULL,
+
+                            RouterName VARCHAR(255) NOT NULL,
+                            PrimaryOutsideConnections VARCHAR(255) NOT NULL,
+                            SecondaryOutsideConnections VARCHAR(255),
+                            InsideConnections TEXT NOT NULL,
+                            NumberOfEthernetPorts SMALLINT CHECK (NumberOfEthernetPorts >= 0),
+                            NumberOfSerialPorts SMALLINT CHECK (NumberOfSerialPorts >= 0),
+                            VLANs ENUM('Unspecified', 'Specified', 'Open Trunk') NOT NULL,
+                            DHCP BOOLEAN DEFAULT NULL,
+                            Quantity SMALLINT NOT NULL CHECK (Quantity > 0),
+                            Price DECIMAL(10,2) NOT NULL,
+
+                            FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
+                                ON DELETE CASCADE
+                                ON UPDATE CASCADE,
+
+                            FOREIGN KEY (RouterPresetID) REFERENCES RouterPresets(RouterPresetID)
+                                ON DELETE SET NULL
+                                ON UPDATE CASCADE
+);
