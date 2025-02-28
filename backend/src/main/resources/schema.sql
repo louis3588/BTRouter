@@ -103,7 +103,6 @@ CREATE TABLE Orders (
                         DeliveryMethod VARCHAR(255) NOT NULL DEFAULT 'Standard Delivery',
                         Status ENUM('Processing', 'Confirmed', 'In Production', 'Shipped', 'Out for Delivery', 'Delivered', 'Cancelled') DEFAULT 'Processing',
                         ShippingAddress TEXT NOT NULL,
-                        TotalPrice DECIMAL(10,2) DEFAULT NULL,
 
                         FOREIGN KEY (UserID) REFERENCES users(id)
                             ON DELETE CASCADE
@@ -124,7 +123,6 @@ CREATE TABLE OrderItems (
                             VLANs ENUM('Unspecified', 'Specified', 'Open Trunk') NOT NULL,
                             DHCP BOOLEAN DEFAULT NULL,
                             Quantity SMALLINT NOT NULL CHECK (Quantity > 0),
-                            Price DECIMAL(10,2) NOT NULL,
 
                             FOREIGN KEY (OrderID) REFERENCES Orders(OrderID)
                                 ON DELETE CASCADE
