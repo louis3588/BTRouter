@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     TextField,
@@ -24,6 +24,11 @@ const Register = () => {
     const [errors, setErrors] = useState({});
     const [showPassword, setShowPassword] = useState(false);
     const [serverError, setServerError] = useState('');
+
+    // Clear any existing authentication state when entering register page
+    useEffect(() => {
+        localStorage.removeItem('token');
+    }, []);
 
     const validateForm = () => {
         const newErrors = {};

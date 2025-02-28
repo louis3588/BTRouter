@@ -17,7 +17,6 @@ import cf.ac.uk.btrouter.dto.LoginDTO;
 import java.util.HashMap;
 import java.util.Map;
 
-
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")  // Allows requests from any origin
