@@ -5,6 +5,8 @@ import cf.ac.uk.btrouter.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserService {
 
@@ -19,6 +21,10 @@ public class UserService {
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public List<User> findAll() {
+        return userRepository.findAll();
     }
 
     public User registerUser(User user) {
