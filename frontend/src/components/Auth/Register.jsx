@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContainer, AuthCard, Logo } from '../../styles/authStyles';
-import btLogo from '../../assets/BT_logo_2019.png';
+import btLogo from '../../assets/BT_logo_purple.png';
 
 const Register = () => {
     const navigate = useNavigate();
@@ -28,32 +28,45 @@ const Register = () => {
     const validateForm = () => {
         const newErrors = {};
 
-        // First Name validation
         if (!formData.firstName.trim()) {
             newErrors.firstName = 'First name is required';
         } else if (!/^[a-zA-Z\s-']{2,}$/.test(formData.firstName)) {
             newErrors.firstName = 'First name must contain only letters, spaces, hyphens, or apostrophes';
         }
 
-        // Last Name validation
         if (!formData.lastName.trim()) {
             newErrors.lastName = 'Last name is required';
         } else if (!/^[a-zA-Z\s-']{2,}$/.test(formData.lastName)) {
             newErrors.lastName = 'Last name must contain only letters, spaces, hyphens, or apostrophes';
         }
 
-        // Email validation
         if (!formData.email) {
             newErrors.email = 'Email is required';
         } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)) {
             newErrors.email = 'Invalid email address';
         }
 
-        // Password validation
         if (!formData.password) {
             newErrors.password = 'Password is required';
-        } else if (!/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,}$/.test(formData.password)) {
-            newErrors.password = 'Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special character';
+        } else {
+            const passwordChecks = {
+                length: formData.password.length >= 8,
+                uppercase: /[A-Z]/.test(formData.password),
+                lowercase: /[a-z]/.test(formData.password),
+                number: /[0-9]/.test(formData.password),
+                special: /[!@#$%^&*(),.?":{}|<>]/.test(formData.password)
+            };
+
+            if (!Object.values(passwordChecks).every(check => check)) {
+                let errorMessage = 'Password must contain:';
+                if (!passwordChecks.length) errorMessage += '\n- At least 8 characters';
+                if (!passwordChecks.uppercase) errorMessage += '\n- One uppercase letter';
+                if (!passwordChecks.lowercase) errorMessage += '\n- One lowercase letter';
+                if (!passwordChecks.number) errorMessage += '\n- One number';
+                if (!passwordChecks.special) errorMessage += '\n- One special character';
+
+                newErrors.password = errorMessage;
+            }
         }
 
         setErrors(newErrors);
@@ -95,7 +108,6 @@ const Register = () => {
             ...prev,
             [name]: value
         }));
-        // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
                 ...prev,

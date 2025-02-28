@@ -11,7 +11,7 @@ import {
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { AuthContainer, AuthCard, Logo } from '../../styles/authStyles';
-import btLogo from '../../assets/BT_logo_2019.png';
+import btLogo from '../../assets/BT_logo_purple.png';
 
 const Login = () => {
     const navigate = useNavigate();

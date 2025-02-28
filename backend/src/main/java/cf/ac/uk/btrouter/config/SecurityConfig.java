@@ -13,9 +13,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,13 +32,16 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 public class SecurityConfig {
 
+    // JWT configuration values from application.properties
     @Value("${jwt.secret}")
     private String jwtSecret;
 
@@ -45,12 +51,13 @@ public class SecurityConfig {
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
 
+    // Create and configure JWT authentication filter
     @Bean
     public JwtAuthFilter jwtAuthFilter() {
         return new JwtAuthFilter(customUserDetailsService, jwtSecret);
     }
 
-    // Configure authentication provider with custom user details service
+    // Configure the authentication provider with custom user details service
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
@@ -59,26 +66,29 @@ public class SecurityConfig {
         return authProvider;
     }
 
-    // Authentication manager bean for handling authentication
+    // Create authentication manager bean
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-    // Password encoder for secure password hashing
+    // Configure password encoder for secure password storage
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    // Configure security filter chain with JWT authentication
+    // Configure security filter chain with JWT and role-based authentication
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Public endpoints
-                        .anyRequest().authenticated()                 // All other endpoints require auth
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/support/**").hasAnyRole("ADMIN", "SUPPORT_AGENT")
+                        .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
+                        .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -89,11 +99,12 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // JWT Authentication Filter for processing tokens in requests
+    // JWT authentication filter implementation
     public class JwtAuthFilter extends OncePerRequestFilter {
         private final UserDetailsService userDetailsService;
         private final String jwtSecret;
 
+        // Constructor for JWT filter
         public JwtAuthFilter(UserDetailsService userDetailsService, String jwtSecret) {
             this.userDetailsService = userDetailsService;
             this.jwtSecret = jwtSecret;
@@ -110,14 +121,19 @@ public class SecurityConfig {
                 return;
             }
 
-            // Extract and validate JWT token
             String jwt = authHeader.substring(7);
             String username = extractUsername(jwt);
+            String role = extractRole(jwt);
 
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
                 if (validateToken(jwt)) {
+                    List<SimpleGrantedAuthority> authorities =
+                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
+
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            username, null, new ArrayList<>());
+                            userDetails, null, authorities);
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
@@ -125,7 +141,7 @@ public class SecurityConfig {
             chain.doFilter(request, response);
         }
 
-        // Helper methods for token processing
+        // Extract username from JWT token
         private String extractUsername(String token) {
             return Jwts.parser()
                     .setSigningKey(jwtSecret)
@@ -134,6 +150,16 @@ public class SecurityConfig {
                     .getSubject();
         }
 
+        // Extract role from JWT token
+        private String extractRole(String token) {
+            return Jwts.parser()
+                    .setSigningKey(jwtSecret)
+                    .parseClaimsJws(token)
+                    .getBody()
+                    .get("role", String.class);
+        }
+
+        // Validate JWT token
         private boolean validateToken(String token) {
             try {
                 Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
@@ -144,24 +170,15 @@ public class SecurityConfig {
         }
     }
 
-    // Generate new JWT token for a user
-    public String generateToken(String username) {
+    // Generate new JWT token with username and role
+    public String generateToken(String username, String role) {
         return Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
                 .signWith(SignatureAlgorithm.HS256, jwtSecret)
                 .compact();
-    }
-
-    // Validate existing JWT token
-    public boolean validateToken(String token) {
-        try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
     }
 
     // Extract username from JWT token
@@ -171,5 +188,14 @@ public class SecurityConfig {
                 .parseClaimsJws(token)
                 .getBody();
         return claims.getSubject();
+    }
+
+    // Extract role from JWT token
+    public String extractRole(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(jwtSecret)
+                .parseClaimsJws(token)
+                .getBody();
+        return claims.get("role", String.class);
     }
 }

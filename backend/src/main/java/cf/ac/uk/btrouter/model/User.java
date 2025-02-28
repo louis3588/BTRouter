@@ -1,3 +1,5 @@
+package cf.ac.uk.btrouter.model;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
