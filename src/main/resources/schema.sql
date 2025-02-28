@@ -1,4 +1,3 @@
-CREATE DATABASE bt_router_db;
 USE bt_router_db;
 DROP TABLE IF EXISTS RequestedRouters;
 DROP TABLE IF EXISTS RouterRequests;
