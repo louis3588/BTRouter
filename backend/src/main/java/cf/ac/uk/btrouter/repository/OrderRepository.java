@@ -1,4 +1,9 @@
 package cf.ac.uk.btrouter.repository;
 
-public class OrderRepository {
+import cf.ac.uk.btrouter.model.Order;
+import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+public interface OrderRepository extends JpaRepository<Order, Long> {
+    List<Order> findByUserId(Long userId);
 }
