@@ -70,14 +70,17 @@ CREATE TABLE RouterRequests (
     -- Faster querying through priority level will probably be needed.
                                 INDEX idx_priority_level (PriorityLevel)
 );
-CREATE TABLE orders (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    configuration_details TEXT,
-    ip_address VARCHAR(255),
-    router_model VARCHAR(255),
-    site_name VARCHAR(255),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+
+
+ALTER TABLE orders 
+MODIFY COLUMN number_of_routers INT NOT NULL DEFAULT 1;
+MODIFY COLUMN site_name VARCHAR(255) NOT NULL,
+MODIFY COLUMN address VARCHAR(255) NOT NULL,
+MODIFY COLUMN city VARCHAR(255) NOT NULL,
+MODIFY COLUMN postcode VARCHAR(20) NOT NULL,
+MODIFY COLUMN email VARCHAR(255) NOT NULL,
+MODIFY COLUMN phone_number VARCHAR(50) NOT NULL;
+
 
 CREATE TABLE RequestedRouters (
                                   RequestRouterID INT AUTO_INCREMENT PRIMARY KEY,

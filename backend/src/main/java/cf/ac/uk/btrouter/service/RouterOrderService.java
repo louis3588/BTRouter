@@ -15,9 +15,19 @@ public class RouterOrderService {
     public void saveOrder(OrderRequest orderRequest) {
         Order order = new Order();
         order.setSiteName(orderRequest.getSiteName());
-        order.setRouterModel(orderRequest.getRouterModel());
-        order.setIpAddress(orderRequest.getIpAddress());
-        order.setConfigurationDetails(orderRequest.getConfigurationDetails());
+
+        // ✅ Ensure these values are properly set
+        order.setRouterModel(orderRequest.getRouterModel() != null ? orderRequest.getRouterModel() : "Unknown Model");
+        order.setIpAddress(orderRequest.getIpAddress() != null ? orderRequest.getIpAddress() : "Not Assigned");
+        order.setConfigurationDetails(orderRequest.getConfigurationDetails() != null ? orderRequest.getConfigurationDetails() : "Default Configuration");
+
+        order.setRouterType(orderRequest.getRouterType());
+        order.setNumberOfRouters(orderRequest.getNumRouters() != null ? orderRequest.getNumRouters() : 1);  // ✅ Fix Mapping
+        order.setAddress(orderRequest.getSiteAddress());
+        order.setCity(orderRequest.getCity());
+        order.setPostcode(orderRequest.getPostcode());
+        order.setEmail(orderRequest.getEmail());
+        order.setPhoneNumber(orderRequest.getPhone());
         orderRepository.save(order);
     }
 }

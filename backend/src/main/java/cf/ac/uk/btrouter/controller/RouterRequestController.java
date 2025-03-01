@@ -16,6 +16,6 @@ public class RouterRequestController {
     @PostMapping
     public ResponseEntity<String> createOrder(@RequestBody OrderRequest orderRequest) {
         routerOrderService.saveOrder(orderRequest);
-        return ResponseEntity.ok("Order submitted successfully!");
+        return ResponseEntity.ok("Order submitted successfully with all details!");
     }
 }

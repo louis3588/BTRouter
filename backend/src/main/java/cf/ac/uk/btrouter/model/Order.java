@@ -14,6 +14,13 @@ public class Order implements Serializable {
     private String routerModel;
     private String ipAddress;
     private String configurationDetails;
+    private String routerType;
+    private int numberOfRouters;
+    private String address;
+    private String city;
+    private String postcode;
+    private String email;
+    private String phoneNumber;
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -26,4 +33,18 @@ public class Order implements Serializable {
     public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
     public String getConfigurationDetails() { return configurationDetails; }
     public void setConfigurationDetails(String configurationDetails) { this.configurationDetails = configurationDetails; }
+    public String getRouterType() { return routerType; }
+    public void setRouterType(String routerType) { this.routerType = routerType; }
+    public int getNumberOfRouters() { return numberOfRouters; }
+    public void setNumberOfRouters(int numberOfRouters) { this.numberOfRouters = numberOfRouters; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public String getCity() { return city; }
+    public void setCity(String city) { this.city = city; }
+    public String getPostcode() { return postcode; }
+    public void setPostcode(String postcode) { this.postcode = postcode; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 }
