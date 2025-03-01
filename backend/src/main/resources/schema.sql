@@ -70,6 +70,14 @@ CREATE TABLE RouterRequests (
     -- Faster querying through priority level will probably be needed.
                                 INDEX idx_priority_level (PriorityLevel)
 );
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    configuration_details TEXT,
+    ip_address VARCHAR(255),
+    router_model VARCHAR(255),
+    site_name VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 CREATE TABLE RequestedRouters (
                                   RequestRouterID INT AUTO_INCREMENT PRIMARY KEY,
