@@ -36,3 +36,7 @@ INSERT INTO users (email, password, first_name, last_name, role) VALUES
 ('admin@bt.com', '$2a$10$xn3LI/AjqicFYZFruSwve.ODd6/B.rq4yK/AHLC4bLVW9B5r0xE7W', 'Admin', 'User', 'ADMIN'),
 ('support@bt.com', '$2a$10$xn3LI/AjqicFYZFruSwve.ODd6/B.rq4yK/AHLC4bLVW9B5r0xE7W', 'Support', 'Agent', 'SUPPORT_AGENT'),
 ('user@bt.com', '$2a$10$xn3LI/AjqicFYZFruSwve.ODd6/B.rq4yK/AHLC4bLVW9B5r0xE7W', 'Standard', 'User', 'USER');
+
+('admin1@bt.com', '$2a$10$GmuMnewUD8usYVAnEtfjC.tIM.9kBoLtcfpg4RqB/ocfV2qdEtOVK', 'Admin', 'User', 'ADMIN')
+('user1@bt.com', '$2a$10$GmuMnewUD8usYVAnEtfjC.tIM.9kBoLtcfpg4RqB/ocfV2qdEtOVK', 'Standard', 'User', 'USER');
+
