@@ -9,17 +9,20 @@ const OrderHistory = () => {
     const userId = 1; // Replace with dynamic user ID in real app
 
     useEffect(() => {
-        fetchOrderHistory(userId)
-            .then((data) => {
+        const getOrders = async () => {
+            try {
+                const data = await fetchOrderHistory();
                 setOrders(data);
-                setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching orders:", error);
+            } catch (error) {
                 setError("Failed to fetch order history.");
+            } finally {
                 setLoading(false);
-            });
+            }
+        };
+
+        getOrders();
     }, []);
+
 
     if (loading) return <p>Loading order history...</p>;
     if (error) return <p>{error}</p>;

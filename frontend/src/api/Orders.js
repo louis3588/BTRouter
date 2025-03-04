@@ -1,9 +1,22 @@
-const API_BASE_URL = "http://localhost:8080/api/orders"; // Adjust if backend uses a different port
+export const fetchOrderHistory = async () => {
+    const token = localStorage.getItem('token');
 
-export const fetchOrderHistory = async (userId) => {
-    const response = await fetch(`${API_BASE_URL}/${userId}`, {
-        credentials: "include", // Ensures authentication cookies are sent
-    });
-    if (!response.ok) throw new Error("Failed to fetch order history");
-    return response.json();
+    try {
+        const response = await fetch("http://localhost:8080/api/orders", {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` // Attach token
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch order history");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Error fetching orders:", error);
+        throw error; // Rethrow error so frontend can handle it
+    }
 };
