@@ -97,6 +97,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/support/**").hasAnyRole("ADMIN", "SUPPORT_AGENT")
                         .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
+                        .requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER") //all roles allowed
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -148,12 +149,48 @@ public class SecurityConfig {
         }
 
         // Process each request to validate JWT token
+//        @Override
+//        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+//                throws ServletException, IOException {
+//            final String authHeader = request.getHeader("Authorization");
+//
+//            System.out.println("JWT Secret being used: " + jwtSecret);  // Debug the secret
+//
+//            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//                chain.doFilter(request, response);
+//                return;
+//            }
+//
+//            String jwt = authHeader.substring(7);
+//            String username = extractUsername(jwt);
+//            String role = extractRole(jwt);
+//
+//            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+//
+//                if (validateToken(jwt)) {
+//                    List<SimpleGrantedAuthority> authorities =
+//                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
+//
+//                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+//                            userDetails, null, authorities);
+//                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                    SecurityContextHolder.getContext().setAuthentication(authToken);
+//                }
+//            }
+//            chain.doFilter(request, response);
+//        }
+
         @Override
         protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
                 throws ServletException, IOException {
             final String authHeader = request.getHeader("Authorization");
 
+            System.out.println("Incoming request: " + request.getRequestURI());
+            System.out.println("JWT Secret being used: " + jwtSecret);
+
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                System.out.println("No valid Authorization header found.");
                 chain.doFilter(request, response);
                 return;
             }
@@ -162,10 +199,15 @@ public class SecurityConfig {
             String username = extractUsername(jwt);
             String role = extractRole(jwt);
 
+            System.out.println("Extracted Username: " + username);
+            System.out.println("Extracted Role: " + role);
+
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 if (validateToken(jwt)) {
+                    System.out.println("JWT is valid. Authenticating user...");
+
                     List<SimpleGrantedAuthority> authorities =
                             Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
 
@@ -173,27 +215,58 @@ public class SecurityConfig {
                             userDetails, null, authorities);
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    System.out.println("Invalid JWT token.");
+                    System.out.println("✅ Authentication set: " + SecurityContextHolder.getContext().getAuthentication()); //debugging
                 }
             }
             chain.doFilter(request, response);
         }
 
         // Extract username from JWT token
+//        private String extractUsername(String token) {
+//            return Jwts.parser()
+//                    .setSigningKey(jwtSecret)
+//                    .parseClaimsJws(token)
+//                    .getBody()
+//                    .getSubject();
+//        }
+
+        // Extract username from JWT token
         private String extractUsername(String token) {
-            return Jwts.parser()
-                    .setSigningKey(jwtSecret)
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+            try {
+                return Jwts.parser()
+                        .setSigningKey(jwtSecret)
+                        .parseClaimsJws(token)
+                        .getBody()
+                        .getSubject();
+            } catch (Exception e) {
+                System.out.println("Error extracting username: " + e.getMessage());
+                return null;
+            }
         }
+
+//        // Extract role from JWT token
+//        private String extractRole(String token) {
+//            return Jwts.parser()
+//                    .setSigningKey(jwtSecret)
+//                    .parseClaimsJws(token)
+//                    .getBody()
+//                    .get("role", String.class);
+//        }
 
         // Extract role from JWT token
         private String extractRole(String token) {
-            return Jwts.parser()
-                    .setSigningKey(jwtSecret)
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .get("role", String.class);
+            try {
+                return Jwts.parser()
+                        .setSigningKey(jwtSecret)
+                        .parseClaimsJws(token)
+                        .getBody()
+                        .get("role", String.class);
+            } catch (Exception e) {
+                System.out.println("Error extracting role: " + e.getMessage());
+                return null;
+            }
         }
 
         // Validate JWT token
