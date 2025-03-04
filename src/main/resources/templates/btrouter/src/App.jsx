@@ -4,6 +4,7 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Home from './components/Home/Home';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+import User from "./components/User";
 
 function App() {
     return (
@@ -42,7 +43,9 @@ function App() {
                     path="/manage-users"
                     element={
                         <ProtectedRoute>
-                            <div>Manage Users Page (To be implemented)</div>
+                            <div>
+                                <User />
+                            </div>
                         </ProtectedRoute>
                     }
                 />

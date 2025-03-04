@@ -1,14 +1,24 @@
 package cf.ac.uk.btrouter.controller;
 
+import cf.ac.uk.btrouter.model.User;
+import cf.ac.uk.btrouter.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "*")  // Allows requests from any origin
+@CrossOrigin(origins = "http://localhost:3000")
 public class HomeController {
+
+    public final UserService userService;
+
+    public HomeController(UserService userService) {
+        this.userService = userService;
+    }
 
     // Admin-only dashboard access
     @GetMapping("/admin/dashboard")
@@ -43,8 +53,9 @@ public class HomeController {
     // Admin-only user management endpoint
     @GetMapping("/admin/users")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> manageUsers() {
-        return ResponseEntity.ok(Map.of("message", "User Management"));
+    public ResponseEntity<List<User>> manageUsers() {
+        List<User> users = userService.findAll();
+        return ResponseEntity.ok().body(users);
     }
 
     // Admin-only router management endpoint
