@@ -1,20 +1,19 @@
 package cf.ac.uk.btrouter.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "Customers")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Customer {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "CustomerID")
-    private Long customerId;
+    private Long customerID;
 
-    @Column(name = "CustomerName", nullable = false)
     private String customerName;
 }
