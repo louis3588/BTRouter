@@ -40,7 +40,7 @@ function App() {
                     }
                 />
                 <Route
-                    path="/manage-users"
+                    path="/users"
                     element={
                         <ProtectedRoute>
                             <div>
@@ -50,11 +50,11 @@ function App() {
                     }
                 />
 
-                {/* Redirect root to home */}
+                {/* Redirect only the root */}
                 <Route path="/" element={<Navigate to="/home" replace />} />
 
-                {/* Catch all route for 404 */}
-                <Route path="*" element={<Navigate to="/home" replace />} />
+                {/* Catch-all 404 Route */}
+                <Route path="*" element={<div>404 - Page Not Found</div>} />
             </Routes>
         </Router>
     );

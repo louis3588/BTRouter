@@ -53,9 +53,28 @@ public class HomeController {
     // Admin-only user management endpoint
     @GetMapping("/admin/users")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<User>> manageUsers() {
-        List<User> users = userService.findAll();
-        return ResponseEntity.ok().body(users);
+    public List<User> manageUsers() {
+        return userService.findAll();
+    }
+
+    @PutMapping("admin/users/{email}")
+    public ResponseEntity updateUser(@PathVariable String email, @RequestBody User user){
+        User currentUser = userService.findByEmail(email);
+        currentUser.setFirstName(user.getFirstName());
+        currentUser.setLastName(user.getLastName());
+        currentUser.setEmail(user.getEmail());
+        currentUser.setPassword(user.getPassword());
+        currentUser.setRole(user.getRole());
+        currentUser = userService.registerUser(currentUser);
+
+        return ResponseEntity.ok(currentUser);
+    }
+
+    @DeleteMapping("/{email}")
+    public ResponseEntity deleteUser(@PathVariable String email) {
+        User selectedUser = userService.findByEmail(email);
+        userService.delete(selectedUser);
+        return ResponseEntity.ok().build();
     }
 
     // Admin-only router management endpoint

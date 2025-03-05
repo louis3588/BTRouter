@@ -27,6 +27,10 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    public void delete(User user) {
+        userRepository.delete(user);
+    }
+
     public User registerUser(User user) {
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
