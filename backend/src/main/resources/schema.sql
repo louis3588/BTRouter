@@ -71,6 +71,17 @@ CREATE TABLE RouterRequests (
                                 INDEX idx_priority_level (PriorityLevel)
 );
 
+
+ALTER TABLE orders 
+MODIFY COLUMN number_of_routers INT NOT NULL DEFAULT 1;
+MODIFY COLUMN site_name VARCHAR(255) NOT NULL,
+MODIFY COLUMN address VARCHAR(255) NOT NULL,
+MODIFY COLUMN city VARCHAR(255) NOT NULL,
+MODIFY COLUMN postcode VARCHAR(20) NOT NULL,
+MODIFY COLUMN email VARCHAR(255) NOT NULL,
+MODIFY COLUMN phone_number VARCHAR(50) NOT NULL;
+
+
 CREATE TABLE RequestedRouters (
                                   RequestRouterID INT AUTO_INCREMENT PRIMARY KEY,
                                   RequestID INT NOT NULL,
