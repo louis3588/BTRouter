@@ -6,6 +6,8 @@ import cf.ac.uk.btrouter.repository.OrderRepository;
 import cf.ac.uk.btrouter.model.Order;
 import cf.ac.uk.btrouter.dto.OrderRequest;
 
+import java.util.List;
+
 @Service
 public class RouterOrderService {
 
@@ -30,4 +32,14 @@ public class RouterOrderService {
         order.setPhoneNumber(orderRequest.getPhone());
         orderRepository.save(order);
     }
+
+    public RouterOrderService(OrderRepository orderRepository) {
+        this.orderRepository = orderRepository;
+    }
+
+    // Fetch orders by user email
+    public List<Order> getOrdersByEmail(String email) {
+        return orderRepository.findOrdersByEmail(email);
+    }
 }
+
