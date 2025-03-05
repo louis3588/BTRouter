@@ -1,6 +1,7 @@
 package cf.ac.uk.btrouter.config;
 
 import cf.ac.uk.btrouter.service.CustomUserDetailsService;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -24,6 +26,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -35,6 +38,11 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
+import org.springframework.web.cors.CorsConfigurationSource;
+
 
 @Configuration
 @EnableWebSecurity
@@ -83,11 +91,13 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/support/**").hasAnyRole("ADMIN", "SUPPORT_AGENT")
                         .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
+                        .requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER") //all roles allowed
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -98,6 +108,34 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowCredentials(true);
+        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // Frontend URL
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
+
+//
+//    // Enable Cors Configuration
+//    @Bean
+//    public CorsFilter corsFilter() {
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        CorsConfiguration config = new CorsConfiguration();
+//        config.setAllowCredentials(true);
+//        config.setAllowedOrigins(List.of("http://localhost:3000"));
+//        config.setAllowedHeaders(List.of("*"));
+//        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        source.registerCorsConfiguration("/**", config);
+//        return new CorsFilter(source);
+//    }
+//}
 
     // JWT authentication filter implementation
     public class JwtAuthFilter extends OncePerRequestFilter {
@@ -111,12 +149,48 @@ public class SecurityConfig {
         }
 
         // Process each request to validate JWT token
+//        @Override
+//        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+//                throws ServletException, IOException {
+//            final String authHeader = request.getHeader("Authorization");
+//
+//            System.out.println("JWT Secret being used: " + jwtSecret);  // Debug the secret
+//
+//            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//                chain.doFilter(request, response);
+//                return;
+//            }
+//
+//            String jwt = authHeader.substring(7);
+//            String username = extractUsername(jwt);
+//            String role = extractRole(jwt);
+//
+//            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+//
+//                if (validateToken(jwt)) {
+//                    List<SimpleGrantedAuthority> authorities =
+//                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
+//
+//                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+//                            userDetails, null, authorities);
+//                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                    SecurityContextHolder.getContext().setAuthentication(authToken);
+//                }
+//            }
+//            chain.doFilter(request, response);
+//        }
+
         @Override
         protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
                 throws ServletException, IOException {
             final String authHeader = request.getHeader("Authorization");
 
+            System.out.println("Incoming request: " + request.getRequestURI());
+            System.out.println("JWT Secret being used: " + jwtSecret);
+
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                System.out.println("No valid Authorization header found.");
                 chain.doFilter(request, response);
                 return;
             }
@@ -125,10 +199,15 @@ public class SecurityConfig {
             String username = extractUsername(jwt);
             String role = extractRole(jwt);
 
+            System.out.println("Extracted Username: " + username);
+            System.out.println("Extracted Role: " + role);
+
             if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 if (validateToken(jwt)) {
+                    System.out.println("JWT is valid. Authenticating user...");
+
                     List<SimpleGrantedAuthority> authorities =
                             Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
 
@@ -136,27 +215,58 @@ public class SecurityConfig {
                             userDetails, null, authorities);
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    System.out.println("Invalid JWT token.");
+                    System.out.println("✅ Authentication set: " + SecurityContextHolder.getContext().getAuthentication()); //debugging
                 }
             }
             chain.doFilter(request, response);
         }
 
         // Extract username from JWT token
+//        private String extractUsername(String token) {
+//            return Jwts.parser()
+//                    .setSigningKey(jwtSecret)
+//                    .parseClaimsJws(token)
+//                    .getBody()
+//                    .getSubject();
+//        }
+
+        // Extract username from JWT token
         private String extractUsername(String token) {
-            return Jwts.parser()
-                    .setSigningKey(jwtSecret)
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .getSubject();
+            try {
+                return Jwts.parser()
+                        .setSigningKey(jwtSecret)
+                        .parseClaimsJws(token)
+                        .getBody()
+                        .getSubject();
+            } catch (Exception e) {
+                System.out.println("Error extracting username: " + e.getMessage());
+                return null;
+            }
         }
+
+//        // Extract role from JWT token
+//        private String extractRole(String token) {
+//            return Jwts.parser()
+//                    .setSigningKey(jwtSecret)
+//                    .parseClaimsJws(token)
+//                    .getBody()
+//                    .get("role", String.class);
+//        }
 
         // Extract role from JWT token
         private String extractRole(String token) {
-            return Jwts.parser()
-                    .setSigningKey(jwtSecret)
-                    .parseClaimsJws(token)
-                    .getBody()
-                    .get("role", String.class);
+            try {
+                return Jwts.parser()
+                        .setSigningKey(jwtSecret)
+                        .parseClaimsJws(token)
+                        .getBody()
+                        .get("role", String.class);
+            } catch (Exception e) {
+                System.out.println("Error extracting role: " + e.getMessage());
+                return null;
+            }
         }
 
         // Validate JWT token

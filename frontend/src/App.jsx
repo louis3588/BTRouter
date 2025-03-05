@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Home from './components/Home/Home';
+import OrderHistory from "./components/Orders/OrderHistory";
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
 function App() {
@@ -43,6 +44,16 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <div>Manage Users Page (To be implemented)</div>
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Protected Route for Order History */}
+                <Route
+                    path="/order-history"
+                    element={
+                        <ProtectedRoute>
+                            <OrderHistory />
                         </ProtectedRoute>
                     }
                 />

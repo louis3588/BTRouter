@@ -107,7 +107,7 @@ const Home = () => {
             icon: HistoryIcon,
             label: 'Order History',
             allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
-            path: '/history'
+            path: '/order-history'
         },
         {
             id: 'analytics',
@@ -164,7 +164,7 @@ const Home = () => {
             icon: HistoryIcon,
             allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
             description: 'View past router requests and their status',
-            path: '/history'
+            path: '/order-history'
         },
         {
             id: 'analytics',
