@@ -25,8 +25,8 @@ const OrderHistory = () => {
                 }
 
                 const data = await response.json();
-                setOrders(data.orders);
-                setMostOrdered(data.mostOrderedRouter);
+                setMostOrdered(data.mostOrderedRouter || "No Data");
+                setOrders(data.orders || []);
                 setLoading(false);
             } catch (error) {
                 console.error("Error fetching orders:", error);

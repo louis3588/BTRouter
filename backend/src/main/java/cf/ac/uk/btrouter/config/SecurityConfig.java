@@ -122,21 +122,6 @@ public class SecurityConfig {
         return source;
     }
 
-//
-//    // Enable Cors Configuration
-//    @Bean
-//    public CorsFilter corsFilter() {
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        CorsConfiguration config = new CorsConfiguration();
-//        config.setAllowCredentials(true);
-//        config.setAllowedOrigins(List.of("http://localhost:3000"));
-//        config.setAllowedHeaders(List.of("*"));
-//        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-//        source.registerCorsConfiguration("/**", config);
-//        return new CorsFilter(source);
-//    }
-//}
-
     // JWT authentication filter implementation
     public class JwtAuthFilter extends OncePerRequestFilter {
         private final UserDetailsService userDetailsService;
@@ -147,40 +132,6 @@ public class SecurityConfig {
             this.userDetailsService = userDetailsService;
             this.jwtSecret = jwtSecret;
         }
-
-        // Process each request to validate JWT token
-//        @Override
-//        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
-//                throws ServletException, IOException {
-//            final String authHeader = request.getHeader("Authorization");
-//
-//            System.out.println("JWT Secret being used: " + jwtSecret);  // Debug the secret
-//
-//            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-//                chain.doFilter(request, response);
-//                return;
-//            }
-//
-//            String jwt = authHeader.substring(7);
-//            String username = extractUsername(jwt);
-//            String role = extractRole(jwt);
-//
-//            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-//                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-//
-//                if (validateToken(jwt)) {
-//                    List<SimpleGrantedAuthority> authorities =
-//                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
-//
-//                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-//                            userDetails, null, authorities);
-//                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//                    SecurityContextHolder.getContext().setAuthentication(authToken);
-//                }
-//            }
-//            chain.doFilter(request, response);
-//        }
-
         @Override
         protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
                 throws ServletException, IOException {
@@ -224,15 +175,6 @@ public class SecurityConfig {
         }
 
         // Extract username from JWT token
-//        private String extractUsername(String token) {
-//            return Jwts.parser()
-//                    .setSigningKey(jwtSecret)
-//                    .parseClaimsJws(token)
-//                    .getBody()
-//                    .getSubject();
-//        }
-
-        // Extract username from JWT token
         private String extractUsername(String token) {
             try {
                 return Jwts.parser()
@@ -245,15 +187,6 @@ public class SecurityConfig {
                 return null;
             }
         }
-
-//        // Extract role from JWT token
-//        private String extractRole(String token) {
-//            return Jwts.parser()
-//                    .setSigningKey(jwtSecret)
-//                    .parseClaimsJws(token)
-//                    .getBody()
-//                    .get("role", String.class);
-//        }
 
         // Extract role from JWT token
         private String extractRole(String token) {
@@ -309,3 +242,96 @@ public class SecurityConfig {
         return claims.get("role", String.class);
     }
 }
+
+//
+//// ============================================================
+//// testing
+//package cf.ac.uk.btrouter.config;
+//
+//import cf.ac.uk.btrouter.security.JwtAuthFilter;
+//import cf.ac.uk.btrouter.security.JwtAuthenticationProvider;
+//import org.springframework.context.annotation.Bean;
+//import org.springframework.context.annotation.Configuration;
+//import org.springframework.core.annotation.Order;
+//import org.springframework.http.HttpMethod;
+//import org.springframework.security.authentication.AuthenticationManager;
+//import org.springframework.security.authentication.AuthenticationProvider;
+//import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+//import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+//import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+//import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+//import org.springframework.security.core.userdetails.UserDetailsService;
+//import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+//import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.web.SecurityFilterChain;
+//import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+//import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+//
+//@Configuration
+//@EnableWebSecurity
+//public class SecurityConfig {
+//
+//    private final JwtAuthFilter jwtAuthFilter;
+//    private final JwtAuthenticationProvider jwtAuthenticationProvider;
+//
+//    public SecurityConfig(JwtAuthFilter jwtAuthFilter, JwtAuthenticationProvider jwtAuthenticationProvider) {
+//        this.jwtAuthFilter = jwtAuthFilter;
+//        this.jwtAuthenticationProvider = jwtAuthenticationProvider;
+//    }
+//
+//    // Define password encoder
+//    @Bean
+//    public PasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+//
+//    // Configure the AuthenticationManager
+//    @Bean
+//    public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
+//        return http.getSharedObject(AuthenticationManagerBuilder.class)
+//                .userDetailsService(userDetailsService())
+//                .passwordEncoder(passwordEncoder())
+//                .and()
+//                .build();
+//    }
+//
+//    // CORS Configuration
+//    private org.springframework.web.cors.CorsConfigurationSource corsConfigurationSource() {
+//        org.springframework.web.cors.CorsConfiguration configuration = new org.springframework.web.cors.CorsConfiguration();
+//        configuration.setAllowedOrigins(java.util.Collections.singletonList("http://localhost:3000"));
+//        configuration.setAllowedMethods(java.util.Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+//        configuration.setAllowedHeaders(java.util.Arrays.asList("Authorization", "Content-Type"));
+//        org.springframework.web.cors.UrlBasedCorsConfigurationSource source = new org.springframework.web.cors.UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
+//
+//    // Security Filter Chain setup
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        return http
+//                .csrf(csrf -> csrf.disable())
+//                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+//                .authorizeRequests(auth -> auth
+//                        .antMatchers("/api/auth/**").permitAll()
+//                        .antMatchers("/api/orders/**").hasAnyRole("USER", "ADMIN", "SUPPORT_AGENT")
+//                        .anyRequest().authenticated()
+//                )
+//                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)  // Add the JWT filter before username password filter
+//                .sessionManagement(session -> session.sessionCreationPolicy(org.springframework.security.config.http.SessionCreationPolicy.STATELESS))  // Stateless sessions
+//                .authenticationProvider(jwtAuthenticationProvider)  // Use custom JWT authentication provider
+//                .build();
+//    }
+//
+//    // Register the UserDetailsService for JWT authentication provider
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        return new CustomUserDetailsService();  // Your custom implementation of UserDetailsService
+//    }
+//
+//    // If using in-memory or database authentication (e.g., UserDetailsService)
+//    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+//        auth.authenticationProvider(jwtAuthenticationProvider);
+//    }
+//
+//}
