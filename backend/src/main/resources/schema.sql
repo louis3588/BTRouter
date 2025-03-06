@@ -10,10 +10,12 @@ DROP TABLE IF EXISTS RequestedRouters;
 DROP TABLE IF EXISTS RouterRequests;
 DROP TABLE IF EXISTS RouterPresets;
 DROP TABLE IF EXISTS Routers;
+DROP TABLE IF EXISTS orders;  -- Orders table must be dropped before users
 DROP TABLE IF EXISTS Customers;
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS users;  -- Now users can be safely dropped
 DROP TABLE IF EXISTS Roles;
 
+-- Re-enable foreign key checks
 SET FOREIGN_KEY_CHECKS=1;
 
 -- Create Users Table
@@ -98,7 +100,7 @@ CREATE TABLE orders (
                         postcode VARCHAR(20) NOT NULL,
                         email VARCHAR(255) NOT NULL, -- Keeping email so David's insert works
                         phone_number VARCHAR(50) NOT NULL,
-                        order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Adds date/time automatically
+                        order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, -- Adds date/time automatically
 
                         user_id INT NULL,
                         FOREIGN KEY  (email) REFERENCES  users(email) ON DELETE CASCADE,
