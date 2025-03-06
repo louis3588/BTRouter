@@ -23,6 +23,15 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
+    public User findById(int id) {
+        return userRepository.findById(Long.valueOf(id))
+                .orElseThrow(() -> new RuntimeException("User not found"));
+    }
+
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
     public List<User> findAll() {
         return userRepository.findAll();
     }

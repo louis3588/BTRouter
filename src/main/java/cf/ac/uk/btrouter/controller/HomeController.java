@@ -2,6 +2,7 @@ package cf.ac.uk.btrouter.controller;
 
 import cf.ac.uk.btrouter.model.User;
 import cf.ac.uk.btrouter.service.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -57,18 +58,28 @@ public class HomeController {
         return userService.findAll();
     }
 
-    @PutMapping("admin/users/{email}")
-    public ResponseEntity updateUser(@PathVariable String email, @RequestBody User user){
-        User currentUser = userService.findByEmail(email);
-        currentUser.setFirstName(user.getFirstName());
-        currentUser.setLastName(user.getLastName());
-        currentUser.setEmail(user.getEmail());
-        currentUser.setPassword(user.getPassword());
-        currentUser.setRole(user.getRole());
-        currentUser = userService.registerUser(currentUser);
+    @PutMapping("admin/users/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User userUpdate) {
+
+        User currentUser = userService.findById(id);
+        if (currentUser == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        currentUser.setFirstName(userUpdate.getFirstName());
+        currentUser.setLastName(userUpdate.getLastName());
+        currentUser.setEmail(userUpdate.getEmail());
+        currentUser.setRole(userUpdate.getRole());
+
+        // Update password only if a new one is provided
+        if (userUpdate.getPassword() != null && !userUpdate.getPassword().isEmpty()) {
+            currentUser.setPassword(userUpdate.getPassword());
+        }
+        userService.saveUser(currentUser);
 
         return ResponseEntity.ok(currentUser);
     }
+
 
     @DeleteMapping("/{email}")
     public ResponseEntity deleteUser(@PathVariable String email) {
