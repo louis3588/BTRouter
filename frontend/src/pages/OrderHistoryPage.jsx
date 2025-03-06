@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchOrderHistory } from "../services/orderService";
-import Sidebar from "../components/Sidebar"; // Import the Sidebar component
+import Sidebar from "../components/Sidebar";
 import {
     PageContainer,
     Title,
@@ -27,6 +27,8 @@ import { Link } from "react-router-dom";
 const OrderHistoryPage = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState("history");
+    const userRole = "ADMIN"; // Fetch from JWT later
 
     useEffect(() => {
         const loadOrders = async () => {
@@ -46,7 +48,7 @@ const OrderHistoryPage = () => {
     return (
         <Box sx={{ display: "flex" }}>
             {/* Sidebar */}
-            <Sidebar />
+            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} userRole={userRole} />
 
             {/* Main Content */}
             <PageContainer>
