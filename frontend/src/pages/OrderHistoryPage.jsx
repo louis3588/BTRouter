@@ -3,15 +3,23 @@ import { fetchOrderHistory } from "../services/orderService";
 import {
     Table,
     TableBody,
-    TableCell,
     TableContainer,
-    TableHead,
     TableRow,
     Paper,
-    Typography,
     CircularProgress,
     Box
 } from "@mui/material";
+import {
+    PageContainer,
+    Title,
+    Description,
+    TableWrapper,
+    StyledTableHead,
+    TableHeaderCell,
+    TableCellStyled,
+    TableRowStyled,
+    ActionButton
+} from "../styles/orderHistoryStyles";
 
 const OrderHistoryPage = () => {
     const [orders, setOrders] = useState([]);
@@ -33,39 +41,44 @@ const OrderHistoryPage = () => {
     }, []);
 
     return (
-        <Box sx={{ p: 4 }}>
-            <Typography variant="h4" sx={{ mb: 3, fontWeight: "bold" }}>
-                Order History
-            </Typography>
+        <PageContainer>
+            <Title>ORDER HISTORY</Title>
+            <Description>View your previous orders or reorder your most frequently purchased items below.</Description>
+
             {loading ? (
                 <CircularProgress />
             ) : orders.length === 0 ? (
-                <Typography>No orders found.</Typography>
+                <Description>No orders found.</Description>
             ) : (
-                <TableContainer component={Paper}>
+                <TableWrapper component={Paper}>
                     <Table>
-                        <TableHead>
+                        <StyledTableHead>
                             <TableRow>
-                                <TableCell><strong>Site Name</strong></TableCell>
-                                <TableCell><strong>Router Model</strong></TableCell>
-                                <TableCell><strong>Order Date</strong></TableCell>
-                                <TableCell><strong>Status</strong></TableCell>
+                                <TableHeaderCell>ORDER ID</TableHeaderCell>
+                                <TableHeaderCell>ROUTER TYPE</TableHeaderCell>
+                                <TableHeaderCell>ORDER DATE</TableHeaderCell>
+                                <TableHeaderCell>ORDER STATUS</TableHeaderCell>
+                                <TableHeaderCell>ACTIONS</TableHeaderCell>
                             </TableRow>
-                        </TableHead>
+                        </StyledTableHead>
                         <TableBody>
                             {orders.map((order) => (
-                                <TableRow key={order.id}>
-                                    <TableCell>{order.siteName}</TableCell>
-                                    <TableCell>{order.routerModel}</TableCell>
-                                    <TableCell>{new Date(order.orderDate).toLocaleDateString()}</TableCell>
-                                    <TableCell>Processing</TableCell>
-                                </TableRow>
+                                <TableRowStyled key={order.id}>
+                                    <TableCellStyled>{order.id}</TableCellStyled>
+                                    <TableCellStyled>{order.routerModel}</TableCellStyled>
+                                    <TableCellStyled>{new Date(order.orderDate).toLocaleDateString()}</TableCellStyled>
+                                    <TableCellStyled>{order.status || "Processing"}</TableCellStyled>
+                                    <TableCellStyled>
+                                        <ActionButton>View Details</ActionButton>
+                                        <ActionButton>Re-order Router</ActionButton>
+                                    </TableCellStyled>
+                                </TableRowStyled>
                             ))}
                         </TableBody>
                     </Table>
-                </TableContainer>
+                </TableWrapper>
             )}
-        </Box>
+        </PageContainer>
     );
 };
 
