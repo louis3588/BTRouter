@@ -1,0 +1,9 @@
+cf\ac\uk\btrouter\service\UserService.class
+cf\ac\uk\btrouter\model\User.class
+cf\ac\uk\btrouter\dto\LoginDTO.class
+cf\ac\uk\btrouter\dto\RegisterDTO.class
+cf\ac\uk\btrouter\repository\UserRepository.class
+cf\ac\uk\btrouter\service\CustomUserDetailsService.class
+cf\ac\uk\btrouter\model\User$Role.class
+cf\ac\uk\btrouter\controller\AuthController.class
+cf\ac\uk\btrouter\controller\HomeController.class

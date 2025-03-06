@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: cf.ac.uk.btrouter.BtRouterApplicationTests
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.707 s -- in cf.ac.uk.btrouter.BtRouterApplicationTests

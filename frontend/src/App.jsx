@@ -4,7 +4,7 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Home from './components/Home/Home';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
-import RequestForm from './components/Router/RequestForm'; 
+import User from "./components/User";
 
 function App() {
     return (
@@ -23,8 +23,14 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-           <Route path="/router-requests" element={<RequestForm />} />
-
+                <Route
+                    path="/router-requests"
+                    element={
+                        <ProtectedRoute>
+                            <div>Router Requests Page (To be implemented)</div>
+                        </ProtectedRoute>
+                    }
+                />
                 <Route
                     path="/router-presets"
                     element={
@@ -34,19 +40,21 @@ function App() {
                     }
                 />
                 <Route
-                    path="/manage-users"
+                    path="/users"
                     element={
                         <ProtectedRoute>
-                            <div>Manage Users Page (To be implemented)</div>
+                            <div>
+                                <User />
+                            </div>
                         </ProtectedRoute>
                     }
                 />
 
-                {/* Redirect root to home */}
+                {/* Redirect only the root */}
                 <Route path="/" element={<Navigate to="/home" replace />} />
 
-                {/* Catch all route for 404 */}
-                <Route path="*" element={<Navigate to="/home" replace />} />
+                {/* Catch-all 404 Route */}
+                <Route path="*" element={<div>404 - Page Not Found</div>} />
             </Routes>
         </Router>
     );
