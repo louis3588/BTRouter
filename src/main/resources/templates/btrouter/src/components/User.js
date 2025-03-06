@@ -9,6 +9,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import PeopleIcon from "@mui/icons-material/People";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import HomeIcon from "@mui/icons-material/Home"
 import { useNavigate } from "react-router-dom";
 
 function User() {
@@ -130,11 +131,11 @@ function User() {
             </Box>
             <List>
                 <ListItem disablePadding>
-                    <NavButton active onClick={() => navigate("/manage-users")} sx={{ width: "100%" }}>
+                    <NavButton onClick={() => navigate("/home")} sx={{ width: "100%" }}>
                         <ListItemIcon sx={{ color: "white", minWidth: 40 }}>
-                            <PeopleIcon />
+                            <HomeIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Manage Users" />
+                        <ListItemText primary="Back to Home" />
                     </NavButton>
                 </ListItem>
                 <ListItem disablePadding>
@@ -148,6 +149,22 @@ function User() {
             </List>
         </Box>
     );
+
+    if (loading) {
+        return (
+            <Box sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100vh",
+                bgcolor: "#f8f9fa"
+            }}>
+                <CircularProgress sx={{ color: "#6200aa" }} />
+                <Typography variant="h6" sx={{ mt: 2 }}>Loading Users...</Typography>
+            </Box>
+        );
+    }
 
     return (
         <MainContainer>
