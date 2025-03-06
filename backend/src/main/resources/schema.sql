@@ -2,14 +2,14 @@
 CREATE DATABASE IF NOT EXISTS bt_router_db;
 USE bt_router_db;
 
--- Drop tables if they exist (ensures a clean start when setting up a new database)
-DROP TABLE IF EXISTS orders;
+-- Drop tables in correct order (child tables first)
+DROP TABLE IF EXISTS RequestedRouters;
+DROP TABLE IF EXISTS RouterRequests;
+DROP TABLE IF EXISTS RouterPresets;
+DROP TABLE IF EXISTS Routers;
+DROP TABLE IF EXISTS Customers;
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS routers;
-DROP TABLE IF EXISTS router_presets;
-DROP TABLE IF EXISTS router_requests;
-DROP TABLE IF EXISTS requested_routers;
-DROP TABLE IF EXISTS customers;
+DROP TABLE IF EXISTS Roles;
 
 -- Create Users Table
 CREATE TABLE users (
@@ -22,105 +22,104 @@ CREATE TABLE users (
 );
 
 -- Create Customers Table
-CREATE TABLE customers (
-                           customer_id INT AUTO_INCREMENT PRIMARY KEY,
-                           customer_name VARCHAR(255) NOT NULL
+CREATE TABLE Customers (
+                           CustomerID INT AUTO_INCREMENT PRIMARY KEY,
+                           CustomerName VARCHAR(255) NOT NULL
 );
 
 -- Create Routers Table
-CREATE TABLE routers (
-                         router_id INT AUTO_INCREMENT PRIMARY KEY,
-                         router_name VARCHAR(255) NOT NULL,
-                         outside_connection_types TEXT NOT NULL,
-                         inside_connection_types TEXT NOT NULL,
-                         ethernet_max_ports SMALLINT CHECK (ethernet_max_ports >= 0),
-                         serial_max_ports SMALLINT CHECK (serial_max_ports >= 0)
+CREATE TABLE Routers (
+                         RouterID INT AUTO_INCREMENT PRIMARY KEY,
+                         RouterName VARCHAR(255) NOT NULL,
+                         OutsideConnectionTypes TEXT NOT NULL,
+                         InsideConnectionTypes TEXT NOT NULL,
+                         EthernetMaxPorts SMALLINT CHECK (EthernetMaxPorts >= 0),
+                         SerialMaxPorts SMALLINT CHECK (SerialMaxPorts >= 0)
 );
 
 -- Create Router Presets Table
-CREATE TABLE router_presets (
-                                router_preset_id INT AUTO_INCREMENT PRIMARY KEY,
-                                router_id INT NOT NULL,
-                                router_preset_name VARCHAR(255) NOT NULL,
-                                primary_outside_connections VARCHAR(255) NOT NULL,
-                                secondary_outside_connections VARCHAR(255),
-                                inside_connections VARCHAR(255) NOT NULL,
-                                number_of_ports SMALLINT CHECK (number_of_ports >= 0),
-                                VLANs ENUM('Unspecified', 'Specified', 'Open Trunk') NOT NULL,
-                                DHCP BOOLEAN DEFAULT NULL,
+CREATE TABLE RouterPresets (
+                               RouterPresetID INT AUTO_INCREMENT PRIMARY KEY,
+                               RouterID INT NOT NULL,
+                               RouterPresetName VARCHAR(255) NOT NULL,
+                               PrimaryOutsideConnections VARCHAR(255) NOT NULL,
+                               SecondaryOutsideConnections VARCHAR(255),
+                               InsideConnections VARCHAR(255) NOT NULL,
+                               NumberOfPorts SMALLINT CHECK (NumberOfPorts >= 0),
+                               VLANs ENUM('Unspecified', 'Specified', 'Open Trunk') NOT NULL,
+                               DHCP BOOLEAN DEFAULT NULL,
 
-                                FOREIGN KEY (router_id) REFERENCES routers(router_id)
-                                    ON DELETE CASCADE
-                                    ON UPDATE CASCADE
+                               FOREIGN KEY (RouterID) REFERENCES Routers(RouterID)
+                                   ON DELETE CASCADE
+                                   ON UPDATE CASCADE
 );
 
 -- Create Router Requests Table
-CREATE TABLE router_requests (
-                                 request_id INT AUTO_INCREMENT PRIMARY KEY,
-                                 customer_id INT NOT NULL,
+CREATE TABLE RouterRequests (
+                                RequestID INT AUTO_INCREMENT PRIMARY KEY,
+                                CustomerID INT NOT NULL,
 
-                                 site_name VARCHAR(255) NOT NULL,
-                                 address VARCHAR(255) NOT NULL,
-                                 city VARCHAR(255) NOT NULL,
-                                 postcode VARCHAR(20) NOT NULL,
-                                 primary_email VARCHAR(255) NOT NULL,
-                                 secondary_email VARCHAR(255),
-                                 phone_number VARCHAR(50) NOT NULL,
-                                 name_of_correspondence VARCHAR(255) NOT NULL,
+                                SiteName VARCHAR(255) NOT NULL,
+                                AddressNumberName VARCHAR(255),
+                                StreetName VARCHAR(255) NOT NULL,
+                                City VARCHAR(255) NOT NULL,
+                                Postcode VARCHAR(20) NOT NULL,
+                                PrimaryEmail VARCHAR(255) NOT NULL,
+                                SecondaryEmail VARCHAR(255),
+                                PhoneNumber VARCHAR(50) NOT NULL,
+                                NameOfCorrespondence VARCHAR(255) NOT NULL,
 
-                                 priority_level ENUM('Critical', 'Urgent', 'High', 'Medium', 'Low') NOT NULL,
-                                 additional_information TEXT,
+                                PriorityLevel ENUM('Critical', 'Urgent', 'High', 'Medium', 'Low') NOT NULL,
+                                AdditionalInformation TEXT,
 
-                                 FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
-                                     ON DELETE CASCADE
-                                     ON UPDATE CASCADE,
+                                FOREIGN KEY (CustomerID) REFERENCES Customers(CustomerID)
+                                    ON DELETE CASCADE
+                                    ON UPDATE CASCADE,
 
-    -- Indexing priority level for fast filtering
-                                 INDEX idx_priority_level (priority_level)
+                                INDEX idx_priority_level (PriorityLevel) -- Faster querying through priority level
 );
 
 -- Create Orders Table
 CREATE TABLE orders (
                         id INT AUTO_INCREMENT PRIMARY KEY,
-                        site_name VARCHAR(255) NOT NULL,
-                        router_model VARCHAR(255) NOT NULL,
-                        ip_address VARCHAR(255),
-                        configuration_details TEXT,
-                        router_type VARCHAR(255) NOT NULL,
-                        number_of_routers INT NOT NULL DEFAULT 1,
-                        address VARCHAR(255) NOT NULL,
-                        city VARCHAR(255) NOT NULL,
-                        postcode VARCHAR(20) NOT NULL,
-                        email VARCHAR(255) NOT NULL,
-                        phone_number VARCHAR(50) NOT NULL,
-                        order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                        SiteName VARCHAR(255) NOT NULL,
+                        RouterModel VARCHAR(255) NOT NULL,
+                        IPAddress VARCHAR(255),
+                        ConfigurationDetails TEXT,
+                        RouterType VARCHAR(255) NOT NULL,
+                        NumberOfRouters INT NOT NULL DEFAULT 1,
+                        Address VARCHAR(255) NOT NULL,
+                        City VARCHAR(255) NOT NULL,
+                        Postcode VARCHAR(20) NOT NULL,
+                        Email VARCHAR(255) NOT NULL,
+                        PhoneNumber VARCHAR(50) NOT NULL,
+                        OrderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
 
-    -- Optional: Associate orders with users
-                        user_id INT,
-                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+                        UserID INT NOT NULL,
+                        FOREIGN KEY (UserID) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Create Requested Routers Table
-CREATE TABLE requested_routers (
-                                   request_router_id INT AUTO_INCREMENT PRIMARY KEY,
-                                   request_id INT NOT NULL,
-                                   router_preset_id INT DEFAULT NULL,
+CREATE TABLE RequestedRouters (
+                                  RequestRouterID INT AUTO_INCREMENT PRIMARY KEY,
+                                  RequestID INT NOT NULL,
+                                  RouterPresetID INT DEFAULT NULL,
 
-                                   router_name VARCHAR(255) NOT NULL,
-                                   primary_outside_connections VARCHAR(255) NOT NULL,
-                                   secondary_outside_connections VARCHAR(255) NOT NULL,
-                                   inside_connections TEXT NOT NULL,
-                                   number_of_ethernet_ports SMALLINT CHECK (number_of_ethernet_ports >= 0),
-                                   number_of_serial_ports SMALLINT CHECK (number_of_serial_ports >= 0),
-                                   VLANs ENUM('Unspecified', 'Specified', 'Open Trunk') NOT NULL,
-                                   DHCP BOOLEAN DEFAULT NULL,
-                                   number_of_routers SMALLINT NOT NULL CHECK (number_of_routers > 0),
+                                  RouterName VARCHAR(255) NOT NULL,
+                                  PrimaryOutsideConnections VARCHAR(255) NOT NULL,
+                                  SecondaryOutsideConnections VARCHAR(255) NOT NULL,
+                                  InsideConnections TEXT NOT NULL,
+                                  NumberOfEthernetPorts SMALLINT CHECK (NumberOfEthernetPorts >= 0),
+                                  NumberOfSerialPorts SMALLINT CHECK (NumberOfSerialPorts >= 0),
+                                  VLANs ENUM('Unspecified', 'Specified', 'Open Trunk') NOT NULL,
+                                  DHCP BOOLEAN DEFAULT NULL,
+                                  NumberOfRouters SMALLINT NOT NULL CHECK (NumberOfRouters > 0),
 
-                                   FOREIGN KEY (request_id) REFERENCES router_requests(request_id)
-                                       ON DELETE CASCADE
-                                       ON UPDATE CASCADE,
+                                  FOREIGN KEY (RequestID) REFERENCES RouterRequests(RequestID)
+                                      ON DELETE CASCADE
+                                      ON UPDATE CASCADE,
 
-                                   FOREIGN KEY (router_preset_id) REFERENCES router_presets(router_preset_id)
-                                       ON DELETE RESTRICT
-                                       ON UPDATE CASCADE
+                                  FOREIGN KEY (RouterPresetID) REFERENCES RouterPresets(RouterPresetID)
+                                      ON DELETE RESTRICT
+                                      ON UPDATE CASCADE
 );

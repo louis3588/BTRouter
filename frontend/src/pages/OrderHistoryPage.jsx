@@ -18,15 +18,18 @@ const OrderHistoryPage = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetchOrderHistory()
-            .then((data) => {
+        const loadOrders = async () => {
+            try {
+                const data = await fetchOrderHistory();
                 setOrders(data);
+            } catch (error) {
+                console.error("Error loading orders:", error);
+            } finally {
                 setLoading(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching order history:", error);
-                setLoading(false);
-            });
+            }
+        };
+
+        loadOrders();
     }, []);
 
     return (
