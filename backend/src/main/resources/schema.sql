@@ -1,6 +1,9 @@
 -- Use the BT Router database
+DROP DATABASE IF EXISTS bt_router_db;
 CREATE DATABASE IF NOT EXISTS bt_router_db;
 USE bt_router_db;
+
+SET FOREIGN_KEY_CHECKS=0;
 
 -- Drop tables in correct order (child tables first)
 DROP TABLE IF EXISTS RequestedRouters;
@@ -10,6 +13,8 @@ DROP TABLE IF EXISTS Routers;
 DROP TABLE IF EXISTS Customers;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS Roles;
+
+SET FOREIGN_KEY_CHECKS=1;
 
 -- Create Users Table
 CREATE TABLE users (
@@ -82,21 +87,22 @@ CREATE TABLE RouterRequests (
 -- Create Orders Table
 CREATE TABLE orders (
                         id INT AUTO_INCREMENT PRIMARY KEY,
-                        SiteName VARCHAR(255) NOT NULL,
-                        RouterModel VARCHAR(255) NOT NULL,
-                        IPAddress VARCHAR(255),
-                        ConfigurationDetails TEXT,
-                        RouterType VARCHAR(255) NOT NULL,
-                        NumberOfRouters INT NOT NULL DEFAULT 1,
-                        Address VARCHAR(255) NOT NULL,
-                        City VARCHAR(255) NOT NULL,
-                        Postcode VARCHAR(20) NOT NULL,
-                        Email VARCHAR(255) NOT NULL,
-                        PhoneNumber VARCHAR(50) NOT NULL,
-                        OrderDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+                        site_name VARCHAR(255) NOT NULL,
+                        router_model VARCHAR(255) NOT NULL,
+                        ip_address VARCHAR(255),
+                        configuration_details TEXT,
+                        router_type VARCHAR(255) NOT NULL,
+                        number_of_routers INT NOT NULL DEFAULT 1,
+                        address VARCHAR(255) NOT NULL,
+                        city VARCHAR(255) NOT NULL,
+                        postcode VARCHAR(20) NOT NULL,
+                        email VARCHAR(255) NOT NULL, -- Keeping email so David's insert works
+                        phone_number VARCHAR(50) NOT NULL,
+                        order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Adds date/time automatically
 
-                        UserID INT NOT NULL,
-                        FOREIGN KEY (UserID) REFERENCES users(id) ON DELETE CASCADE
+                        user_id INT NULL,
+                        FOREIGN KEY  (email) REFERENCES  users(email) ON DELETE CASCADE,
+                        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
 
 -- Create Requested Routers Table
