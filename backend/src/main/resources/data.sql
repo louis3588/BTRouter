@@ -33,6 +33,6 @@ VALUES (
            false);
 
 INSERT INTO users (email, password, first_name, last_name, role) VALUES
-('admin@bt.com', '$2a$10$xn3LI/AjqicFYZFruSwve.ODd6/B.rq4yK/AHLC4bLVW9B5r0xE7W', 'Admin', 'User', 'ADMIN'),
-('support@bt.com', '$2a$10$xn3LI/AjqicFYZFruSwve.ODd6/B.rq4yK/AHLC4bLVW9B5r0xE7W', 'Support', 'Agent', 'SUPPORT_AGENT'),
-('user@bt.com', '$2a$10$xn3LI/AjqicFYZFruSwve.ODd6/B.rq4yK/AHLC4bLVW9B5r0xE7W', 'Standard', 'User', 'USER');
+('admin@bt.com', '$2a$10$dYJ.JJf/YyJDw3PGkpzPaOGz9.H0VSWg3HolW0s7IQYHj71JkP6gi', 'Admin', 'User', 'ADMIN'),
+('support@bt.com', '$2a$10$lR.oHqEZVxvFZ3OZKpaYVe6lrYMNKX.P9dOY9HgJSIvV1KHKHhJSC', 'Support', 'Agent', 'SUPPORT_AGENT'),
+('user@bt.com', '$2a$10$BBQZFHxI0d0OmHPHi0IkqO0T1HWJUz5OYJmqt7.qERrXs3O0tKsAS', 'Standard', 'User', 'USER');
