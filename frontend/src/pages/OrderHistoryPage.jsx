@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { fetchOrderHistory } from "../services/orderService";
+import React, {useCallback, useEffect, useState} from "react";
+import { fetchOrderHistory, reorderRouter } from "../services/orderService";
 import Sidebar from "../components/Sidebar";
 import {
     PageContainer,
@@ -21,6 +21,8 @@ import {
     Paper,
     CircularProgress,
     Box,
+    Snackbar,
+    Alert,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
@@ -28,22 +30,48 @@ const OrderHistoryPage = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState("history");
+    const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [snackbarMessage, setSnackbarMessage] = useState("");
+    const [snackbarSeverity, setSnackbarSeverity] = useState("success");
     const userRole = "ADMIN"; // Fetch from JWT later
 
-    useEffect(() => {
-        const loadOrders = async () => {
-            try {
-                const data = await fetchOrderHistory();
-                setOrders(data);
-            } catch (error) {
-                console.error("Error loading orders:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadOrders();
+    const loadOrders = useCallback(async () => {
+        setLoading(true);
+        try {
+            const data = await fetchOrderHistory();
+            setOrders(data);
+        } catch (error) {
+            console.error("Error loading orders:", error);
+        } finally {
+            setLoading(false);
+        }
     }, []);
+
+    useEffect(() => {
+        loadOrders();
+    }, [loadOrders]);
+
+    // Handle reordering a router
+    const handleReorder = async (orderId) => {
+        try {
+            const response = await reorderRouter(orderId);
+            if (response.success) {
+                setSnackbarMessage("Order successfully placed!");
+                setSnackbarSeverity("success");
+
+                // Refresh orders list after reordering
+                await loadOrders();
+            } else {
+                setSnackbarMessage(response.message || "Failed to place order. Please try again.");
+                setSnackbarSeverity("error");
+            }
+        } catch (error) {
+            setSnackbarMessage("Failed to place order. Please try again.");
+            setSnackbarSeverity("error");
+        } finally {
+            setSnackbarOpen(true);
+        }
+    };
 
     return (
         <Box sx={{ display: "flex" }}>
@@ -87,7 +115,7 @@ const OrderHistoryPage = () => {
                                                 <ActionButton component={Link} to={`/order-details/${order.id}`}>
                                                     View Details
                                                 </ActionButton>
-                                                <ActionButton component={Link} to={`/reorder/${order.id}`}>
+                                                <ActionButton onClick={() => handleReorder(order.id)}>
                                                     Re-order Router
                                                 </ActionButton>
                                             </TableCellStyled>
@@ -98,6 +126,16 @@ const OrderHistoryPage = () => {
                         </TableContainer>
                     </TableWrapper>
                 )}
+
+                <Snackbar
+                    open={snackbarOpen}
+                    autoHideDuration={3000}
+                    onClose={() => setSnackbarOpen(false)}
+                >
+                    <Alert severity={snackbarSeverity} onClose={() => setSnackbarOpen(false)}>
+                        {snackbarMessage}
+                    </Alert>
+                </Snackbar>
             </PageContainer>
         </Box>
     );
