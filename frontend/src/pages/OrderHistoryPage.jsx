@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState} from "react";
-import { fetchOrderHistory, reorderRouter } from "../services/orderService";
+import {fetchOrderDetails, fetchOrderHistory, reorderRouter} from "../services/orderService";
 import Sidebar from "../components/Sidebar";
+import RouterDetailsModal from "../components/OrderHistory/RouterDetailsModal";
 import {
     PageContainer,
     Title,
@@ -26,6 +27,7 @@ import {
 } from "@mui/material";
 import { Link } from "react-router-dom";
 
+
 const OrderHistoryPage = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -33,6 +35,8 @@ const OrderHistoryPage = () => {
     const [snackbarOpen, setSnackbarOpen] = useState(false);
     const [snackbarMessage, setSnackbarMessage] = useState("");
     const [snackbarSeverity, setSnackbarSeverity] = useState("success");
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
     const userRole = "ADMIN"; // Fetch from JWT later
 
     const loadOrders = useCallback(async () => {
@@ -69,6 +73,29 @@ const OrderHistoryPage = () => {
             setSnackbarMessage("Failed to place order. Please try again.");
             setSnackbarSeverity("error");
         } finally {
+            setSnackbarOpen(true);
+        }
+    };
+
+    // Handles view order
+    const handleViewDetails = async (orderId) => {
+        try {
+            console.log("Fetching order details for:", orderId);
+            const order = await fetchOrderDetails(orderId);
+            console.log("Order details fetched:", order);
+
+            if (order) {
+                setSelectedOrder(order);
+                setModalOpen(true); // ✅ Open the modal
+            } else {
+                setSnackbarMessage("Order details not found.");
+                setSnackbarSeverity("error");
+                setSnackbarOpen(true);
+            }
+        } catch (error) {
+            console.error("Failed to load order details:", error);
+            setSnackbarMessage("Failed to load order details.");
+            setSnackbarSeverity("error");
             setSnackbarOpen(true);
         }
     };
@@ -112,7 +139,7 @@ const OrderHistoryPage = () => {
                                             </TableCellStyled>
                                             <TableCellStyled>Processing</TableCellStyled>
                                             <TableCellStyled>
-                                                <ActionButton component={Link} to={`/order-details/${order.id}`}>
+                                                <ActionButton onClick={() => handleViewDetails(order.id)}>
                                                     View Details
                                                 </ActionButton>
                                                 <ActionButton onClick={() => handleReorder(order.id)}>
@@ -127,6 +154,7 @@ const OrderHistoryPage = () => {
                     </TableWrapper>
                 )}
 
+                {/* Snackbar for notifications */}
                 <Snackbar
                     open={snackbarOpen}
                     autoHideDuration={3000}
@@ -136,6 +164,9 @@ const OrderHistoryPage = () => {
                         {snackbarMessage}
                     </Alert>
                 </Snackbar>
+
+                {/* Router details modal */}
+                <RouterDetailsModal open={modalOpen} onClose={() => setModalOpen(false)} order={selectedOrder} />
             </PageContainer>
         </Box>
     );

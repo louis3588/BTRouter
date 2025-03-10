@@ -44,6 +44,11 @@ public class RouterOrderService {
         return orderRepository.findOrdersByEmail(email);
     }
 
+    // Fetch a specific order by ID but ensure it belongs to the user
+    public Optional<Order> getOrderById(Long orderId, String userEmail) {
+        return Optional.ofNullable(orderRepository.findOrderByIdAndEmail(orderId, userEmail));
+    }
+
     // New method to reorder a router
     public Order reorderRouter(Long orderId, String userEmail) {
         Optional<Order> existingOrder = orderRepository.findById(orderId);

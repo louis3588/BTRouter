@@ -42,3 +42,23 @@ export const reorderRouter = async (orderId) => {
         return { success: false, message: error.response ? error.response.data : error.message };
     }
 };
+
+// Function to get Order Details
+export const fetchOrderDetails = async (orderId) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+        console.error("🔴 No token found. User is not authenticated.");
+        return null;
+    }
+
+    try {
+        // ✅ FIX: Call `/api/orders/{orderId}`, NOT `/history/{orderId}`
+        const response = await axios.get(`http://localhost:8080/api/orders/${orderId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("🔴 Error fetching order details:", error.response ? error.response.data : error.message);
+        return null;
+    }
+};

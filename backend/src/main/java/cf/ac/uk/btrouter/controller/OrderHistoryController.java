@@ -6,8 +6,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/orders")
@@ -47,6 +49,16 @@ public class OrderHistoryController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error reordering router: " + e.getMessage());
         }
+    }
+
+    // Fetch full order details by ID - View Details feature.
+    @GetMapping("/{orderId}")
+    public ResponseEntity<Order> getOrderDetails(@PathVariable Long orderId, Authentication authentication) {
+        String userEmail = authentication.getName();
+        Order order = routerOrderService.getOrderById(orderId, userEmail)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Unauthorized access"));
+
+        return ResponseEntity.ok(order);
     }
 
 }
