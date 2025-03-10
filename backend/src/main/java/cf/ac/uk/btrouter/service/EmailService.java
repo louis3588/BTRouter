@@ -7,18 +7,28 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class EmailService {
-    @Autowired
-    private JavaMailSender mailSender;
+    private final JavaMailSender mailSender;
 
+    @Autowired
+    public EmailService(JavaMailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    // Send password reset email with token
     public void sendPasswordResetEmail(String to, String token) {
+        // Create email message
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("noreply@btrouter.com");
+        message.setFrom("ttgzee123@gmail.com");
         message.setTo(to);
         message.setSubject("Password Reset Request");
+
+        // Construct email body with reset link
         message.setText("To reset your password, click the link below:\n\n" +
                 "http://localhost:3000/reset-password?token=" + token + "\n\n" +
-                "This link will expire in 24 hours.");
+                "This link will expire in 24 hours.\n\n" +
+                "If you did not request a password reset, please ignore this email.");
 
+        // Send the email
         mailSender.send(message);
     }
 }

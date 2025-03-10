@@ -13,7 +13,9 @@ CREATE TABLE users (
                        password VARCHAR(255) NOT NULL,
                        first_name VARCHAR(255) NOT NULL,
                        last_name VARCHAR(255) NOT NULL,
-                       role ENUM('ADMIN', 'SUPPORT_AGENT', 'USER') NOT NULL
+                       role ENUM('ADMIN', 'SUPPORT_AGENT', 'USER') NOT NULL,
+                       reset_token VARCHAR(100),
+                       reset_token_expiry TIMESTAMP
 );
 
 CREATE TABLE Customers (
@@ -93,12 +95,4 @@ CREATE TABLE RequestedRouters (
                                   FOREIGN KEY (RouterPresetID) REFERENCES RouterPresets(RouterPresetID)
                                       ON DELETE RESTRICT
                                       ON UPDATE CASCADE
-);
-
-CREATE TABLE IF NOT EXISTS password_reset_token (
-                                                    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-                                                    token VARCHAR(255) NOT NULL,
-                                                    user_id BIGINT NOT NULL,
-                                                    expiry_date TIMESTAMP NOT NULL,
-                                                    FOREIGN KEY (user_id) REFERENCES users(id)
 );
