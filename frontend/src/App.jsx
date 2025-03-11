@@ -8,6 +8,7 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import RequestForm from './components/Router/RequestForm';
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
+import OrderExport from "./components/OrderHistory/OrderExport";
 
 
 function App() {
@@ -17,6 +18,8 @@ function App() {
                 {/* Public Routes */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
+
+                <Route path="/export" element={<OrderExport />} />
 
                 {/* Protected Routes */}
                 <Route
