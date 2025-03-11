@@ -31,7 +31,7 @@ function App() {
                     path="/router-requests"
                     element={
                         <ProtectedRoute>
-                            <div>Router Requests Page (To be implemented)</div>
+                            <RequestForm />
                         </ProtectedRoute>
                     }
                 />
