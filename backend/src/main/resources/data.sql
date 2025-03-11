@@ -45,3 +45,5 @@ VALUES ('Norwich', 'Virtual Access - GW1400M', '192.168.1.250', 'Custom Config',
 
 -- INSERT INTO orders (SiteName, RouterModel, IPAddress, ConfigurationDetails, RouterType, NumberOfRouters, Address, City, Postcode, Email, PhoneNumber)
 -- VALUES ('Norwich', 'Virtual Access - GW1400M', '192.168.1.250', 'Custom Config', 'Fiber', 20, '89 Virginia Road', 'Surrey', 'CR9 5EJ', 'user1@bt.com', '07951322284');
+
+

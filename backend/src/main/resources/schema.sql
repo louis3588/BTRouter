@@ -108,6 +108,7 @@ CREATE TABLE orders (
 );
 
 -- Create Requested Routers Table
+
 CREATE TABLE RequestedRouters (
                                   RequestRouterID INT AUTO_INCREMENT PRIMARY KEY,
                                   RequestID INT NOT NULL,
