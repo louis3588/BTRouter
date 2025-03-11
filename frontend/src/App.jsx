@@ -7,7 +7,7 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 
 import RequestForm from './components/Router/RequestForm';
 import OrderHistoryPage from "./pages/OrderHistoryPage";
-import User from "./components/User";
+import User from "./components/UserList/User";
 
 
 function App() {
