@@ -35,10 +35,7 @@ public class SpreadsheetGenerationService {
 
     public void write(File file){
         try(Workbook wb = new XSSFWorkbook()){
-            boolean result = writeOrders(getAllOrders(), wb, file);
-            if(result){
-
-            }
+            writeOrders(getAllOrders(), wb, file);
         } catch (IOException e){
             throw new RuntimeException(e);
         }
