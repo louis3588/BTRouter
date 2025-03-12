@@ -2,11 +2,11 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
-import ForgotPassword from './components/Auth/ForgotPassword';
-import ResetPassword from './components/Auth/ResetPassword';
 import Home from './components/Home/Home';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
 
+import ForgotPassword from './components/Auth/ForgotPassword';
+import ResetPassword from './components/Auth/ResetPassword';
 import RequestForm from './components/Router/RequestForm';
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
