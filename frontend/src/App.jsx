@@ -4,8 +4,12 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Home from './components/Home/Home';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
+
+import RequestForm from './components/Router/RequestForm';
+import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/User";
 import RequestForm from "./components/Router/RequestForm";  // ✅ Import the RequestForm component
+
 
 function App() {
     return (
@@ -49,7 +53,16 @@ function App() {
                     }
                 />
 
-                {/* Redirect only the root */}
+                <Route
+                    path="/order-history"
+                    element={
+                        <ProtectedRoute>
+                            <OrderHistoryPage />
+                        </ProtectedRoute>
+                    }
+                />
+
+                {/* Redirect root to home */}
                 <Route path="/" element={<Navigate to="/home" replace />} />
 
                 {/* Catch-all 404 Route */}
