@@ -1,61 +1,49 @@
 package cf.ac.uk.btrouter.model;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
-@Table(name = "orders")
-public class Order implements Serializable {
-
+@Getter
+@Setter
+@Table(name = "router_orders")
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String siteName;
-    private String routerModel;
-    private String ipAddress;
-    private String configurationDetails;
+
+    private String customerType;
     private String routerType;
-    private int numberOfRouters;
-    private String address;
-    private String city;
-    private String postcode;
-    private String email;
-    private String phoneNumber;
+    private String primaryOutsideConnection;
+    private Integer primaryOutsidePorts;
+    private String secondaryOutsideConnection;
+    private Integer secondaryOutsidePorts;
+    private String primaryInsideConnection;
+    private Integer primaryInsidePorts;
+    private String vlanConfiguration;
+    private String vlanAssignments;
+    private Boolean dhcpConfiguration;
 
-    @Column(name = "order_date", nullable = false, updatable = false)
-    private LocalDateTime orderDate;
+    // Explicitly map to the column name Hibernate is expecting.
+    @Column(name = "number_of_routers", nullable = false)
+    private Integer numRouters;
 
+    private String siteName;
+    private String siteAddress;
+    private String sitePostcode;
+    private String sitePrimaryEmail;
+    private String siteSecondaryEmail;
+    private String sitePhone;
+    private String siteContactName;
+    private String priorityLevel;
+    private Boolean addAnotherRouter;
+
+    // Set default value if not provided.
     @PrePersist
-    protected void onCreate() {
-        this.orderDate = LocalDateTime.now();
+    public void setDefaultValues() {
+        if (numRouters == null || numRouters <= 0) {
+            numRouters = 1; // Default to 1
+        }
     }
-
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getSiteName() { return siteName; }
-    public void setSiteName(String siteName) { this.siteName = siteName; }
-    public String getRouterModel() { return routerModel; }
-    public void setRouterModel(String routerModel) { this.routerModel = routerModel; }
-    public String getIpAddress() { return ipAddress; }
-    public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
-    public String getConfigurationDetails() { return configurationDetails; }
-    public void setConfigurationDetails(String configurationDetails) { this.configurationDetails = configurationDetails; }
-    public String getRouterType() { return routerType; }
-    public void setRouterType(String routerType) { this.routerType = routerType; }
-    public int getNumberOfRouters() { return numberOfRouters; }
-    public void setNumberOfRouters(int numberOfRouters) { this.numberOfRouters = numberOfRouters; }
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-    public String getCity() { return city; }
-    public void setCity(String city) { this.city = city; }
-    public String getPostcode() { return postcode; }
-    public void setPostcode(String postcode) { this.postcode = postcode; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public String getPhoneNumber() { return phoneNumber; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
-    public LocalDateTime getOrderDate() { return orderDate; }
-    public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
 }

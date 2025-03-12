@@ -1,4 +1,4 @@
-import React from 'react';
+import React from 'react'; 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
@@ -8,6 +8,7 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import RequestForm from './components/Router/RequestForm';
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/User";
+import RequestForm from "./components/Router/RequestForm";  // ✅ Import the RequestForm component
 
 
 function App() {
@@ -31,7 +32,7 @@ function App() {
                     path="/router-requests"
                     element={
                         <ProtectedRoute>
-                            <RequestForm />
+                            <RequestForm />  {/* ✅ Update Route to render RequestForm */}
                         </ProtectedRoute>
                     }
                 />
@@ -47,9 +48,7 @@ function App() {
                     path="/users"
                     element={
                         <ProtectedRoute>
-                            <div>
-                                <User />
-                            </div>
+                            <User />
                         </ProtectedRoute>
                     }
                 />

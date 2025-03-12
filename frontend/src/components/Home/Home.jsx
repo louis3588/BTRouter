@@ -101,6 +101,7 @@ const Home = () => {
             label: 'Router Requests',
             allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
             path: '/router-requests'
+
         },
         {
             id: 'history',
