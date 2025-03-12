@@ -25,7 +25,9 @@ CREATE TABLE users (
                        password VARCHAR(255) NOT NULL,
                        first_name VARCHAR(255) NOT NULL,
                        last_name VARCHAR(255) NOT NULL,
-                       role ENUM('ADMIN', 'SUPPORT_AGENT', 'USER') NOT NULL
+                       role ENUM('ADMIN', 'SUPPORT_AGENT', 'USER') NOT NULL,
+                       reset_token VARCHAR(100),
+                       reset_token_expiry TIMESTAMP
 );
 
 -- Create Customers Table
@@ -131,4 +133,32 @@ CREATE TABLE RequestedRouters (
                                   FOREIGN KEY (RouterPresetID) REFERENCES RouterPresets(RouterPresetID)
                                       ON DELETE RESTRICT
                                       ON UPDATE CASCADE
+);
+
+
+CREATE TABLE router_orders (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    customer_type VARCHAR(50) NOT NULL,
+    router_type VARCHAR(50) NOT NULL,
+    primary_outside_connection VARCHAR(50) NOT NULL,
+    primary_outside_ports INT NOT NULL CHECK (primary_outside_ports >= 1),
+    secondary_outside_connection VARCHAR(50),
+    secondary_outside_ports INT CHECK (secondary_outside_ports >= 0),
+    primary_inside_connection VARCHAR(50) NOT NULL,
+    primary_inside_ports INT NOT NULL CHECK (primary_inside_ports >= 1),
+    vlan_configuration VARCHAR(50) NOT NULL,
+    vlan_assignments VARCHAR(255),
+    dhcp_configuration BOOLEAN NOT NULL,
+    num_routers INT NOT NULL DEFAULT 1 CHECK (num_routers > 0), -- ✅ Fix: Default Value
+    site_name VARCHAR(100) NOT NULL,
+    site_address VARCHAR(255) NOT NULL,
+    site_postcode VARCHAR(20) NOT NULL,
+    site_primary_email VARCHAR(100) NOT NULL,
+    site_secondary_email VARCHAR(100),
+    site_phone VARCHAR(20) NOT NULL,
+    site_contact_name VARCHAR(100) NOT NULL,
+    priority_level VARCHAR(20) NOT NULL,
+    add_another_router BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );

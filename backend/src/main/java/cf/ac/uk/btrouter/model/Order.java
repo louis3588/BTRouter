@@ -1,61 +1,137 @@
 package cf.ac.uk.btrouter.model;
 
 import jakarta.persistence.*;
-import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "orders")
-public class Order implements Serializable {
-
+@Getter
+@Setter
+@Table(name = "router_orders")
+public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String customerType;
+    private String routerType;
+    private String primaryOutsideConnection;
+    private Integer primaryOutsidePorts;
+    private String secondaryOutsideConnection;
+    private Integer secondaryOutsidePorts;
+    private String primaryInsideConnection;
+    private Integer primaryInsidePorts;
+    private String vlanConfiguration;
+    private String vlanAssignments;
+    private Boolean dhcpConfiguration;
+
+    // Explicitly map to the column name Hibernate is expecting.
+    @Column(name = "number_of_routers", nullable = false)
+    private Integer numRouters;
+
     private String siteName;
-    private String routerModel;
+    private String siteAddress;
+    private String sitePostcode;
+    private String sitePrimaryEmail;
+    private String siteSecondaryEmail;
+    private String sitePhone;
+    private String siteContactName;
+    private String priorityLevel;
+    private Boolean addAnotherRouter;
+
+    // Additional fields needed by the service layer:
     private String ipAddress;
     private String configurationDetails;
-    private String routerType;
-    private int numberOfRouters;
-    private String address;
-    private String city;
-    private String postcode;
-    private String email;
-    private String phoneNumber;
-
-    @Column(name = "order_date", nullable = false, updatable = false)
+    
+    // Added field for city (if required)
+    private String siteCity;
+    
+    // Field for order date
     private LocalDateTime orderDate;
 
+    // Set default value if not provided.
     @PrePersist
-    protected void onCreate() {
-        this.orderDate = LocalDateTime.now();
+    public void setDefaultValues() {
+        if (numRouters == null || numRouters <= 0) {
+            numRouters = 1; // Default to 1
+        }
     }
 
-    // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-    public String getSiteName() { return siteName; }
-    public void setSiteName(String siteName) { this.siteName = siteName; }
-    public String getRouterModel() { return routerModel; }
-    public void setRouterModel(String routerModel) { this.routerModel = routerModel; }
-    public String getIpAddress() { return ipAddress; }
-    public void setIpAddress(String ipAddress) { this.ipAddress = ipAddress; }
-    public String getConfigurationDetails() { return configurationDetails; }
-    public void setConfigurationDetails(String configurationDetails) { this.configurationDetails = configurationDetails; }
-    public String getRouterType() { return routerType; }
-    public void setRouterType(String routerType) { this.routerType = routerType; }
-    public int getNumberOfRouters() { return numberOfRouters; }
-    public void setNumberOfRouters(int numberOfRouters) { this.numberOfRouters = numberOfRouters; }
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
-    public String getCity() { return city; }
-    public void setCity(String city) { this.city = city; }
-    public String getPostcode() { return postcode; }
-    public void setPostcode(String postcode) { this.postcode = postcode; }
-    public String getEmail() { return email; }
-    public void setEmail(String email) { this.email = email; }
-    public String getPhoneNumber() { return phoneNumber; }
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
-    public LocalDateTime getOrderDate() { return orderDate; }
-    public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
+    // Custom getters/setters to provide the method names expected by RouterOrderService
+
+    // Map getEmail() to sitePrimaryEmail.
+    public String getEmail() {
+        return sitePrimaryEmail;
+    }
+    public void setEmail(String email) {
+        this.sitePrimaryEmail = email;
+    }
+
+    // Map getRouterModel() to routerType.
+    public String getRouterModel() {
+        return routerType;
+    }
+
+    // For ipAddress, Lombok already generates getIpAddress() and setIpAddress()
+    
+    // If configurationDetails is not explicitly set, combine vlanConfiguration and vlanAssignments.
+    public String getConfigurationDetails() {
+        if (configurationDetails != null && !configurationDetails.isEmpty()) {
+            return configurationDetails;
+        } else {
+            return "VLAN Config: " + vlanConfiguration + ", VLAN Assignments: " + vlanAssignments;
+        }
+    }
+    public void setConfigurationDetails(String configurationDetails) {
+        this.configurationDetails = configurationDetails;
+    }
+
+    // Map getNumberOfRouters() to numRouters.
+    public int getNumberOfRouters() {
+        return numRouters;
+    }
+    public void setNumberOfRouters(int numberOfRouters) {
+        this.numRouters = numberOfRouters;
+    }
+
+    // Map getAddress() to siteAddress.
+    public String getAddress() {
+        return siteAddress;
+    }
+    public void setAddress(String address) {
+        this.siteAddress = address;
+    }
+
+    // Map getCity() to siteCity.
+    public String getCity() {
+        return siteCity;
+    }
+    public void setCity(String city) {
+        this.siteCity = city;
+    }
+
+    // Map getPostcode() to sitePostcode.
+    public String getPostcode() {
+        return sitePostcode;
+    }
+    public void setPostcode(String postcode) {
+        this.sitePostcode = postcode;
+    }
+
+    // Map getPhoneNumber() to sitePhone.
+    public String getPhoneNumber() {
+        return sitePhone;
+    }
+    public void setPhoneNumber(String phoneNumber) {
+        this.sitePhone = phoneNumber;
+    }
+
+    // Order date getter/setter (even though Lombok generates these, they’re explicitly defined for clarity)
+    public LocalDateTime getOrderDate() {
+        return orderDate;
+    }
+    public void setOrderDate(LocalDateTime orderDate) {
+        this.orderDate = orderDate;
+    }
 }

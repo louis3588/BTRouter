@@ -10,11 +10,9 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     // Fetch orders only for the logged-in user, sorted by order date
-    @Query("SELECT o FROM Order o WHERE o.email = :email ORDER BY o.orderDate DESC")
+    @Query("SELECT o FROM Order o WHERE o.sitePrimaryEmail = :email ORDER BY o.orderDate DESC")
     List<Order> findOrdersByEmail(@Param("email") String email);
 
-
-    @Query("SELECT o FROM Order o WHERE o.id = :orderId AND o.email = :email")
+    @Query("SELECT o FROM Order o WHERE o.id = :orderId AND o.sitePrimaryEmail = :email")
     Order findOrderByIdAndEmail(@Param("orderId") Long orderId, @Param("email") String email);
-
 }
