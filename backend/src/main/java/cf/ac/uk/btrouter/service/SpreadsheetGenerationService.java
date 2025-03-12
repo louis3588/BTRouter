@@ -2,17 +2,14 @@ package cf.ac.uk.btrouter.service;
 
 import cf.ac.uk.btrouter.model.Order;
 import cf.ac.uk.btrouter.repository.OrderRepository;
-import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -98,5 +95,4 @@ public class SpreadsheetGenerationService {
             cell.setCellStyle(headerStyle);
         }
     }
-
 }
