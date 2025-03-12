@@ -25,6 +25,8 @@ function App() {
 
                 <Route path="/export" element={<OrderExport />} />
 
+                <Route path="/export" element={<OrderExport />} />
+
                 {/* Protected Routes */}
                 <Route
                     path="/home"
