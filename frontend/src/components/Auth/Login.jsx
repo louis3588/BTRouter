@@ -25,14 +25,12 @@ const Login = () => {
 
     const validateForm = () => {
         const newErrors = {};
-        // Email validation
         if (!formData.email) {
             newErrors.email = 'Email is required';
         } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(formData.email)) {
             newErrors.email = 'Invalid email address';
         }
 
-        // Password validation
         if (!formData.password) {
             newErrors.password = 'Password is required';
         }
@@ -77,7 +75,6 @@ const Login = () => {
             ...prev,
             [name]: value
         }));
-        // Clear error when user starts typing
         if (errors[name]) {
             setErrors(prev => ({
                 ...prev,
@@ -156,6 +153,14 @@ const Login = () => {
                         Login
                     </Button>
                     <Typography align="center">
+                        <Link
+                            component="button"
+                            variant="body2"
+                            onClick={() => navigate('/forgot-password')}
+                            sx={{ color: '#6200aa', mr: 2 }}
+                        >
+                            Forgot Password?
+                        </Link>
                         Don't have an account?{' '}
                         <Link
                             component="button"

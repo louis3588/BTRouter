@@ -1,11 +1,7 @@
 package cf.ac.uk.btrouter.controller;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -84,6 +80,54 @@ public class AuthController {
             return ResponseEntity
                     .badRequest()
                     .body(Map.of("message", e.getMessage()));
+        }
+    }
+
+    // Handle password reset request
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) {
+        try {
+            // Validate email presence
+            String email = request.get("email");
+            if (email == null || email.trim().isEmpty()) {
+                return ResponseEntity.badRequest().body("Email is required");
+            }
+
+            // Process password reset request
+            userService.createPasswordResetTokenForUser(email);
+            return ResponseEntity.ok().body("Password reset email sent");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    // Validate password reset token
+    @GetMapping("/reset-password/validate")
+    public ResponseEntity<?> validateResetToken(@RequestParam String token) {
+        String result = userService.validatePasswordResetToken(token);
+        if (result.equals("valid")) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().body(result);
+    }
+
+    // Handle password reset with token
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> request) {
+        try {
+            // Validate request parameters
+            String token = request.get("token");
+            String newPassword = request.get("newPassword");
+
+            if (token == null || newPassword == null) {
+                return ResponseEntity.badRequest().body("Token and new password are required");
+            }
+
+            // Process password reset
+            userService.resetPassword(token, newPassword);
+            return ResponseEntity.ok().body("Password has been reset successfully");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 }
