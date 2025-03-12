@@ -25,7 +25,9 @@ CREATE TABLE users (
                        password VARCHAR(255) NOT NULL,
                        first_name VARCHAR(255) NOT NULL,
                        last_name VARCHAR(255) NOT NULL,
-                       role ENUM('ADMIN', 'SUPPORT_AGENT', 'USER') NOT NULL
+                       role ENUM('ADMIN', 'SUPPORT_AGENT', 'USER') NOT NULL,
+                       reset_token VARCHAR(100),
+                       reset_token_expiry TIMESTAMP
 );
 
 -- Create Customers Table
