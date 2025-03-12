@@ -2,6 +2,7 @@ package cf.ac.uk.btrouter.model;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "orders")
@@ -21,6 +22,14 @@ public class Order implements Serializable {
     private String postcode;
     private String email;
     private String phoneNumber;
+
+    @Column(name = "order_date", nullable = false, updatable = false)
+    private LocalDateTime orderDate;
+
+    @PrePersist
+    protected void onCreate() {
+        this.orderDate = LocalDateTime.now();
+    }
 
     // Getters and Setters
     public Long getId() { return id; }
@@ -47,4 +56,6 @@ public class Order implements Serializable {
     public void setEmail(String email) { this.email = email; }
     public String getPhoneNumber() { return phoneNumber; }
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
+    public LocalDateTime getOrderDate() { return orderDate; }
+    public void setOrderDate(LocalDateTime orderDate) { this.orderDate = orderDate; }
 }
