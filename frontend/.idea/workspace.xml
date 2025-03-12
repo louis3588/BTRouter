@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="160730ab-59b2-422b-8cc6-fe5a922fa0d1" name="Changes" comment="generates spreadsheet successfully">
-      <change beforePath="$PROJECT_DIR$/../.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../backend/src/main/resources/data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/../backend/src/main/resources/data.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/OrderHistory/OrderExport.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderHistory/OrderExport.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/UserList/User.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UserList/User.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -119,7 +116,7 @@
       <workItem from="1741269785890" duration="1630000" />
       <workItem from="1741271868187" duration="1032000" />
       <workItem from="1741700687326" duration="7066000" />
-      <workItem from="1741775600654" duration="609000" />
+      <workItem from="1741775600654" duration="2998000" />
     </task>
     <task id="LOCAL-00001" summary="start backend reflects new strcuture">
       <option name="closed" value="true" />

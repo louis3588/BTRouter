@@ -11,6 +11,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class SpreadsheetGenerationService {
@@ -30,15 +32,22 @@ public class SpreadsheetGenerationService {
         return orderRepository.findAll();
     }
 
-    public void write(File file){
+    public void write(File file, boolean separateSheets){
         try(Workbook wb = new XSSFWorkbook()){
-            writeOrders(getAllOrders(), wb, file);
+            writeOrders(getAllOrders(), wb);
+            if(separateSheets){
+                writeOrdersByCustomer(getAllOrders(), wb);
+            }
+
+            try (FileOutputStream fos = new FileOutputStream(file)){
+                wb.write(fos);
+            }
         } catch (IOException e){
             throw new RuntimeException(e);
         }
     }
 
-    private Boolean writeOrders(List<Order> orders, Workbook wb, File file) {
+    private void writeOrders(List<Order> orders, Workbook wb) {
         Sheet sheet = wb.createSheet("Full orders");
         createHeaderRow(sheet);
 
@@ -53,11 +62,22 @@ public class SpreadsheetGenerationService {
             sheet.autoSizeColumn(i);
         }
 
-        try (FileOutputStream fos = new FileOutputStream(file)){
-            wb.write(fos);
-            return true;
-        } catch (IOException e) {
-            return false;
+    }
+
+    private void writeOrdersByCustomer(List<Order> orders, Workbook wb) {
+        Map<String, List<Order>> ordersByCustomer = orders.stream().collect(Collectors.groupingBy(Order::getEmail));
+
+        for (Map.Entry<String, List<Order>> entry : ordersByCustomer.entrySet()) {
+            Sheet sheet = wb.createSheet(entry.getKey());
+            createHeaderRow(sheet);
+            int rowNum = 1;
+            for (Order order : entry.getValue()) {
+                Row row = sheet.createRow(rowNum++);
+                populateRows(row, order);
+            }
+            for (int i = 0; i < HEADERS.length; i++) {
+                sheet.autoSizeColumn(i);
+            }
         }
     }
 

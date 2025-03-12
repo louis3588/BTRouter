@@ -1,19 +1,32 @@
 import React, { useState } from "react";
 
-import { Box, Button, CircularProgress, Toolbar, Typography, IconButton, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import {
+    Box,
+    Button,
+    CircularProgress,
+    Toolbar,
+    Typography,
+    IconButton,
+    List,
+    ListItem,
+    ListItemIcon,
+    ListItemText,
+    FormControlLabel, Checkbox
+} from "@mui/material";
 import { People as PeopleIcon, FileDownload as FileDownloadIcon, Home as HomeIcon, Logout as LogoutIcon, Menu as MenuIcon } from "@mui/icons-material";
 import { StyledDrawer, MainContainer, HeaderBar, ScrollableContainer } from "../../styles/homeStyles";
 import { useNavigate } from "react-router-dom";
 
 function OrderExport() {
     const [loading, setLoading] = useState(false);
+    const [separateSheets, setSeparateSheets] = useState(false);
     const token = localStorage.getItem("token");
     const navigate = useNavigate();
 
     const handleDownload = () => {
         setLoading(true);
 
-        fetch("http://localhost:8080/api/spreadsheet/download", {
+        fetch(`http://localhost:8080/api/spreadsheet/download?separateSheets=${separateSheets}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`
@@ -96,6 +109,10 @@ function OrderExport() {
                 </HeaderBar>
                 <ScrollableContainer sx={{ p: 3, flexGrow: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                     <Typography variant="h6" sx={{ mb: 2 }}>Download Order Spreadsheet</Typography>
+                    <FormControlLabel
+                        control={<Checkbox checked={separateSheets} onChange={(e) => setSeparateSheets(e.target.checked)} />}
+                        label="Generate separate sheets per customer"
+                    />
                     <Button variant="contained" color="primary" startIcon={<FileDownloadIcon />} onClick={handleDownload} disabled={loading}>
                         {loading ? <CircularProgress size={24} sx={{ color: "white" }} /> : "Download Orders.xlsx"}
                     </Button>
