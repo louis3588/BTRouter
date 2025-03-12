@@ -10,7 +10,6 @@ import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
 import OrderExport from "./components/OrderHistory/OrderExport";
 
-
 function App() {
     return (
         <Router>
@@ -57,16 +56,7 @@ function App() {
                     }
                 />
 
-                <Route
-                    path="/order-history"
-                    element={
-                        <ProtectedRoute>
-                            <OrderHistoryPage />
-                        </ProtectedRoute>
-                    }
-                />
-
-                {/* Redirect root to home */}
+                {/* Redirect only the root */}
                 <Route path="/" element={<Navigate to="/home" replace />} />
 
                 {/* Catch-all 404 Route */}
