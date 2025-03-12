@@ -20,7 +20,7 @@ SET FOREIGN_KEY_CHECKS=1;
 
 -- Create Users Table
 CREATE TABLE users (
-                       id INT AUTO_INCREMENT PRIMARY KEY,
+                       id BIGINT AUTO_INCREMENT PRIMARY KEY,
                        email VARCHAR(255) NOT NULL UNIQUE,
                        password VARCHAR(255) NOT NULL,
                        first_name VARCHAR(255) NOT NULL,
@@ -32,13 +32,13 @@ CREATE TABLE users (
 
 -- Create Customers Table
 CREATE TABLE Customers (
-                           CustomerID INT AUTO_INCREMENT PRIMARY KEY,
+                           CustomerID BIGINT AUTO_INCREMENT PRIMARY KEY,
                            CustomerName VARCHAR(255) NOT NULL
 );
 
 -- Create Routers Table
 CREATE TABLE Routers (
-                         RouterID INT AUTO_INCREMENT PRIMARY KEY,
+                         RouterID BIGINT AUTO_INCREMENT PRIMARY KEY,
                          RouterName VARCHAR(255) NOT NULL,
                          OutsideConnectionTypes TEXT NOT NULL,
                          InsideConnectionTypes TEXT NOT NULL,
@@ -48,8 +48,8 @@ CREATE TABLE Routers (
 
 -- Create Router Presets Table
 CREATE TABLE RouterPresets (
-                               RouterPresetID INT AUTO_INCREMENT PRIMARY KEY,
-                               RouterID INT NOT NULL,
+                               RouterPresetID BIGINT AUTO_INCREMENT PRIMARY KEY,
+                               RouterID BIGINT NOT NULL,
                                RouterPresetName VARCHAR(255) NOT NULL,
                                PrimaryOutsideConnections VARCHAR(255) NOT NULL,
                                SecondaryOutsideConnections VARCHAR(255),
@@ -65,8 +65,8 @@ CREATE TABLE RouterPresets (
 
 -- Create Router Requests Table
 CREATE TABLE RouterRequests (
-                                RequestID INT AUTO_INCREMENT PRIMARY KEY,
-                                CustomerID INT NOT NULL,
+                                RequestID BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                CustomerID BIGINT NOT NULL,
 
                                 SiteName VARCHAR(255) NOT NULL,
                                 AddressNumberName VARCHAR(255),
@@ -90,7 +90,7 @@ CREATE TABLE RouterRequests (
 
 -- Create Orders Table
 CREATE TABLE orders (
-                        id INT AUTO_INCREMENT PRIMARY KEY,
+                        id BIGINT AUTO_INCREMENT PRIMARY KEY,
                         site_name VARCHAR(255) NOT NULL,
                         router_model VARCHAR(255) NOT NULL,
                         ip_address VARCHAR(255),
@@ -104,7 +104,7 @@ CREATE TABLE orders (
                         phone_number VARCHAR(50) NOT NULL,
                         order_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, -- Adds date/time automatically
 
-                        user_id INT NULL,
+                        user_id BIGINT NULL,
                         FOREIGN KEY  (email) REFERENCES  users(email) ON DELETE CASCADE,
                         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
 );
@@ -112,9 +112,9 @@ CREATE TABLE orders (
 -- Create Requested Routers Table
 
 CREATE TABLE RequestedRouters (
-                                  RequestRouterID INT AUTO_INCREMENT PRIMARY KEY,
-                                  RequestID INT NOT NULL,
-                                  RouterPresetID INT DEFAULT NULL,
+                                  RequestRouterID BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                  RequestID BIGINT NOT NULL,
+                                  RouterPresetID BIGINT DEFAULT NULL,
 
                                   RouterName VARCHAR(255) NOT NULL,
                                   PrimaryOutsideConnections VARCHAR(255) NOT NULL,
@@ -158,6 +158,8 @@ CREATE TABLE router_orders (
     site_phone VARCHAR(20) NOT NULL,
     site_contact_name VARCHAR(100) NOT NULL,
     priority_level VARCHAR(20) NOT NULL,
+    ip_address VARCHAR(255) DEFAULT NULL,
+    configuration_details VARCHAR(255) DEFAULT NULL,
     add_another_router BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
