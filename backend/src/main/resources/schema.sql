@@ -1,3 +1,6 @@
+-- Use the BT Router database
+DROP DATABASE IF EXISTS bt_router_db;
+CREATE DATABASE IF NOT EXISTS bt_router_db;
 USE bt_router_db;
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -7,10 +10,15 @@ DROP TABLE IF EXISTS RequestedRouters;
 DROP TABLE IF EXISTS RouterRequests;
 DROP TABLE IF EXISTS RouterPresets;
 DROP TABLE IF EXISTS Routers;
+DROP TABLE IF EXISTS orders;  -- Orders table must be dropped before users
 DROP TABLE IF EXISTS Customers;
-DROP TABLE IF EXISTS users;
+DROP TABLE IF EXISTS users;  -- Now users can be safely dropped
 DROP TABLE IF EXISTS Roles;
 
+-- Re-enable foreign key checks
+SET FOREIGN_KEY_CHECKS=1;
+
+-- Create Users Table
 CREATE TABLE users (
                        id INT AUTO_INCREMENT PRIMARY KEY,
                        email VARCHAR(255) NOT NULL UNIQUE,
@@ -20,11 +28,13 @@ CREATE TABLE users (
                        role ENUM('ADMIN', 'SUPPORT_AGENT', 'USER') NOT NULL
 );
 
+-- Create Customers Table
 CREATE TABLE Customers (
                            CustomerID INT AUTO_INCREMENT PRIMARY KEY,
                            CustomerName VARCHAR(255) NOT NULL
 );
 
+-- Create Routers Table
 CREATE TABLE Routers (
                          RouterID INT AUTO_INCREMENT PRIMARY KEY,
                          RouterName VARCHAR(255) NOT NULL,
@@ -34,6 +44,7 @@ CREATE TABLE Routers (
                          SerialMaxPorts SMALLINT CHECK (SerialMaxPorts >= 0)
 );
 
+-- Create Router Presets Table
 CREATE TABLE RouterPresets (
                                RouterPresetID INT AUTO_INCREMENT PRIMARY KEY,
                                RouterID INT NOT NULL,
