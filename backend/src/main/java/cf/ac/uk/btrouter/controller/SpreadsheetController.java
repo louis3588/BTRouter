@@ -26,9 +26,9 @@ public class SpreadsheetController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<Resource> downloadSpreadsheet() {
+    public ResponseEntity<Resource> downloadSpreadsheet(@RequestParam(required = false, defaultValue = "false") boolean separateCustomers) {
         File file = new File("orders.xlsx");
-        spreadsheetService.write(file);
+        spreadsheetService.write(file, separateCustomers);
 
         try {
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
@@ -42,5 +42,6 @@ public class SpreadsheetController {
             return ResponseEntity.notFound().build();
         }
     }
+
 }
 
