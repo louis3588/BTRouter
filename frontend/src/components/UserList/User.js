@@ -6,6 +6,7 @@ import {
 import { AppBar, Toolbar, Typography, Box, IconButton, List, ListItem, ListItemIcon, ListItemText, CircularProgress, Button, TextField, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import PeopleIcon from "@mui/icons-material/People";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -137,6 +138,14 @@ function User() {
                         </ListItemIcon>
                         <ListItemText primary="Back to Home" />
                     </NavButton>
+                </ListItem>
+                <ListItem disablePadding>
+                    <Button onClick={() => navigate("/export")} sx={{ width: "100%", justifyContent: "flex-start" }}>
+                        <ListItemIcon sx={{ color: "white", minWidth: 40 }}>
+                            <FileDownloadIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Order History spreadsheet" />
+                    </Button>
                 </ListItem>
                 <ListItem disablePadding>
                     <NavButton onClick={handleLogout} sx={{ width: "100%" }}>
