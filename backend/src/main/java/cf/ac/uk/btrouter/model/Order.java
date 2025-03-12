@@ -27,7 +27,7 @@ public class Order {
     private Boolean dhcpConfiguration;
 
     // Explicitly map to the column name Hibernate is expecting.
-    @Column(name = "number_of_routers", nullable = false)
+    @Column(name = "num_routers", nullable = false)
     private Integer numRouters;
 
     private String siteName;
@@ -43,11 +43,8 @@ public class Order {
     // Additional fields needed by the service layer:
     private String ipAddress;
     private String configurationDetails;
-    
-    // Added field for city (if required)
-    private String siteCity;
-    
-    // Field for order date
+
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime orderDate;
 
     // Set default value if not provided.
@@ -101,14 +98,6 @@ public class Order {
     }
     public void setAddress(String address) {
         this.siteAddress = address;
-    }
-
-    // Map getCity() to siteCity.
-    public String getCity() {
-        return siteCity;
-    }
-    public void setCity(String city) {
-        this.siteCity = city;
     }
 
     // Map getPostcode() to sitePostcode.

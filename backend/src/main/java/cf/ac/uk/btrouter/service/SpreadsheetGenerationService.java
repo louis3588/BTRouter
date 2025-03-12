@@ -91,7 +91,6 @@ public class SpreadsheetGenerationService {
         row.createCell(colNum++).setCellValue(order.getRouterType());
         row.createCell(colNum++).setCellValue(String.valueOf(order.getNumberOfRouters()));
         row.createCell(colNum++).setCellValue(order.getAddress());
-        row.createCell(colNum++).setCellValue(order.getCity());
         row.createCell(colNum++).setCellValue(order.getPostcode());
         row.createCell(colNum++).setCellValue(order.getEmail());
         row.createCell(colNum++).setCellValue(order.getPhoneNumber());
