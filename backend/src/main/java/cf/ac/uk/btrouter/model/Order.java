@@ -46,7 +46,10 @@ public class Order {
     
     // Added field for city (if required)
     private String siteCity;
-    
+
+    @Column(name = "order_status")
+    private String orderStatus = "Processing";
+
     // Field for order date
     private LocalDateTime orderDate;
 
@@ -56,6 +59,12 @@ public class Order {
         if (numRouters == null || numRouters <= 0) {
             numRouters = 1; // Default to 1
         }
+        if (orderStatus == null || orderStatus.isEmpty()) {
+            orderStatus = "Processing";
+        }
+        if (orderDate == null) {
+            orderDate = LocalDateTime.now();
+        } // added status and order date just in case frfr
     }
 
     // Custom getters/setters to provide the method names expected by RouterOrderService

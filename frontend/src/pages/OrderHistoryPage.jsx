@@ -134,11 +134,11 @@ const OrderHistoryPage = () => {
                                     {orders.map((order) => (
                                         <TableRowStyled key={order.id}>
                                             <TableCellStyled>{order.id}</TableCellStyled>
-                                            <TableCellStyled>{order.routerModel}</TableCellStyled>
+                                            <TableCellStyled>{order.routerType}</TableCellStyled> {/* Changed from routerModel to routerType */}
                                             <TableCellStyled>
                                                 {new Date(order.orderDate).toLocaleDateString()}
                                             </TableCellStyled>
-                                            <TableCellStyled>Processing</TableCellStyled>
+                                            <TableCellStyled>{order.orderStatus}</TableCellStyled> {/*  Dynamic orderStatus */}
                                             <TableCellStyled>
                                                 <ActionButton onClick={() => handleViewDetails(order.id)}>
                                                     View Details

@@ -159,6 +159,7 @@ CREATE TABLE router_orders (
     site_contact_name VARCHAR(100) NOT NULL,
     priority_level VARCHAR(20) NOT NULL,
     add_another_router BOOLEAN DEFAULT FALSE,
+    order_status VARCHAR(50) NOT NULL DEFAULT 'Processing', -- for the order-history ennit
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
