@@ -21,7 +21,7 @@ public class SpreadsheetGenerationService {
 
     public String[] HEADERS = {
             "Order ID", "Site Name", "Router Model", "IP Address", "Configuration Details", "Router Type", "Quantity",
-            "Address", "City", "Postcode", "Email", "Phone Number"
+            "Address", "Postcode", "Email", "Phone Number"
     };
 
     public SpreadsheetGenerationService(OrderRepository orderRepository) {
