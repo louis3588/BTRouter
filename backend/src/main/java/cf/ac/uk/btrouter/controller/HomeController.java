@@ -54,10 +54,24 @@ public class HomeController {
         return ResponseEntity.ok(Map.of("message", "Router Management"));
     }
 
+    // Admin-only router management endpoint
+    @GetMapping("/admin/customers")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<?> manageCustomers() {
+        return ResponseEntity.ok(Map.of("message", "Customer Management"));
+    }
+
     // Router request endpoint for all authenticated users
-    @GetMapping("/user/router-request")
+    @GetMapping("/user/router-requests")
     @PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT_AGENT', 'USER')")
     public ResponseEntity<?> routerRequest() {
         return ResponseEntity.ok(Map.of("message", "Router Request Form"));
+    }
+
+    // Router request endpoint for all authenticated users
+    @GetMapping("/user/order-history")
+    @PreAuthorize("hasAnyRole('ADMIN', 'SUPPORT_AGENT', 'USER')")
+    public ResponseEntity<?> orderHistory() {
+        return ResponseEntity.ok(Map.of("message", "Order History"));
     }
 }

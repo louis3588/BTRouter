@@ -100,14 +100,14 @@ const Home = () => {
             icon: AssignmentIcon,
             label: 'Router Requests',
             allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
-            path: '/requests'
+            path: '/router-requests'
         },
         {
             id: 'history',
             icon: HistoryIcon,
             label: 'Order History',
             allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
-            path: '/history'
+            path: '/order-history'
         },
         {
             id: 'analytics',
@@ -156,7 +156,7 @@ const Home = () => {
             icon: AssignmentIcon,
             allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
             description: 'Submit new router configuration requests',
-            path: '/requests'
+            path: '/router-requests'
         },
         {
             id: 'history',
@@ -164,7 +164,7 @@ const Home = () => {
             icon: HistoryIcon,
             allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
             description: 'View past router requests and their status',
-            path: '/history'
+            path: '/order-history'
         },
         {
             id: 'analytics',
