@@ -8,6 +8,7 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import ForgotPassword from './components/Auth/ForgotPassword';
 import ResetPassword from './components/Auth/ResetPassword';
 import RequestForm from './components/Router/RequestForm';
+import RoutersPage from './pages/RouterForm';
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
 import OrderExport from "./components/OrderHistory/OrderExport";
@@ -37,7 +38,7 @@ function App() {
                     path="/routers"
                     element={
                         <ProtectedRoute>
-                            <div>Router Presets Page (To be implemented)</div>
+                            <RoutersPage />
                         </ProtectedRoute>
                     }
                 />
