@@ -7,8 +7,8 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 
 import ForgotPassword from './components/Auth/ForgotPassword';
 import ResetPassword from './components/Auth/ResetPassword';
-import RequestForm from './components/Router/RequestForm';
-import RoutersPage from './pages/RouterForm';
+import RequestForm from './components/RouterRequests/RequestForm';
+import RoutersPage from './components/Routers/RouterForm';
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
 import OrderExport from "./components/OrderHistory/OrderExport";
@@ -18,14 +18,14 @@ function App() {
     return (
         <Router>
             <Routes>
-                {/* Public Routes */}
+                {/* Public Routes. */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/export" element={<OrderExport />} />
 
-                {/* Protected Routes */}
+                {/* Protected Routes. */}
                 <Route
                     path="/home"
                     element={
@@ -77,10 +77,10 @@ function App() {
                     }
                 />
 
-                {/* Redirect root to home */}
+                {/* Redirect root to home. */}
                 <Route path="/" element={<Navigate to="/home" replace />} />
 
-                {/* Catch-all 404 Route */}
+                {/* Catch-all 404 Route. */}
                 <Route path="*" element={<div>404 - Page Not Found</div>} />
             </Routes>
         </Router>

@@ -10,19 +10,18 @@ import {
     MenuItem,
     Checkbox,
     FormControlLabel,
-    Paper,
+    Paper
 } from "@mui/material";
 import { styled } from "@mui/system";
-import Sidebar from "../components/Sidebar"; // Adjust the path based on your project structure
+import Sidebar from "../Navigation/Sidebar";
+import useAuth from "../Auth/useAuth";
 
-/* MAIN CONTAINER */
 const MainContainer = styled(Box)({
     display: "flex",
     minHeight: "100vh",
     background: "linear-gradient(to bottom right, #f7f3fc 0%, #ece6f4 100%)",
 });
 
-/* CONTENT AREA */
 const ContentArea = styled(Box)({
     flexGrow: 1,
     display: "flex",
@@ -31,7 +30,6 @@ const ContentArea = styled(Box)({
     padding: "40px",
 });
 
-/* FORM WRAPPER */
 const FormWrapper = styled(Paper)({
     width: "100%",
     maxWidth: "600px",
@@ -41,7 +39,6 @@ const FormWrapper = styled(Paper)({
     backgroundColor: "#fff",
 });
 
-/* BUTTON */
 const StyledButton = styled(Button)({
     background: "linear-gradient(135deg, #5f00a7, #9b42c3)",
     color: "#fff",
@@ -54,7 +51,6 @@ const StyledButton = styled(Button)({
     },
 });
 
-/* COLUMN STYLE */
 const CheckboxColumn = styled(Box)({
     display: "flex",
     flexDirection: "column",
@@ -62,6 +58,7 @@ const CheckboxColumn = styled(Box)({
 });
 
 const RouterForm = () => {
+    const { userRole, activeTab, setActiveTab } = useAuth();
     const [routers, setRouters] = useState([]);
     const [selectedRouter, setSelectedRouter] = useState(null);
     const [outsideConnections, setOutsideConnections] = useState([]);
@@ -70,29 +67,21 @@ const RouterForm = () => {
     const [serialPorts, setSerialPorts] = useState("");
 
     useEffect(() => {
-        // Fetch routers from backend API
         fetch("http://localhost:8080/api/routers")
             .then((response) => response.json())
             .then((data) => setRouters(data))
             .catch((error) => console.error("Error fetching routers:", error));
     }, []);
 
+    // If drop-down box selection is changed...
     const handleRouterChange = (event) => {
         const selectedId = parseInt(event.target.value, 10);
         const router = routers.find((r) => r.routerID === selectedId);
         setSelectedRouter(router || null);
 
         if (router) {
-            setOutsideConnections(
-                router.outsideConnectionTypes
-                    ? router.outsideConnectionTypes.split(", ")
-                    : []
-            );
-            setInsideConnections(
-                router.insideConnectionTypes
-                    ? router.insideConnectionTypes.split(", ")
-                    : []
-            );
+            setOutsideConnections(router.outsideConnectionTypes?.split(", ") || []);
+            setInsideConnections(router.insideConnectionTypes?.split(", ") || []);
             setEthernetPorts(router.ethernetPorts || "");
             setSerialPorts(router.serialPorts || "");
         } else {
@@ -103,6 +92,20 @@ const RouterForm = () => {
         }
     };
 
+    // ...change the selected checkboxes appropriately.
+    const handleCheckboxChange = (type, checked, isOutside) => {
+        if (isOutside) {
+            setOutsideConnections((prev) =>
+                checked ? [...prev, type] : prev.filter((item) => item !== type)
+            );
+        } else {
+            setInsideConnections((prev) =>
+                checked ? [...prev, type] : prev.filter((item) => item !== type)
+            );
+        }
+    };
+
+    // Fixed outside connections for the moment, will work fine for the project.
     const outsideOptions = [
         "Mobile Radio - Roaming Sim",
         "Mobile Radio - UK SIM",
@@ -116,20 +119,20 @@ const RouterForm = () => {
 
     return (
         <MainContainer>
-            {/* Sidebar */}
-            <Sidebar />
+            {/* Sidebar. */}
+            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} userRole={userRole} />
 
-            {/* Form Content */}
+            {/* Form Content. */}
             <ContentArea>
                 <FormWrapper elevation={3}>
                     <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "center", mb: 2 }}>
                         Configure Router
                     </Typography>
 
-                    {/* Router Selection */}
+                    {/* Router Selection. */}
                     <FormControl fullWidth sx={{ mb: 2 }}>
                         <InputLabel>Select a Router</InputLabel>
-                        <Select onChange={handleRouterChange} value={selectedRouter ? selectedRouter.routerID : ""}>
+                        <Select onChange={handleRouterChange} value={selectedRouter?.routerID || ""}>
                             <MenuItem value="">Select a router...</MenuItem>
                             {routers.map((router) => (
                                 <MenuItem key={router.routerID} value={router.routerID}>
@@ -139,7 +142,7 @@ const RouterForm = () => {
                         </Select>
                     </FormControl>
 
-                    {/* Outside Connections */}
+                    {/* Outside Connections. */}
                     <Typography variant="h6" sx={{ mt: 2 }}>
                         Outside Connection Types
                     </Typography>
@@ -147,19 +150,29 @@ const RouterForm = () => {
                         {outsideOptions.map((type) => (
                             <FormControlLabel
                                 key={type}
-                                control={<Checkbox checked={outsideConnections.includes(type)} />}
+                                control={
+                                    <Checkbox
+                                        checked={outsideConnections.includes(type)}
+                                        onChange={(e) => handleCheckboxChange(type, e.target.checked, true)}
+                                    />
+                                }
                                 label={type}
                             />
                         ))}
                     </CheckboxColumn>
 
-                    {/* Inside Connections */}
+                    {/* Inside Connections. */}
                     <Typography variant="h6" sx={{ mt: 2 }}>
                         Inside Connection Types
                     </Typography>
                     <CheckboxColumn>
                         <FormControlLabel
-                            control={<Checkbox checked={insideConnections.includes("Ethernet")} />}
+                            control={
+                                <Checkbox
+                                    checked={insideConnections.includes("Ethernet")}
+                                    onChange={(e) => handleCheckboxChange("Ethernet", e.target.checked, false)}
+                                />
+                            }
                             label="Ethernet"
                         />
                         {insideConnections.includes("Ethernet") && (
@@ -174,7 +187,12 @@ const RouterForm = () => {
                         )}
 
                         <FormControlLabel
-                            control={<Checkbox checked={insideConnections.includes("Serial")} />}
+                            control={
+                                <Checkbox
+                                    checked={insideConnections.includes("Serial")}
+                                    onChange={(e) => handleCheckboxChange("Serial", e.target.checked, false)}
+                                />
+                            }
                             label="Serial"
                         />
                         {insideConnections.includes("Serial") && (
@@ -189,7 +207,7 @@ const RouterForm = () => {
                         )}
                     </CheckboxColumn>
 
-                    {/* Save Button */}
+                    {/* Save Button. */}
                     <StyledButton fullWidth variant="contained">
                         Save
                     </StyledButton>

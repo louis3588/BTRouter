@@ -26,13 +26,13 @@ const borderGlow = keyframes`
 
 const gradientMove = keyframes`
     0% {
-        background-position: 0% 50%;
+        background-position: 0 50%;
     }
     50% {
         background-position: 100% 50%;
     }
     100% {
-        background-position: 0% 50%;
+        background-position: 0 50%;
     }
 `;
 
@@ -63,7 +63,7 @@ export const ScrollableContainer = styled(Box)(({ theme }) => ({
 }));
 
 export const HeaderBar = styled(AppBar)(({ theme }) => ({
-    backgroundColor: '#6200aa',
+    background: "linear-gradient(90deg, #6200AA, #7c00d7)", // Same as sidebar.
     boxShadow: 'none',
     borderBottom: '1px solid rgba(255,255,255,0.1)',
     position: 'relative',
