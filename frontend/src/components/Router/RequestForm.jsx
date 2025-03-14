@@ -240,6 +240,13 @@ const RequestForm = () => {
     setIsLoading(true);
     setMessage("");
 
+    // Get JWT token from localStorage
+    const token = localStorage.getItem('token');
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    };
+
     // Ensure required fields are filled
     for (const key in formData) {
       if (formData[key] === "" && key !== "configurationDetails") {
@@ -255,11 +262,11 @@ const RequestForm = () => {
       numRouters: formData.numRouters || 1, // ✅ Fix: Ensure it's always sent
     };
 
-    console.log("Submitting Data:", finalData); 
+    console.log("Submitting Data:", finalData);
     try {
       const response = await fetch("/api/orders", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: headers,
         body: JSON.stringify(finalData),
       });
 
@@ -267,7 +274,22 @@ const RequestForm = () => {
         throw new Error("Failed to submit order.");
       }
 
-      setMessage("Order submitted successfully!");
+      const savedOrder = await response.json();
+
+      // Create tracking
+      const trackingResponse = await fetch("/api/order-tracking/create", {
+        method: "POST",
+        headers: headers,  // <-- CHANGE THIS LINE TO USE THE AUTH HEADERS
+        body: JSON.stringify({ orderId: savedOrder.id }),
+      });
+
+      if (!trackingResponse.ok) {
+        throw new Error("Failed to create tracking.");
+      }
+
+      const trackingData = await trackingResponse.json();
+
+      setMessage(`Order submitted! Reference number: ${trackingData.referenceNumber}. Please check your email for tracking details.`);
       setFormData({
         customerType: "",
         routerType: "",
@@ -298,331 +320,331 @@ const RequestForm = () => {
       setIsLoading(false);
       setOpenSnackbar(true);
     }
-};
+  };
 
   const getStepContent = (step) => {
     switch (step) {
       case 0:
         return (
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Step 1: Customer Type
-            </Typography>
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Customer Type</InputLabel>
-              <Select
-                name="customerType"
-                value={formData.customerType}
-                onChange={handleChange}
-                required
-              >
-                {[
-                  "Water Utility 1",
-                  "Water Utility 2",
-                  "Water Utility 3",
-                  "Industrial Signalling",
-                  "Cash Machines",
-                  "Other (Custom)"
-                ].map((option, index) => (
-                  <MenuItem key={index} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                Step 1: Customer Type
+              </Typography>
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Customer Type</InputLabel>
+                <Select
+                    name="customerType"
+                    value={formData.customerType}
+                    onChange={handleChange}
+                    required
+                >
+                  {[
+                    "Water Utility 1",
+                    "Water Utility 2",
+                    "Water Utility 3",
+                    "Industrial Signalling",
+                    "Cash Machines",
+                    "Other (Custom)"
+                  ].map((option, index) => (
+                      <MenuItem key={index} value={option}>
+                        {option}
+                      </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
         );
       case 1:
         return (
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Step 2: Router Type
-            </Typography>
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Router Type</InputLabel>
-              <Select
-                name="routerType"
-                value={formData.routerType}
-                onChange={handleChange}
-                required
-              >
-                {(
-                  formData.customerType === "Water Utility 1"
-                    ? ["GW1042M", "Westermo Merlin 4708"]
-                    : ["GW1042M", "Westermo Merlin 4708"]
-                ).map((option, index) => (
-                  <MenuItem key={index} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Box>
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                Step 2: Router Type
+              </Typography>
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Router Type</InputLabel>
+                <Select
+                    name="routerType"
+                    value={formData.routerType}
+                    onChange={handleChange}
+                    required
+                >
+                  {(
+                      formData.customerType === "Water Utility 1"
+                          ? ["GW1042M", "Westermo Merlin 4708"]
+                          : ["GW1042M", "Westermo Merlin 4708"]
+                  ).map((option, index) => (
+                      <MenuItem key={index} value={option}>
+                        {option}
+                      </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+            </Box>
         );
       case 2:
         return (
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Step 3: Outside Connection Options
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={8}>
-                <FormControl fullWidth margin="normal">
-                  <InputLabel>Primary Outside Connection</InputLabel>
-                  <Select
-                    name="primaryOutsideConnection"
-                    value={formData.primaryOutsideConnection}
-                    onChange={handleChange}
-                    required
-                  >
-                    {["Radio", "Customer Ethernet", "FTTP", "VDSL", "Customer Serial"].map((option, index) => (
-                      <MenuItem key={index} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                Step 3: Outside Connection Options
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={8}>
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel>Primary Outside Connection</InputLabel>
+                    <Select
+                        name="primaryOutsideConnection"
+                        value={formData.primaryOutsideConnection}
+                        onChange={handleChange}
+                        required
+                    >
+                      {["Radio", "Customer Ethernet", "FTTP", "VDSL", "Customer Serial"].map((option, index) => (
+                          <MenuItem key={index} value={option}>
+                            {option}
+                          </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <StyledTextField
+                      fullWidth
+                      margin="normal"
+                      label="Ports"
+                      type="number"
+                      name="primaryOutsidePorts"
+                      value={formData.primaryOutsidePorts}
+                      onChange={handleChange}
+                      required
+                  />
+                </Grid>
+                <Grid item xs={12} sm={8}>
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel>Secondary Outside Connection (Optional)</InputLabel>
+                    <Select
+                        name="secondaryOutsideConnection"
+                        value={formData.secondaryOutsideConnection}
+                        onChange={handleChange}
+                    >
+                      {["Radio", "Customer Ethernet", "FTTP", "VDSL", "Customer Serial"].map((option, index) => (
+                          <MenuItem key={index} value={option}>
+                            {option}
+                          </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <StyledTextField
+                      fullWidth
+                      margin="normal"
+                      label="Ports"
+                      type="number"
+                      name="secondaryOutsidePorts"
+                      value={formData.secondaryOutsidePorts}
+                      onChange={handleChange}
+                  />
+                </Grid>
               </Grid>
-              <Grid item xs={12} sm={4}>
-                <StyledTextField
-                  fullWidth
-                  margin="normal"
-                  label="Ports"
-                  type="number"
-                  name="primaryOutsidePorts"
-                  value={formData.primaryOutsidePorts}
-                  onChange={handleChange}
-                  required
-                />
-              </Grid>
-              <Grid item xs={12} sm={8}>
-                <FormControl fullWidth margin="normal">
-                  <InputLabel>Secondary Outside Connection (Optional)</InputLabel>
-                  <Select
-                    name="secondaryOutsideConnection"
-                    value={formData.secondaryOutsideConnection}
-                    onChange={handleChange}
-                  >
-                    {["Radio", "Customer Ethernet", "FTTP", "VDSL", "Customer Serial"].map((option, index) => (
-                      <MenuItem key={index} value={option}>
-                        {option}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <StyledTextField
-                  fullWidth
-                  margin="normal"
-                  label="Ports"
-                  type="number"
-                  name="secondaryOutsidePorts"
-                  value={formData.secondaryOutsidePorts}
-                  onChange={handleChange}
-                />
-              </Grid>
-            </Grid>
-          </Box>
+            </Box>
         );
       case 3:
         return (
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Step 4: Inside Connection Selection
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={8}>
-                <FormControl fullWidth margin="normal">
-                  <InputLabel>Primary Inside Connection</InputLabel>
-                  <Select
-                    name="primaryInsideConnection"
-                    value={formData.primaryInsideConnection}
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                Step 4: Inside Connection Selection
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={8}>
+                  <FormControl fullWidth margin="normal">
+                    <InputLabel>Primary Inside Connection</InputLabel>
+                    <Select
+                        name="primaryInsideConnection"
+                        value={formData.primaryInsideConnection}
+                        onChange={handleChange}
+                        required
+                    >
+                      {["Radio", "Customer Ethernet", "FTTP", "VDSL", "Customer Serial"].map((option, index) => (
+                          <MenuItem key={index} value={option}>
+                            {option}
+                          </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} sm={4}>
+                  <StyledTextField
+                      fullWidth
+                      margin="normal"
+                      label="Ports"
+                      type="number"
+                      name="primaryInsidePorts"
+                      value={formData.primaryInsidePorts}
+                      onChange={handleChange}
+                      required
+                  />
+                </Grid>
+              </Grid>
+              <FormControl fullWidth margin="normal">
+                <InputLabel>VLAN Configuration</InputLabel>
+                <Select
+                    name="vlanConfiguration"
+                    value={formData.vlanConfiguration}
                     onChange={handleChange}
                     required
-                  >
-                    {["Radio", "Customer Ethernet", "FTTP", "VDSL", "Customer Serial"].map((option, index) => (
+                >
+                  {["Specified per port", "Open Trunk"].map((option, index) => (
                       <MenuItem key={index} value={option}>
                         {option}
                       </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12} sm={4}>
-                <StyledTextField
+                  ))}
+                </Select>
+              </FormControl>
+              <StyledTextField
                   fullWidth
                   margin="normal"
-                  label="Ports"
-                  type="number"
-                  name="primaryInsidePorts"
-                  value={formData.primaryInsidePorts}
+                  label="VLAN Assignments"
+                  name="vlanAssignments"
+                  value={formData.vlanAssignments}
                   onChange={handleChange}
-                  required
-                />
-              </Grid>
-            </Grid>
-            <FormControl fullWidth margin="normal">
-              <InputLabel>VLAN Configuration</InputLabel>
-              <Select
-                name="vlanConfiguration"
-                value={formData.vlanConfiguration}
-                onChange={handleChange}
-                required
-              >
-                {["Specified per port", "Open Trunk"].map((option, index) => (
-                  <MenuItem key={index} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <StyledTextField
-              fullWidth
-              margin="normal"
-              label="VLAN Assignments"
-              name="vlanAssignments"
-              value={formData.vlanAssignments}
-              onChange={handleChange}
-              helperText="Example: Port 1: VLAN 100, Port 2: VLAN 101"
-            />
+                  helperText="Example: Port 1: VLAN 100, Port 2: VLAN 101"
+              />
               <FormControl fullWidth margin="normal">
-                  <InputLabel>DHCP Configuration</InputLabel>
-                  <Select
+                <InputLabel>DHCP Configuration</InputLabel>
+                <Select
                     name="dhcpConfiguration"
                     value={formData.dhcpConfiguration.toString()} // ✅ Convert Boolean to String for UI
                     onChange={handleChange}
                     required
-                  >
-                    <MenuItem value="true">Yes</MenuItem>
-                    <MenuItem value="false">No</MenuItem>
-                  </Select>
-                </FormControl>
-          </Box>
+                >
+                  <MenuItem value="true">Yes</MenuItem>
+                  <MenuItem value="false">No</MenuItem>
+                </Select>
+              </FormControl>
+            </Box>
         );
       case 4:
         return (
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Step 5: Routers & Site Information
-            </Typography>
-            <Grid container spacing={2}>
-              <Grid item xs={12} sm={4}>
-                <StyledTextField
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                Step 5: Routers & Site Information
+              </Typography>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={4}>
+                  <StyledTextField
+                      fullWidth
+                      margin="normal"
+                      label="Number of Routers"
+                      type="number"
+                      name="numRouters"
+                      value={formData.numRouters}
+                      onChange={handleChange}
+                      required
+                  />
+                </Grid>
+              </Grid>
+              <Divider sx={{ my: 2 }} />
+              <Typography variant="subtitle1" gutterBottom>
+                Site Information
+              </Typography>
+              <StyledTextField
                   fullWidth
                   margin="normal"
-                  label="Number of Routers"
-                  type="number"
-                  name="numRouters"
-                  value={formData.numRouters}
+                  label="Site Name"
+                  name="siteName"
+                  value={formData.siteName}
                   onChange={handleChange}
                   required
-                />
-              </Grid>
-            </Grid>
-            <Divider sx={{ my: 2 }} />
-            <Typography variant="subtitle1" gutterBottom>
-              Site Information
-            </Typography>
-            <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Site Name"
-              name="siteName"
-              value={formData.siteName}
-              onChange={handleChange}
-              required
-            />
-            <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Site Address"
-              name="siteAddress"
-              value={formData.siteAddress}
-              onChange={handleChange}
-              required
-            />
-            <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Site Postcode"
-              name="sitePostcode"
-              value={formData.sitePostcode}
-              onChange={handleChange}
-              required
-            />
-            <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Site Primary Email"
-              type="email"
-              name="sitePrimaryEmail"
-              value={formData.sitePrimaryEmail}
-              onChange={handleChange}
-              required
-            />
-            <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Site Secondary Email"
-              type="email"
-              name="siteSecondaryEmail"
-              value={formData.siteSecondaryEmail}
-              onChange={handleChange}
-            />
-            <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Site Phone Number"
-              name="sitePhone"
-              value={formData.sitePhone}
-              onChange={handleChange}
-              required
-            />
-            <StyledTextField
-              fullWidth
-              margin="normal"
-              label="Site Contact Name"
-              name="siteContactName"
-              value={formData.siteContactName}
-              onChange={handleChange}
-              required
-            />
-          </Box>
+              />
+              <StyledTextField
+                  fullWidth
+                  margin="normal"
+                  label="Site Address"
+                  name="siteAddress"
+                  value={formData.siteAddress}
+                  onChange={handleChange}
+                  required
+              />
+              <StyledTextField
+                  fullWidth
+                  margin="normal"
+                  label="Site Postcode"
+                  name="sitePostcode"
+                  value={formData.sitePostcode}
+                  onChange={handleChange}
+                  required
+              />
+              <StyledTextField
+                  fullWidth
+                  margin="normal"
+                  label="Site Primary Email"
+                  type="email"
+                  name="sitePrimaryEmail"
+                  value={formData.sitePrimaryEmail}
+                  onChange={handleChange}
+                  required
+              />
+              <StyledTextField
+                  fullWidth
+                  margin="normal"
+                  label="Site Secondary Email"
+                  type="email"
+                  name="siteSecondaryEmail"
+                  value={formData.siteSecondaryEmail}
+                  onChange={handleChange}
+              />
+              <StyledTextField
+                  fullWidth
+                  margin="normal"
+                  label="Site Phone Number"
+                  name="sitePhone"
+                  value={formData.sitePhone}
+                  onChange={handleChange}
+                  required
+              />
+              <StyledTextField
+                  fullWidth
+                  margin="normal"
+                  label="Site Contact Name"
+                  name="siteContactName"
+                  value={formData.siteContactName}
+                  onChange={handleChange}
+                  required
+              />
+            </Box>
         );
       case 5:
         return (
-          <Box>
-            <Typography variant="h6" gutterBottom>
-              Step 6: Priority Level & Extras
-            </Typography>
-            <FormControl fullWidth margin="normal">
-              <InputLabel>Priority Level</InputLabel>
-              <Select
-                name="priorityLevel"
-                value={formData.priorityLevel}
-                onChange={handleChange}
-                required
-              >
-                {["Critical", "Urgent", "High", "Medium", "Low"].map((option, index) => (
-                  <MenuItem key={index} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControlLabel
-              control={
-                <Checkbox
-                  name="addAnotherRouter"
-                  checked={formData.addAnotherRouter}
-                  onChange={handleChange}
-                />
-              }
-              label="Add another router?"
-              sx={{ mt: 2 }}
-            />
-          </Box>
+            <Box>
+              <Typography variant="h6" gutterBottom>
+                Step 6: Priority Level & Extras
+              </Typography>
+              <FormControl fullWidth margin="normal">
+                <InputLabel>Priority Level</InputLabel>
+                <Select
+                    name="priorityLevel"
+                    value={formData.priorityLevel}
+                    onChange={handleChange}
+                    required
+                >
+                  {["Critical", "Urgent", "High", "Medium", "Low"].map((option, index) => (
+                      <MenuItem key={index} value={option}>
+                        {option}
+                      </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              <FormControlLabel
+                  control={
+                    <Checkbox
+                        name="addAnotherRouter"
+                        checked={formData.addAnotherRouter}
+                        onChange={handleChange}
+                    />
+                  }
+                  label="Add another router?"
+                  sx={{ mt: 2 }}
+              />
+            </Box>
         );
       default:
         return <Typography>Unknown Step</Typography>;
@@ -630,84 +652,84 @@ const RequestForm = () => {
   };
 
   return (
-    <>
-      <TopBar>
-        <Typography variant="h5" fontWeight="bold">
-          BT IoT Router Services - Router Request Form
-        </Typography>
-      </TopBar>
+      <>
+        <TopBar>
+          <Typography variant="h5" fontWeight="bold">
+            BT IoT Router Services - Router Request Form
+          </Typography>
+        </TopBar>
 
-      <StyledContainer>
-        <TopDecoration />
-        <BottomDecoration />
+        <StyledContainer>
+          <TopDecoration />
+          <BottomDecoration />
 
-        <Container maxWidth="md" sx={{ zIndex: 2 }}>
-          <Fade in={true} timeout={600}>
-            <FlowCard>
-              <Box sx={{ mb: 3, textAlign: "center" }}>
-                <Typography variant="h4" fontWeight="bold">
-                  Request a Router
-                </Typography>
-                <Typography variant="subtitle1" color="text.secondary">
-                  Complete the form steps below to submit your router request.
-                </Typography>
-              </Box>
-
-              <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
-                {steps.map((label, index) => (
-                  <Step key={index}>
-                    <StepLabel>{label}</StepLabel>
-                  </Step>
-                ))}
-              </Stepper>
-
-              <form>
-                {getStepContent(activeStep)}
-
-                <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
-                  {activeStep > 0 && (
-                    <GradientButton onClick={handleBack} variant="contained">
-                      Back
-                    </GradientButton>
-                  )}
-                  {activeStep < steps.length - 1 ? (
-                    <GradientButton onClick={handleNext} variant="contained">
-                      Next
-                    </GradientButton>
-                  ) : (
-                    <GradientButton
-                      onClick={handleSubmit}
-                      variant="contained"
-                      disabled={isLoading}
-                      startIcon={isLoading ? <CircularProgress size={20} /> : null}
-                    >
-                      {isLoading ? "Submitting..." : "Submit"}
-                    </GradientButton>
-                  )}
+          <Container maxWidth="md" sx={{ zIndex: 2 }}>
+            <Fade in={true} timeout={600}>
+              <FlowCard>
+                <Box sx={{ mb: 3, textAlign: "center" }}>
+                  <Typography variant="h4" fontWeight="bold">
+                    Request a Router
+                  </Typography>
+                  <Typography variant="subtitle1" color="text.secondary">
+                    Complete the form steps below to submit your router request.
+                  </Typography>
                 </Box>
-                <Box sx={{ mt: 2, textAlign: "center" }}>
-                  <Button onClick={() => navigate("/home")} variant="text">
-                    Return to Dashboard
-                  </Button>
-                </Box>
-              </form>
-            </FlowCard>
-          </Fade>
-          <Footer>
-            <Typography variant="caption">
-              © 2025 BT IoT Router Services. All rights reserved.
-            </Typography>
-          </Footer>
-        </Container>
-      </StyledContainer>
 
-      <Snackbar
-        open={openSnackbar}
-        autoHideDuration={4000}
-        onClose={() => setOpenSnackbar(false)}
-        message={message}
-      />
-    </>
+                <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
+                  {steps.map((label, index) => (
+                      <Step key={index}>
+                        <StepLabel>{label}</StepLabel>
+                      </Step>
+                  ))}
+                </Stepper>
+
+                <form>
+                  {getStepContent(activeStep)}
+
+                  <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+                    {activeStep > 0 && (
+                        <GradientButton onClick={handleBack} variant="contained">
+                          Back
+                        </GradientButton>
+                    )}
+                    {activeStep < steps.length - 1 ? (
+                        <GradientButton onClick={handleNext} variant="contained">
+                          Next
+                        </GradientButton>
+                    ) : (
+                        <GradientButton
+                            onClick={handleSubmit}
+                            variant="contained"
+                            disabled={isLoading}
+                            startIcon={isLoading ? <CircularProgress size={20} /> : null}
+                        >
+                          {isLoading ? "Submitting..." : "Submit"}
+                        </GradientButton>
+                    )}
+                  </Box>
+                  <Box sx={{ mt: 2, textAlign: "center" }}>
+                    <Button onClick={() => navigate("/home")} variant="text">
+                      Return to Dashboard
+                    </Button>
+                  </Box>
+                </form>
+              </FlowCard>
+            </Fade>
+            <Footer>
+              <Typography variant="caption">
+                © 2025 BT IoT Router Services. All rights reserved.
+              </Typography>
+            </Footer>
+          </Container>
+        </StyledContainer>
+
+        <Snackbar
+            open={openSnackbar}
+            autoHideDuration={4000}
+            onClose={() => setOpenSnackbar(false)}
+            message={message}
+        />
+      </>
   );
 };
 

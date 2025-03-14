@@ -164,7 +164,7 @@ CREATE TABLE router_orders (
 
 CREATE TABLE order_tracking (
                                 id INT AUTO_INCREMENT PRIMARY KEY,
-                                order_id BIGINT NOT NULL,  -- Changed from INT to BIGINT to match router_orders
+                                order_id BIGINT NOT NULL,
                                 reference_number VARCHAR(20) UNIQUE NOT NULL,
                                 status ENUM('PENDING', 'CONFIRMED', 'IN_PRODUCTION', 'QUALITY_CHECK', 'READY_FOR_SHIPPING', 'IN_TRANSIT', 'DELIVERED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
                                 can_modify BOOLEAN DEFAULT TRUE,
