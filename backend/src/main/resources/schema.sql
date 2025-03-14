@@ -162,10 +162,9 @@ CREATE TABLE router_orders (
                                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- Create Order Tracking Table for new tracking functionality
 CREATE TABLE order_tracking (
                                 id INT AUTO_INCREMENT PRIMARY KEY,
-                                order_id INT NOT NULL,
+                                order_id BIGINT NOT NULL,  -- Changed from INT to BIGINT to match router_orders
                                 reference_number VARCHAR(20) UNIQUE NOT NULL,
                                 status ENUM('PENDING', 'CONFIRMED', 'IN_PRODUCTION', 'QUALITY_CHECK', 'READY_FOR_SHIPPING', 'IN_TRANSIT', 'DELIVERED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
                                 can_modify BOOLEAN DEFAULT TRUE,
