@@ -11,7 +11,7 @@ import RequestForm from './components/Router/RequestForm';
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
 import OrderExport from "./components/OrderHistory/OrderExport";
-
+import OrderTracking from './components/OrderTracking/OrderTracking';
 
 function App() {
     return (
@@ -22,10 +22,9 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
-
                 <Route path="/export" element={<OrderExport />} />
-
                 <Route path="/export" element={<OrderExport />} />
+                <Route path="/track-order/:referenceNumber" element={<OrderTracking />} />
 
                 {/* Protected Routes */}
                 <Route
