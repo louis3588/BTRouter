@@ -156,7 +156,7 @@ const Home = () => {
             icon: AssignmentIcon,
             allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
             description: 'Submit new router configuration requests',
-            path: '/requests'
+            path: '/router-requests'
         },
         {
             id: 'history',
