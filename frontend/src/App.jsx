@@ -7,7 +7,8 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 
 import ForgotPassword from './components/Auth/ForgotPassword';
 import ResetPassword from './components/Auth/ResetPassword';
-import RequestForm from './components/Router/RequestForm';
+import RequestForm from './components/RouterRequests/RequestForm';
+import RoutersPage from './components/Routers/RouterForm';
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
 import OrderExport from "./components/OrderHistory/OrderExport";
@@ -17,16 +18,18 @@ function App() {
     return (
         <Router>
             <Routes>
-                {/* Public Routes */}
+                {/* Public Routes. */}
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
+
                 <Route path="/export" element={<OrderExport />} />
+
                 <Route path="/export" element={<OrderExport />} />
                 <Route path="/track-order/:referenceNumber" element={<OrderTracking />} />
 
-                {/* Protected Routes */}
+                {/* Protected Routes. */}
                 <Route
                     path="/home"
                     element={
@@ -36,18 +39,18 @@ function App() {
                     }
                 />
                 <Route
-                    path="/router-requests"
+                    path="/routers"
                     element={
                         <ProtectedRoute>
-                            <RequestForm />
+                            <RoutersPage />
                         </ProtectedRoute>
                     }
                 />
                 <Route
-                    path="/router-presets"
+                    path="/customers"
                     element={
                         <ProtectedRoute>
-                            <div>Router Presets Page (To be implemented)</div>
+                            <div>Customers Page (To be implemented)</div>
                         </ProtectedRoute>
                     }
                 />
@@ -61,7 +64,14 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-
+                <Route
+                    path="/router-requests"
+                    element={
+                        <ProtectedRoute>
+                            <RequestForm />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route
                     path="/order-history"
                     element={
@@ -71,10 +81,10 @@ function App() {
                     }
                 />
 
-                {/* Redirect root to home */}
+                {/* Redirect root to home. */}
                 <Route path="/" element={<Navigate to="/home" replace />} />
 
-                {/* Catch-all 404 Route */}
+                {/* Catch-all 404 Route. */}
                 <Route path="*" element={<div>404 - Page Not Found</div>} />
             </Routes>
         </Router>

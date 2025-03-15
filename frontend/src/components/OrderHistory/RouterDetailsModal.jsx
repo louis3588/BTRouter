@@ -26,7 +26,7 @@ const RouterDetailsModal = ({ open, onClose, order }) => {
                 <Typography><strong>Configuration:</strong> {order.configurationDetails}</Typography>
                 <Typography><strong>Router Type:</strong> {order.routerType}</Typography>
                 <Typography><strong>Quantity:</strong> {order.numberOfRouters}</Typography>
-                <Typography><strong>Address:</strong> {order.address}, {order.city}, {order.postcode}</Typography>
+                <Typography><strong>Address:</strong> {order.address}, {order.postcode}</Typography>
 
                 <Box mt={3} textAlign="right">
                     <Button variant="contained" color="primary" onClick={onClose}>
