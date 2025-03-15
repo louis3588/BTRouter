@@ -22,9 +22,6 @@ function App() {
                 <Route path="/register" element={<Register />} />
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
-
-                <Route path="/export" element={<OrderExport />} />
-
                 <Route path="/export" element={<OrderExport />} />
 
                 {/* Protected Routes */}
@@ -37,18 +34,18 @@ function App() {
                     }
                 />
                 <Route
-                    path="/router-requests"
+                    path="/routers"
                     element={
                         <ProtectedRoute>
-                            <RequestForm />
+                            <div>Router Presets Page (To be implemented)</div>
                         </ProtectedRoute>
                     }
                 />
                 <Route
-                    path="/router-presets"
+                    path="/customers"
                     element={
                         <ProtectedRoute>
-                            <div>Router Presets Page (To be implemented)</div>
+                            <div>Customers Page (To be implemented)</div>
                         </ProtectedRoute>
                     }
                 />
@@ -62,7 +59,14 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-
+                <Route
+                    path="/router-requests"
+                    element={
+                        <ProtectedRoute>
+                            <RequestForm />
+                        </ProtectedRoute>
+                    }
+                />
                 <Route
                     path="/order-history"
                     element={
