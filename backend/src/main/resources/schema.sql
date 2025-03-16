@@ -1,3 +1,4 @@
+-- Use the BT Router database
 DROP DATABASE IF EXISTS bt_router_db;
 CREATE DATABASE IF NOT EXISTS bt_router_db;
 USE bt_router_db;
@@ -12,6 +13,7 @@ DROP TABLE IF EXISTS orders;
 DROP TABLE IF EXISTS customers;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS roles;
+DROP TABLE IF EXISTS order_tracking;
 
 SET FOREIGN_KEY_CHECKS=1;
 
@@ -148,4 +150,18 @@ CREATE TABLE router_orders (
     add_another_router BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE order_tracking (
+                                id INT AUTO_INCREMENT PRIMARY KEY,
+                                order_id BIGINT NOT NULL,
+                                reference_number VARCHAR(20) UNIQUE NOT NULL,
+                                status ENUM('PENDING', 'CONFIRMED', 'IN_PRODUCTION', 'QUALITY_CHECK', 'READY_FOR_SHIPPING', 'IN_TRANSIT', 'DELIVERED', 'CANCELLED') NOT NULL DEFAULT 'PENDING',
+                                can_modify BOOLEAN DEFAULT TRUE,
+                                can_cancel BOOLEAN DEFAULT TRUE,
+                                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                FOREIGN KEY (order_id) REFERENCES router_orders(id) ON DELETE CASCADE,
+                                INDEX idx_reference_number (reference_number),
+                                INDEX idx_order_status (status)
 );
