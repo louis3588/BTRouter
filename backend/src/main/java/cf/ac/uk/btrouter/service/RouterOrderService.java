@@ -91,7 +91,6 @@ public class RouterOrderService {
             newOrder.setCustomerType(oldOrder.getCustomerType());
             newOrder.setNumRouters(oldOrder.getNumberOfRouters());
             newOrder.setSiteAddress(oldOrder.getAddress());
-            newOrder.setSiteCity(oldOrder.getCity());
             newOrder.setSitePostcode(oldOrder.getPostcode());
             newOrder.setSitePrimaryEmail(userEmail); // Ensure correct user is linked via email
             newOrder.setSitePhone(oldOrder.getPhoneNumber());
