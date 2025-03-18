@@ -32,8 +32,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 import java.io.IOException;
@@ -92,9 +90,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
-                        .requestMatchers("api/spreadsheet/download").permitAll()
+                        .requestMatchers("/api/spreadsheet/download").permitAll()
                         .requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/routers/**").permitAll() // Temporary change.
                         .requestMatchers("/api/support/**").hasAnyRole("ADMIN", "SUPPORT_AGENT")
                         .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
                         .anyRequest().authenticated()
