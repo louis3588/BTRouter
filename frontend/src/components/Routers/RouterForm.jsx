@@ -1,61 +1,25 @@
 import React, { useState, useEffect } from "react";
 import {
     TextField,
-    Button,
     Typography,
-    Box,
     FormControl,
     InputLabel,
     Select,
     MenuItem,
     Checkbox,
-    FormControlLabel,
-    Paper
+    FormControlLabel
 } from "@mui/material";
-import { styled } from "@mui/system";
+import {
+    MainContainer,
+    ContentArea,
+    FormWrapper,
+    ButtonContainer,
+    SaveButton,
+    DeleteButton,
+    CheckboxColumn
+} from "../../styles/RouterFormStyles";
 import Sidebar from "../Navigation/Sidebar";
 import useAuth from "../Auth/useAuth";
-
-const MainContainer = styled(Box)({
-    display: "flex",
-    minHeight: "100vh",
-    background: "linear-gradient(to bottom right, #f7f3fc 0%, #ece6f4 100%)",
-});
-
-const ContentArea = styled(Box)({
-    flexGrow: 1,
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
-    padding: "40px",
-});
-
-const FormWrapper = styled(Paper)({
-    width: "100%",
-    maxWidth: "600px",
-    padding: "24px",
-    borderRadius: "12px",
-    boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
-    backgroundColor: "#fff",
-});
-
-const StyledButton = styled(Button)({
-    background: "linear-gradient(135deg, #5f00a7, #9b42c3)",
-    color: "#fff",
-    padding: "10px",
-    fontSize: "16px",
-    fontWeight: "bold",
-    marginTop: "16px",
-    "&:hover": {
-        background: "linear-gradient(135deg, #4b0082, #8a2be2)",
-    },
-});
-
-const CheckboxColumn = styled(Box)({
-    display: "flex",
-    flexDirection: "column",
-    gap: "6px",
-});
 
 const RouterForm = () => {
     const { userRole, activeTab, setActiveTab } = useAuth();
@@ -73,7 +37,6 @@ const RouterForm = () => {
             .catch((error) => console.error("Error fetching routers:", error));
     }, []);
 
-    // If drop-down box selection is changed...
     const handleRouterChange = (event) => {
         const selectedId = parseInt(event.target.value, 10);
         const router = routers.find((r) => r.routerID === selectedId);
@@ -92,7 +55,6 @@ const RouterForm = () => {
         }
     };
 
-    // ...change the selected checkboxes appropriately.
     const handleCheckboxChange = (type, checked, isOutside) => {
         if (isOutside) {
             setOutsideConnections((prev) =>
@@ -105,7 +67,6 @@ const RouterForm = () => {
         }
     };
 
-    // Fixed outside connections for the moment, will work fine for the project.
     const outsideOptions = [
         "Mobile Radio - Roaming Sim",
         "Mobile Radio - UK SIM",
@@ -119,17 +80,14 @@ const RouterForm = () => {
 
     return (
         <MainContainer>
-            {/* Sidebar. */}
             <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} userRole={userRole} />
 
-            {/* Form Content. */}
             <ContentArea>
                 <FormWrapper elevation={3}>
                     <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "center", mb: 2 }}>
                         Configure Router
                     </Typography>
 
-                    {/* Router Selection. */}
                     <FormControl fullWidth sx={{ mb: 2 }}>
                         <InputLabel>Select a Router</InputLabel>
                         <Select onChange={handleRouterChange} value={selectedRouter?.routerID || ""}>
@@ -142,10 +100,7 @@ const RouterForm = () => {
                         </Select>
                     </FormControl>
 
-                    {/* Outside Connections. */}
-                    <Typography variant="h6" sx={{ mt: 2 }}>
-                        Outside Connection Types
-                    </Typography>
+                    <Typography variant="h6" sx={{ mt: 2 }}>Outside Connection Types</Typography>
                     <CheckboxColumn>
                         {outsideOptions.map((type) => (
                             <FormControlLabel
@@ -161,10 +116,7 @@ const RouterForm = () => {
                         ))}
                     </CheckboxColumn>
 
-                    {/* Inside Connections. */}
-                    <Typography variant="h6" sx={{ mt: 2 }}>
-                        Inside Connection Types
-                    </Typography>
+                    <Typography variant="h6" sx={{ mt: 2 }}>Inside Connection Types</Typography>
                     <CheckboxColumn>
                         <FormControlLabel
                             control={
@@ -176,14 +128,7 @@ const RouterForm = () => {
                             label="Ethernet"
                         />
                         {insideConnections.includes("Ethernet") && (
-                            <TextField
-                                fullWidth
-                                label="Maximum Ethernet Ports"
-                                type="number"
-                                value={ethernetPorts}
-                                sx={{ mt: 1, mb: 2 }}
-                                disabled
-                            />
+                            <TextField fullWidth label="Maximum Ethernet Ports" type="number" value={ethernetPorts} sx={{ mt: 1, mb: 2 }} disabled />
                         )}
 
                         <FormControlLabel
@@ -196,21 +141,14 @@ const RouterForm = () => {
                             label="Serial"
                         />
                         {insideConnections.includes("Serial") && (
-                            <TextField
-                                fullWidth
-                                label="Maximum Serial Ports"
-                                type="number"
-                                value={serialPorts}
-                                sx={{ mt: 1, mb: 2 }}
-                                disabled
-                            />
+                            <TextField fullWidth label="Maximum Serial Ports" type="number" value={serialPorts} sx={{ mt: 1, mb: 2 }} disabled />
                         )}
                     </CheckboxColumn>
 
-                    {/* Save Button. */}
-                    <StyledButton fullWidth variant="contained">
-                        Save
-                    </StyledButton>
+                    <ButtonContainer>
+                        <SaveButton>Save</SaveButton>
+                        <DeleteButton>Delete</DeleteButton>
+                    </ButtonContainer>
                 </FormWrapper>
             </ContentArea>
         </MainContainer>
