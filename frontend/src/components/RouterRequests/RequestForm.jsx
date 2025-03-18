@@ -331,7 +331,9 @@ const RequestForm = () => {
                 Step 1: Customer Type
               </Typography>
               <FormControl fullWidth margin="normal">
-                <InputLabel>Customer Type</InputLabel>
+                <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                  Customer Type
+                </InputLabel>
                 <Select
                     name="customerType"
                     value={formData.customerType}
@@ -361,7 +363,9 @@ const RequestForm = () => {
                 Step 2: Router Type
               </Typography>
               <FormControl fullWidth margin="normal">
-                <InputLabel>Router Type</InputLabel>
+                <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                  Router Type
+                </InputLabel>
                 <Select
                     name="routerType"
                     value={formData.routerType}
@@ -390,7 +394,9 @@ const RequestForm = () => {
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={8}>
                   <FormControl fullWidth margin="normal">
-                    <InputLabel>Primary Outside Connection</InputLabel>
+                    <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                      Primary Outside Connection
+                    </InputLabel>
                     <Select
                         name="primaryOutsideConnection"
                         value={formData.primaryOutsideConnection}
@@ -419,7 +425,9 @@ const RequestForm = () => {
                 </Grid>
                 <Grid item xs={12} sm={8}>
                   <FormControl fullWidth margin="normal">
-                    <InputLabel>Secondary Outside Connection (Optional)</InputLabel>
+                    <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                      Secondary Outside Connection (Optional)
+                    </InputLabel>
                     <Select
                         name="secondaryOutsideConnection"
                         value={formData.secondaryOutsideConnection}
@@ -456,7 +464,9 @@ const RequestForm = () => {
               <Grid container spacing={2}>
                 <Grid item xs={12} sm={8}>
                   <FormControl fullWidth margin="normal">
-                    <InputLabel>Primary Inside Connection</InputLabel>
+                    <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                      Primary Inside Connection
+                    </InputLabel>
                     <Select
                         name="primaryInsideConnection"
                         value={formData.primaryInsideConnection}
@@ -485,7 +495,9 @@ const RequestForm = () => {
                 </Grid>
               </Grid>
               <FormControl fullWidth margin="normal">
-                <InputLabel>VLAN Configuration</InputLabel>
+                <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                  VLAN Configuration
+                </InputLabel>
                 <Select
                     name="vlanConfiguration"
                     value={formData.vlanConfiguration}
@@ -509,7 +521,9 @@ const RequestForm = () => {
                   helperText="Example: Port 1: VLAN 100, Port 2: VLAN 101"
               />
               <FormControl fullWidth margin="normal">
-                <InputLabel>DHCP Configuration</InputLabel>
+                <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                  DHCP Configuration
+                </InputLabel>
                 <Select
                     name="dhcpConfiguration"
                     value={formData.dhcpConfiguration.toString()} // ✅ Convert Boolean to String for UI
@@ -619,7 +633,9 @@ const RequestForm = () => {
                 Step 6: Priority Level & Extras
               </Typography>
               <FormControl fullWidth margin="normal">
-                <InputLabel>Priority Level</InputLabel>
+                <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                  Priority Level
+                </InputLabel>
                 <Select
                     name="priorityLevel"
                     value={formData.priorityLevel}

@@ -52,7 +52,7 @@ import {
     NavButton,
     StyledDrawer,
     Logo
-} from '../../styles/homeStyles';
+} from '../../styles/HomeStyles';
 import btLogo from '../../assets/BT_logo_white.png';
 
 const OrderTracking = () => {

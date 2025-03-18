@@ -13,7 +13,7 @@ import {
     ResponsiveGrid,
     ScrollableContainer,
     HeaderBar
-} from '../../styles/homeStyles';
+} from '../../styles/HomeStyles';
 import {
     Router as RouterIcon,
     People as PeopleIcon,
