@@ -31,6 +31,7 @@ export const AuthContainer = styled(Box)(({ theme }) => ({
     backgroundSize: '400% 400%',
     animation: `${gradientBg} 15s ease infinite`,
     position: 'relative',
+
     '&::before': {
         content: '""',
         position: 'absolute',
@@ -56,10 +57,12 @@ export const AuthCard = styled(Paper)(({ theme }) => ({
     boxShadow: '0 8px 32px rgba(85, 20, 180, 0.1)',
     border: `1px solid ${btPurple}15`,
     transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+
     '&:hover': {
         transform: 'translateY(-5px)',
         boxShadow: `0 12px 40px rgba(85, 20, 180, 0.15)`,
     },
+
     [theme.breakpoints.down('sm')]: {
         padding: theme.spacing(3),
         margin: theme.spacing(2)
@@ -71,9 +74,11 @@ export const Logo = styled('img')(({ theme }) => ({
     marginBottom: 24,
     animation: `${fadeIn} 0.8s ease-out`,
     transition: 'transform 0.3s ease',
+
     '&:hover': {
         transform: 'scale(1.05)',
     },
+
     [theme.breakpoints.down('sm')]: {
         width: 120,
         marginBottom: theme.spacing(2)
@@ -89,6 +94,7 @@ export const GradientButton = styled('button')(({ theme }) => ({
     padding: '12px 24px',
     cursor: 'pointer',
     transition: 'all 0.3s ease',
+
     '&:hover': {
         transform: 'translateY(-2px)',
         boxShadow: '0 5px 15px rgba(237, 0, 130, 0.3)',
@@ -105,6 +111,7 @@ export const InputField = styled('input')(({ theme }) => ({
     borderRadius: '8px',
     border: `1px solid ${btPurple}30`,
     transition: 'all 0.3s ease',
+
     '&:focus': {
         outline: 'none',
         borderColor: btMagenta,
