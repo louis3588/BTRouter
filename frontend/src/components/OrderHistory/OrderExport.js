@@ -14,7 +14,7 @@ import {
     FormControlLabel, Checkbox
 } from "@mui/material";
 import { People as PeopleIcon, FileDownload as FileDownloadIcon, Home as HomeIcon, Logout as LogoutIcon, Menu as MenuIcon } from "@mui/icons-material";
-import { StyledDrawer, MainContainer, HeaderBar, ScrollableContainer } from "../../styles/homeStyles";
+import { StyledDrawer, MainContainer, HeaderBar, ScrollableContainer } from "../../styles/HomeStyles";
 import { useNavigate } from "react-router-dom";
 
 function OrderExport() {
