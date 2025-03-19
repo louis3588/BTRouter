@@ -19,7 +19,8 @@ import {
     People as PeopleIcon,
     Assignment as AssignmentIcon,
     History as HistoryIcon,
-    Analytics as AnalyticsIcon
+    Analytics as AnalyticsIcon,
+    Hub as RouterManagementIcon // NEW ICON FOR ROUTER MANAGEMENT
 } from '@mui/icons-material';
 import Sidebar from '../Navigation/Sidebar';
 import useAuth from "../Auth/useAuth";
@@ -32,6 +33,7 @@ const Home = () => {
         { id: 'customers', title: 'Customers', icon: PeopleIcon, allowedRoles: ['ADMIN'], description: 'View and manage customer information', path: '/customers' },
         { id: 'users', title: 'Users', icon: PeopleIcon, allowedRoles: ['ADMIN'], description: 'Manage system users and permissions', path: '/users' },
         { id: 'requests', title: 'Router Request Form', icon: AssignmentIcon, allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'], description: 'Submit new router configuration requests', path: '/router-requests' },
+        { id: 'manageRequests', title: 'Router Management', icon: RouterManagementIcon, allowedRoles: ['ADMIN'], description: 'Review and update router request statuses', path: '/manage-router-requests' }, // UPDATED ICON
         { id: 'history', title: 'Order History', icon: HistoryIcon, allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'], description: 'View past router requests and their status', path: '/order-history' },
         { id: 'analytics', title: 'Analytics', icon: AnalyticsIcon, allowedRoles: ['ADMIN'], description: 'View system analytics and reports', path: '/analytics' }
     ];

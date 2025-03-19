@@ -13,6 +13,8 @@ import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
 import OrderExport from "./components/OrderHistory/OrderExport";
 import OrderTracking from './components/OrderTracking/OrderTracking';
+import RouterRequestManagement from './components/Admin/RouterRequestManagement';
+
 
 function App() {
     return (
@@ -37,6 +39,7 @@ function App() {
                             <Home />
                         </ProtectedRoute>
                     }
+                    
                 />
                 <Route
                     path="/routers"
@@ -80,6 +83,15 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
+                <Route
+    path="/manage-router-requests"
+    element={
+        <ProtectedRoute>
+            <RouterRequestManagement />
+        </ProtectedRoute>
+    }
+/>
+
 
                 {/* Redirect root to home. */}
                 <Route path="/" element={<Navigate to="/home" replace />} />
