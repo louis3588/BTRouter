@@ -5,7 +5,9 @@ stages:
   - test_front
   - run
 
+
 variables:
+  CI: "false"
   MYSQL_DATABASE: mydb
   MYSQL_USER: root
   MYSQL_PASSWORD: comsc
