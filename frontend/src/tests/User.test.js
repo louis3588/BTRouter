@@ -1,6 +1,6 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import User from "./User";
-import { BrowserRouter } from "react-router-dom";
+import User from "../components/UserList/User";
+import {BrowserRouter} from "react-router";
 
 // Enable fetch mocks before each test
 beforeEach(() => {
