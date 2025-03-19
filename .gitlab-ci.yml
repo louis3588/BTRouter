@@ -21,6 +21,7 @@ build_back:
   stage: build_back
   image: maven:3.9.0-eclipse-temurin-17
   script:
+    - cd backend
     - mvn clean package -DskipTests
   artifacts:
     paths:
@@ -41,6 +42,7 @@ test_back:
   stage: test_back
   image: maven:3.9.0-eclipse-temurin-17
   script:
+    - cd backend
     - mvn test
 
 test_front:
