@@ -8,7 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -24,7 +23,7 @@ public class UserController {
     // Admin-only user management endpoint
     @GetMapping("/admin/users")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<User> manageUsers() {
+    public List<User> listUsers() {
         return userService.findAll();
     }
 
@@ -52,7 +51,7 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/{email}")
+    @DeleteMapping("admin/users/{email}")
     public ResponseEntity deleteUser(@PathVariable String email) {
         User selectedUser = userService.findByEmail(email);
         userService.delete(selectedUser);

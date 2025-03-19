@@ -4,11 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b792223c-755b-4464-8706-c7303f2921b4" name="Changes" comment="input stream download spreadsheet">
-      <change afterPath="$PROJECT_DIR$/backend/src/main/java/cf/ac/uk/btrouter/controller/UserController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+    <list default="true" id="b792223c-755b-4464-8706-c7303f2921b4" name="Changes" comment="separate user controller">
+      <change afterPath="$PROJECT_DIR$/backend/src/test/java/cf/ac/uk/btrouter/WebTests/UserWebTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/java/cf/ac/uk/btrouter/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/cf/ac/uk/btrouter/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BTRouter.iml" beforeDir="false" afterPath="$PROJECT_DIR$/BTRouter.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/backend/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/cf/ac/uk/btrouter/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/cf/ac/uk/btrouter/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backend/src/main/java/cf/ac/uk/btrouter/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/cf/ac/uk/btrouter/model/User.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,8 +53,14 @@
   "keyToString": {
     "Database Script.data.sql.executor": "Run",
     "Database Script.schema.sql.executor": "Run",
+    "JUnit.BtRouterApplicationTests.contextLoads.executor": "Run",
+    "JUnit.BtRouterApplicationTests.executor": "Run",
+    "JUnit.UserWebTest.executor": "Run",
     "Maven.BTRouter [clean].executor": "Run",
+    "Maven.BTRouter [compile].executor": "Run",
     "Maven.BTRouter [install].executor": "Run",
+    "Maven.BTRouter [package].executor": "Run",
+    "Maven.BTRouter [test].executor": "Run",
     "RequestMappingsPanelOrder0": "0",
     "RequestMappingsPanelOrder1": "1",
     "RequestMappingsPanelWidth0": "75",
@@ -94,7 +102,7 @@
       <recent name="D:\Code\Java\BTRouter\frontend\src\components\Admin" />
     </key>
   </component>
-  <component name="RunManager" selected="Database Script.data.sql">
+  <component name="RunManager" selected="JUnit.BtRouterApplicationTests.contextLoads">
     <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/backend/src/main/resources/data.sql" />
       <script-mode>FILE</script-mode>
@@ -107,9 +115,48 @@
       <data-source id="735a5a39-fd40-4ae1-a17d-aece371f95b2" />
       <method v="2" />
     </configuration>
-    <configuration name="BtRouterApplication (1)" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
+    <configuration name="BtRouterApplicationTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="BTRouter" />
-      <option name="SPRING_BOOT_MAIN_CLASS" value="BtRouterApplication" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cf.ac.uk.btrouter.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="cf.ac.uk.btrouter" />
+      <option name="MAIN_CLASS_NAME" value="cf.ac.uk.btrouter.BtRouterApplicationTests" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="BtRouterApplicationTests.contextLoads" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="BTRouter" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cf.ac.uk.btrouter.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="cf.ac.uk.btrouter" />
+      <option name="MAIN_CLASS_NAME" value="cf.ac.uk.btrouter.BtRouterApplicationTests" />
+      <option name="METHOD_NAME" value="contextLoads" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="UserWebTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="BTRouter" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="cf.ac.uk.btrouter.WebTests.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="cf.ac.uk.btrouter.WebTests" />
+      <option name="MAIN_CLASS_NAME" value="cf.ac.uk.btrouter.WebTests.UserWebTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -141,23 +188,13 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="start:backend" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
-      <package-json value="$PROJECT_DIR$/src/main/resources/templates/btrouter/package.json" />
-      <command value="run" />
-      <scripts>
-        <script value="start:backend" />
-      </scripts>
-      <node-interpreter value="project" />
-      <envs />
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.BtRouterApplicationTests.contextLoads" />
+        <item itemvalue="JUnit.BtRouterApplicationTests" />
+        <item itemvalue="JUnit.UserWebTest" />
         <item itemvalue="npm.start" />
         <item itemvalue="npm.build" />
-        <item itemvalue="npm.start:backend" />
-        <item itemvalue="Spring Boot.BtRouterApplication (1)" />
-        <item itemvalue="npm.start" />
       </list>
     </recent_temporary>
   </component>
@@ -194,7 +231,7 @@
       <workItem from="1741696421046" duration="78000" />
       <workItem from="1741696588420" duration="4037000" />
       <workItem from="1741775371805" duration="452000" />
-      <workItem from="1742312989049" duration="1262000" />
+      <workItem from="1742312989049" duration="5655000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -308,7 +345,15 @@
       <option name="project" value="LOCAL" />
       <updated>1741700620010</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="separate user controller">
+      <option name="closed" value="true" />
+      <created>1742314482429</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1742314482430</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -329,7 +374,8 @@
     <MESSAGE value="readded changes for user page" />
     <MESSAGE value="added spreadsheet generator" />
     <MESSAGE value="input stream download spreadsheet" />
-    <option name="LAST_COMMIT_MESSAGE" value="input stream download spreadsheet" />
+    <MESSAGE value="separate user controller" />
+    <option name="LAST_COMMIT_MESSAGE" value="separate user controller" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
