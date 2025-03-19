@@ -59,7 +59,7 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <div>
-                                <User />
+                                <User url="http://localhost:8080/api/admin/users"/>
                             </div>
                         </ProtectedRoute>
                     }

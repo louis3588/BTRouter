@@ -13,7 +13,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import HomeIcon from "@mui/icons-material/Home"
 import { useNavigate } from "react-router-dom";
 
-function User() {
+function User({url}) {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -28,7 +28,7 @@ function User() {
     }, []);
 
     const fetchUsers = () => {
-        fetch("http://localhost:8080/api/admin/users", {
+        fetch(url, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
