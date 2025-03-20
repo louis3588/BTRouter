@@ -53,6 +53,33 @@ public class User {
     @Column(name = "reset_token_expiry")
     private LocalDateTime resetTokenExpiry;
 
+    @Size(max = 20, message = "Phone number must be less than 20 characters")
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "business_type")
+    private String businessType;
+
+    @Size(max = 255, message = "Billing address must be less than 255 characters")
+    @Column(name = "billing_address")
+    private String billingAddress;
+
+    @Size(max = 50, message = "VAT number must be less than 50 characters")
+    @Column(name = "vat_number")
+    private String vatNumber;
+
+    // currently ommited for now.
+    @Column(name = "two_factor_auth")
+    private boolean twoFactorAuth = false; //
+
+    @Column(name = "order_updates")
+    private boolean orderUpdates = false; //
+
+    @Column(name = "billing_notifications")
+    private boolean billingNotifications = false; //
+    @Column(name = "marketing_emails")
+    private boolean marketingEmails = false; //
+
     public enum Role {
         ADMIN, SUPPORT_AGENT, USER
     }

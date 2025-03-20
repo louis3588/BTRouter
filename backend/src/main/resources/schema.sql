@@ -25,7 +25,16 @@ CREATE TABLE users (
     last_name VARCHAR(255) NOT NULL,
     role ENUM('ADMIN', 'SUPPORT_AGENT', 'USER') NOT NULL,
     reset_token VARCHAR(100),
-    reset_token_expiry TIMESTAMP
+    reset_token_expiry TIMESTAMP,
+
+    phone_number VARCHAR(20),
+    business_type VARCHAR(255),
+    vat_number VARCHAR(50),
+    billing_address VARCHAR(255),
+    two_factor_auth BOOLEAN DEFAULT FALSE,
+    order_updates BOOLEAN DEFAULT FALSE,
+    billing_notifications BOOLEAN DEFAULT FALSE,
+    marketing_emails BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE customers (
