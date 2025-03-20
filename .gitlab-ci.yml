@@ -5,16 +5,17 @@ stages:
   - test_front
   - run
 
-
 variables:
   CI: "false"
-  MYSQL_DATABASE: mydb
+  MYSQL_ROOT_PASSWORD: root
+  MYSQL_DATABASE: bt_router_db
   MYSQL_USER: root
   MYSQL_PASSWORD: comsc
   DB_HOST: mysql
 
 services:
-  - mysql:latest
+  - name: mysql:latest
+    alias: mysql
 
 before_script:
   - apt-get update -y && apt-get install -y curl unzip
@@ -27,8 +28,9 @@ build_back:
     - mvn clean package -DskipTests
   artifacts:
     paths:
-      - target/*.jar
+      - backend/target/*.jar
 
+# 🎨 **Step 2: Build Frontend**
 build_front:
   stage: build_front
   image: node:20
@@ -43,10 +45,22 @@ build_front:
 test_back:
   stage: test_back
   image: maven:3.9.0-eclipse-temurin-17
+  services:
+    - name: mysql:latest
+      alias: mysql
   script:
+    - echo "Waiting for MySQL to be ready..."
+    - until mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD -e "SELECT 1" &>/dev/null; do
+        echo "Waiting for database...";
+        sleep 5;
+      done
+    - echo "MySQL is ready!"
+    - mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
+    - mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
     - cd backend
     - mvn test
 
+# 🧪 **Step 4: Test Frontend**
 test_front:
   stage: test_front
   image: node:20
@@ -62,11 +76,15 @@ run:
     - name: mysql:latest
       alias: mysql
   script:
-    - echo "Waiting for MySQL..."
-    - sleep 20
-    - mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD -e "SHOW DATABASES;"
+    - echo "Waiting for MySQL to be ready..."
+    - until mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD -e "SELECT 1" &>/dev/null; do
+        echo "Waiting for database...";
+        sleep 5;
+      done
+    - echo "MySQL is ready!"
+    - mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
     - mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
-    - java -jar target/*.jar &
+    - java -jar backend/target/*.jar &
     - sleep 10
     - curl --fail http://localhost:8080/api/health || exit 1
   only:
