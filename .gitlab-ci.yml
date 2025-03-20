@@ -9,14 +9,16 @@ variables:
   CI: "false"
   MYSQL_ROOT_PASSWORD: comsc
   MYSQL_DATABASE: bt_router_db
-  DB_HOST: mysql
+  DB_HOST: mariadb
 
 services:
-  - name: mysql:latest
-    alias: mysql
+  - name: mariadb:latest  
+    alias: mariadb
+    command:
+      - --default-authentication-plugin=mysql_native_password
 
 before_script:
-  - apt-get update -y && apt-get install -y curl unzip
+  - apt-get update -y && apt-get install -y curl unzip mariadb-client
 
 build_back:
   stage: build_back
@@ -28,7 +30,6 @@ build_back:
     paths:
       - backend/target/*.jar
 
-# 🎨 **Step 2: Build Frontend**
 build_front:
   stage: build_front
   image: node:20
@@ -44,10 +45,12 @@ test_back:
   stage: test_back
   image: maven:3.9.0-eclipse-temurin-17
   services:
-    - name: mysql:latest
-      alias: mysql
+    - name: mariadb:latest
+      alias: mariadb
   script:
-    - echo "MySQL is ready!"
+    - echo "Waiting for MariaDB to be ready..."
+    - sleep 15  # ✅ Ensures MariaDB is fully ready before running scripts
+    - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD -e "SHOW DATABASES;"
     - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
     - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
     - cd backend
@@ -66,19 +69,17 @@ run:
   stage: run
   image: maven:3.9.0-eclipse-temurin-17
   services:
-    - name: mysql:latest
-      alias: mysql
+    - name: mariadb:latest
+      alias: mariadb
   script:
-    - echo "Waiting for MySQL to be ready..."
-    - until mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD -e "SELECT 1" &>/dev/null; do
-        echo "Waiting for database...";
-        sleep 5;
-      done
-    - echo "MySQL is ready!"
-    - mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
-    - mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
+    - echo "Waiting for MariaDB to be ready..."
+    - sleep 15  # ✅ Ensures MariaDB is fully ready before running scripts
+    - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD -e "SHOW DATABASES;"
+    - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
+    - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
     - java -jar backend/target/*.jar &
     - sleep 10
     - curl --fail http://localhost:8080/api/health || exit 1
   only:
     - main
+
