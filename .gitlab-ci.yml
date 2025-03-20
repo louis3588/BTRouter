@@ -17,6 +17,7 @@ services:
 
 before_script:
   - apt-get update -y && apt-get install -y curl unzip
+  - apt-get install -y -qq --no-install-recommends default-mysql-client
 
 build_back:
   stage: build_back
@@ -47,7 +48,7 @@ test_back:
     - name: mysql:latest
       alias: mysql
   script:
-    - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
+    - mysql --user=root --password=$MYSQL_ROOT_PASSWORD -host=$DB_HOST $MYSQL_DATABASE < backend/src/main/resources/schema.sql
     - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
     - cd backend
     - mvn test
