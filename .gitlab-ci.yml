@@ -7,10 +7,8 @@ stages:
 
 variables:
   CI: "false"
-  MYSQL_ROOT_PASSWORD: root
+  MYSQL_ROOT_PASSWORD: comsc
   MYSQL_DATABASE: bt_router_db
-  MYSQL_USER: root
-  MYSQL_PASSWORD: comsc
   DB_HOST: mysql
 
 services:
@@ -50,15 +48,15 @@ test_back:
       alias: mysql
   script:
     - echo "Waiting for MySQL to be ready..."
-    - until mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD -e "SELECT 1" &>/dev/null; do
-        echo "Waiting for database...";
-        sleep 5;
+      - until mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD -e "SELECT 1" &>/dev/null; do
+      echo "Waiting for database...";
+      sleep 5;
       done
-    - echo "MySQL is ready!"
-    - mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
-    - mysql --host=$DB_HOST --user=$MYSQL_USER --password=$MYSQL_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
-    - cd backend
-    - mvn test
+      - echo "MySQL is ready!"
+      - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
+      - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
+      - cd backend
+      - mvn test
 
 # 🧪 **Step 4: Test Frontend**
 test_front:

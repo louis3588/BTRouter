@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="160730ab-59b2-422b-8cc6-fe5a922fa0d1" name="Changes" comment="ejected and frontend test passed">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.test.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/ForgotPassword.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/ForgotPassword.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/Login.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/ProtectedRoute.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/ProtectedRoute.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/Register.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/Register.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/ResetPassword.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/ResetPassword.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/useAuth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/useAuth.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/OrderHistory/OrderExport.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderHistory/OrderExport.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/RouterRequests/RequestForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouterRequests/RequestForm.jsx" afterDir="false" />
-    </list>
+    <list default="true" id="160730ab-59b2-422b-8cc6-fe5a922fa0d1" name="Changes" comment="ejected and frontend test passed" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -185,7 +173,7 @@
       <workItem from="1741775600654" duration="2998000" />
       <workItem from="1742385925530" duration="642000" />
       <workItem from="1742386727993" duration="5738000" />
-      <workItem from="1742393312045" duration="1584000" />
+      <workItem from="1742393312045" duration="2137000" />
     </task>
     <task id="LOCAL-00001" summary="start backend reflects new strcuture">
       <option name="closed" value="true" />
