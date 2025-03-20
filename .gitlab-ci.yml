@@ -47,7 +47,6 @@ test_back:
     - name: mysql:latest
       alias: mysql
   script:
-    - echo "MySQL is ready!"
     - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
     - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
     - cd backend
