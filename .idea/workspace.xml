@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b792223c-755b-4464-8706-c7303f2921b4" name="Changes" comment="permit endpoint points">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="b792223c-755b-4464-8706-c7303f2921b4" name="Changes" comment="changed user env" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -229,7 +226,7 @@
       <workItem from="1741775371805" duration="452000" />
       <workItem from="1742312989049" duration="6170000" />
       <workItem from="1742395010877" duration="860000" />
-      <workItem from="1742478456507" duration="641000" />
+      <workItem from="1742478456507" duration="1041000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -367,7 +364,15 @@
       <option name="project" value="LOCAL" />
       <updated>1742395148176</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="changed user env">
+      <option name="closed" value="true" />
+      <created>1742479481386</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1742479481386</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -391,7 +396,8 @@
     <MESSAGE value="separate user controller" />
     <MESSAGE value="wrote user controller tests" />
     <MESSAGE value="permit endpoint points" />
-    <option name="LAST_COMMIT_MESSAGE" value="permit endpoint points" />
+    <MESSAGE value="changed user env" />
+    <option name="LAST_COMMIT_MESSAGE" value="changed user env" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

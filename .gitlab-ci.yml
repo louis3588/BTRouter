@@ -48,7 +48,7 @@ test_back:
       alias: mysql
   script:
     - echo "Waiting for MySQL to be ready..."
-      - until mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD -e "SELECT 1" &>/dev/null; do
+      - until mysql --host=$DB_HOST --user=root --password=comsc -e "SELECT 1" &>/dev/null; do
       echo "Waiting for database...";
       sleep 5;
       done
