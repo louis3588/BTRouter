@@ -47,17 +47,11 @@ test_back:
     - name: mysql:latest
       alias: mysql
   script:
-    - echo "Waiting for MySQL to be ready..."
-      - |
-      while ! mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD -e "SELECT 1" &>/dev/null; do
-      echo "Waiting for database...";
-      sleep 5;
-      done
-      - echo "MySQL is ready!"
-      - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
-      - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
-      - cd backend
-      - mvn test
+    - echo "MySQL is ready!"
+    - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
+    - mysql --host=$DB_HOST --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
+    - cd backend
+    - mvn test
 
 # 🧪 **Step 4: Test Frontend**
 test_front:
