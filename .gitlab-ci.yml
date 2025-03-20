@@ -14,6 +14,10 @@ variables:
 services:
   - name: mysql:latest
     alias: mysql
+    command:
+      - --default-authentication-plugin==mysql_native_password
+      - --bind-address=0.0.0.0
+      - --skip-networking=0
 
 before_script:
   - apt-get update -y && apt-get install -y curl unzip
@@ -48,8 +52,8 @@ test_back:
     - name: mysql:latest
       alias: mysql
   script:
-    - mysql --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/schema.sql
-    - mysql --user=root --password=$MYSQL_ROOT_PASSWORD $MYSQL_DATABASE < backend/src/main/resources/data.sql
+    - mysql --user=root --password=$MYSQL_ROOT_PASSWORD --host=$DB_HOST $MYSQL_DATABASE < backend/src/main/resources/schema.sql
+    - mysql --user=root --password=$MYSQL_ROOT_PASSWORD --host=$DB_HOST $MYSQL_DATABASE < backend/src/main/resources/data.sql
     - cd backend
     - mvn test
 
