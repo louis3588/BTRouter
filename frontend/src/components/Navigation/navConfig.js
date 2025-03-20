@@ -7,6 +7,7 @@ import {
     Analytics as AnalyticsIcon,
     Support as SupportIcon,
     ExitToApp as LogoutIcon,
+    Settings as SettingsIcon,
 } from '@mui/icons-material';
 
 export const navItems = [
@@ -65,7 +66,14 @@ export const navItems = [
         label: 'Support',
         allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
         path: '/support'
-    }
+    },
+    {
+        id: 'settings',
+        icon: SettingsIcon,
+        label: 'Settings',
+        allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
+        path: '/settings'
+    },
 ];
 
 export const logoutItem = {

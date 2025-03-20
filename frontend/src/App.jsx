@@ -13,6 +13,7 @@ import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
 import OrderExport from "./components/OrderHistory/OrderExport";
 import OrderTracking from './components/OrderTracking/OrderTracking';
+import UserSettingsPage from "./pages/UserSettingsPage";
 
 function App() {
     return (
@@ -77,6 +78,15 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <OrderHistoryPage />
+                        </ProtectedRoute>
+                    }
+                />
+                />
+                <Route
+                    path="/settings"
+                    element={
+                        <ProtectedRoute>
+                            <UserSettingsPage />
                         </ProtectedRoute>
                     }
                 />
