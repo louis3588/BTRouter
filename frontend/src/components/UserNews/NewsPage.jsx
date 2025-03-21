@@ -22,33 +22,35 @@ import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
+/* 🔹 STYLED COMPONENTS */
 const TopBar = styled(Box)({
   width: '100%',
-  background: 'linear-gradient(135deg, #5f00a7, #9b42c3)',
+  background: 'linear-gradient(135deg, #6200ea, #9c27b0)',
   color: '#fff',
   padding: '16px',
   textAlign: 'center',
-  boxShadow: '0px 4px 10px rgba(0,0,0,0.1)'
+  boxShadow: '0px 4px 15px rgba(0,0,0,0.1)',
 });
 
 const StyledContainer = styled(Box)({
   display: 'flex',
   minHeight: '100vh',
-  background: 'linear-gradient(to bottom right, #f7f3fc 0%, #ece6f4 100%)',
+  background: 'linear-gradient(to bottom right, #f3e5f5, #ede7f6)',
   paddingTop: '60px',
-  paddingBottom: '20px',
-  justifyContent: 'center'
+  paddingBottom: '40px',
+  justifyContent: 'center',
 });
 
 const FlowCard = styled(Box)({
   background: '#ffffff',
   borderRadius: '16px',
-  padding: '24px',
-  boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+  padding: '30px',
+  boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
   width: '100%',
-  maxWidth: '900px'
+  maxWidth: '900px',
 });
 
+/* 🔹 MAIN COMPONENT */
 const NewsPage = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -92,9 +94,10 @@ const NewsPage = () => {
 
   return (
     <>
+      {/* 🔹 HEADER */}
       <TopBar>
         <Typography variant="h5" fontWeight="bold">
-          BT IoT Router Services - News & Updates
+          📢 News & Updates - BT IoT Router Services
         </Typography>
       </TopBar>
 
@@ -102,6 +105,7 @@ const NewsPage = () => {
         <Container maxWidth="md">
           <Fade in timeout={600}>
             <FlowCard>
+              {/* 🔹 HEADER SECTION */}
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Box display="flex" alignItems="center" gap={2}>
                   <Typography variant="h4" fontWeight="bold" color="primary">
@@ -117,12 +121,13 @@ const NewsPage = () => {
                   variant="outlined"
                   onClick={markAllAsRead}
                   disabled={unreadIds.size === 0}
-                  sx={{ borderRadius: 3 }}
+                  sx={{ borderRadius: 3, textTransform: 'none' }}
                 >
                   Mark all as read
                 </Button>
               </Box>
 
+              {/* 🔹 SEARCH BAR */}
               <TextField
                 fullWidth
                 placeholder="Search news..."
@@ -133,11 +138,12 @@ const NewsPage = () => {
                     <InputAdornment position="start">
                       <SearchIcon color="primary" />
                     </InputAdornment>
-                  )
+                  ),
                 }}
                 sx={{ mb: 3, borderRadius: 2 }}
               />
 
+              {/* 🔹 NEWS LIST */}
               {loading ? (
                 <Box mt={4} textAlign="center">
                   <CircularProgress color="primary" />
@@ -158,10 +164,10 @@ const NewsPage = () => {
                               cursor: 'pointer',
                               transition: 'background-color 0.2s',
                               backgroundColor: unreadIds.has(post.id) ? '#f3f0ff' : 'transparent',
-                              '&:hover': { backgroundColor: '#f1f1f1' },
+                              '&:hover': { backgroundColor: '#f5f5f5' },
                               borderRadius: 2,
                               my: 1,
-                              px: 2
+                              px: 2,
                             }}
                           >
                             <ListItemText
@@ -183,8 +189,23 @@ const NewsPage = () => {
                   </List>
                 </Paper>
               )}
+
+              {/* 🔹 BACK TO DASHBOARD BUTTON */}
               <Box mt={4} textAlign="center">
-                <Button onClick={() => navigate('/home')} variant="text">
+                <Button
+                  onClick={() => navigate('/home')}
+                  variant="contained"
+                  sx={{
+                    textTransform: 'none',
+                    background: 'linear-gradient(45deg, #6200ea, #9c27b0)',
+                    color: '#fff',
+                    borderRadius: 3,
+                    px: 3,
+                    '&:hover': {
+                      background: 'linear-gradient(45deg, #5a00d3, #8800a7)',
+                    },
+                  }}
+                >
                   ⬅ Back to Dashboard
                 </Button>
               </Box>
