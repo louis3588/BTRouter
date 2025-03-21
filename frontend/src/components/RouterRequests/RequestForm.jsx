@@ -1,27 +1,13 @@
 import React, { useState } from "react";
 import {
-  TextField,
-  Button,
-  Typography,
-  Box,
-  Container,
-  Snackbar,
-  MenuItem,
-  Select,
-  FormControl,
-  InputLabel,
-  CircularProgress,
-  Divider,
-  Fade,
-  Stepper,
-  Step,
-  StepLabel,
-  Checkbox,
-  FormControlLabel,
-  Grid
+  TextField, Button, Typography, Box, Container, Snackbar, MenuItem, Select,
+  FormControl, InputLabel, CircularProgress, Divider, Fade, Stepper, Step,
+  StepLabel, Checkbox, FormControlLabel, Grid, Toolbar
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { styled } from "@mui/system";
+import Sidebar from "../Navigation/Sidebar";
+import useAuth from "../Auth/useAuth";
 
 /* TOP BAR */
 const TopBar = styled(Box)({
@@ -36,14 +22,20 @@ const TopBar = styled(Box)({
 });
 
 /* MAIN CONTAINER */
-const StyledContainer = styled(Box)({
-  display: "flex",
-  minHeight: "100vh",
+const MainContainer = styled(Box)({
+  display: 'flex',
+  minHeight: '100vh',
   background: "linear-gradient(to bottom right, #f7f3fc 0%, #ece6f4 100%)",
   position: "relative",
-  overflow: "hidden",
-  paddingTop: "80px",
-  paddingBottom: "40px"
+  overflow: "hidden"
+});
+
+const ContentContainer = styled(Box)({
+  flexGrow: 1,
+  height: '100vh',
+  overflow: 'hidden',
+  display: 'flex',
+  flexDirection: 'column'
 });
 
 /* DECORATIVE BACKGROUNDS */
@@ -133,31 +125,24 @@ const steps = [
 
 const RequestForm = () => {
   const navigate = useNavigate();
+  const { activeTab, setActiveTab } = useAuth();
   const [activeStep, setActiveStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [message, setMessage] = useState("");
-
-  // Form data includes all fields from the document.
   const [formData, setFormData] = useState({
-    // Step 1: Customer Type
     customerType: "",
-    // Step 2: Router Type (for demo purposes, only two options shown based on customer type Water Utility 1)
     routerType: "",
-    // Step 3: Outside Connection Options
     primaryOutsideConnection: "",
     primaryOutsidePorts: "",
     secondaryOutsideConnection: "",
     secondaryOutsidePorts: "",
-    // Step 4: Inside Connection Selection
     primaryInsideConnection: "",
     primaryInsidePorts: "",
     vlanConfiguration: "",
     vlanAssignments: "",
     dhcpConfiguration: "",
-    // Step 5: Number of Routers
     numRouters: 1,
-    // Step 6: Site Information
     siteName: "",
     siteAddress: "",
     sitePostcode: "",
@@ -165,9 +150,7 @@ const RequestForm = () => {
     siteSecondaryEmail: "",
     sitePhone: "",
     siteContactName: "",
-    // Step 7: Priority Level
     priorityLevel: "",
-    // Step 8: Optional additional router
     addAnotherRouter: false
   });
 
@@ -176,7 +159,6 @@ const RequestForm = () => {
     setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
   };
 
-  // Navigation handlers
   const handleNext = () => {
     if (!validateStep(activeStep)) return;
     setActiveStep((prev) => prev + 1);
@@ -240,14 +222,12 @@ const RequestForm = () => {
     setIsLoading(true);
     setMessage("");
 
-    // Get JWT token from localStorage
     const token = localStorage.getItem('token');
     const headers = {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${token}`
     };
 
-    // Ensure required fields are filled
     for (const key in formData) {
       if (formData[key] === "" && key !== "configurationDetails") {
         setMessage(`Please fill in the ${key} field.`);
@@ -259,10 +239,9 @@ const RequestForm = () => {
 
     const finalData = {
       ...formData,
-      numRouters: formData.numRouters || 1, // ✅ Fix: Ensure it's always sent
+      numRouters: formData.numRouters || 1,
     };
 
-    console.log("Submitting Data:", finalData);
     try {
       const response = await fetch("/api/orders", {
         method: "POST",
@@ -276,10 +255,9 @@ const RequestForm = () => {
 
       const savedOrder = await response.json();
 
-      // Create tracking
       const trackingResponse = await fetch("/api/order-tracking/create", {
         method: "POST",
-        headers: headers,  // <-- CHANGE THIS LINE TO USE THE AUTH HEADERS
+        headers: headers,
         body: JSON.stringify({ orderId: savedOrder.id }),
       });
 
@@ -526,7 +504,7 @@ const RequestForm = () => {
                 </InputLabel>
                 <Select
                     name="dhcpConfiguration"
-                    value={formData.dhcpConfiguration.toString()} // ✅ Convert Boolean to String for UI
+                    value={formData.dhcpConfiguration.toString()}
                     onChange={handleChange}
                     required
                 >
@@ -668,84 +646,78 @@ const RequestForm = () => {
   };
 
   return (
-      <>
-        <TopBar>
-          <Typography variant="h5" fontWeight="bold">
-            BT IoT Router Services - Router Request Form
-          </Typography>
-        </TopBar>
-
-        <StyledContainer>
-          <TopDecoration />
-          <BottomDecoration />
-
-          <Container maxWidth="md" sx={{ zIndex: 2 }}>
-            <Fade in={true} timeout={600}>
-              <FlowCard>
-                <Box sx={{ mb: 3, textAlign: "center" }}>
-                  <Typography variant="h4" fontWeight="bold">
-                    Request a Router
-                  </Typography>
-                  <Typography variant="subtitle1" color="text.secondary">
-                    Complete the form steps below to submit your router request.
-                  </Typography>
-                </Box>
-
-                <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
-                  {steps.map((label, index) => (
-                      <Step key={index}>
-                        <StepLabel>{label}</StepLabel>
-                      </Step>
-                  ))}
-                </Stepper>
-
-                <form>
-                  {getStepContent(activeStep)}
-
-                  <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
-                    {activeStep > 0 && (
-                        <GradientButton onClick={handleBack} variant="contained">
-                          Back
-                        </GradientButton>
-                    )}
-                    {activeStep < steps.length - 1 ? (
-                        <GradientButton onClick={handleNext} variant="contained">
-                          Next
-                        </GradientButton>
-                    ) : (
-                        <GradientButton
-                            onClick={handleSubmit}
-                            variant="contained"
-                            disabled={isLoading}
-                            startIcon={isLoading ? <CircularProgress size={20} /> : null}
-                        >
-                          {isLoading ? "Submitting..." : "Submit"}
-                        </GradientButton>
-                    )}
-                  </Box>
-                  <Box sx={{ mt: 2, textAlign: "center" }}>
-                    <Button onClick={() => navigate("/home")} variant="text">
-                      Return to Dashboard
-                    </Button>
-                  </Box>
-                </form>
-              </FlowCard>
-            </Fade>
-            <Footer>
-              <Typography variant="caption">
-                © 2025 BT IoT Router Services. All rights reserved.
+      <MainContainer>
+        <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+        <ContentContainer>
+          <TopBar>
+            <Toolbar>
+              <Typography variant="h5" fontWeight="bold">
+                BT IoT Router Services - Router Request Form
               </Typography>
-            </Footer>
-          </Container>
-        </StyledContainer>
-
+            </Toolbar>
+          </TopBar>
+          <Box sx={{ flexGrow: 1, overflow: 'auto', p: 3 }}>
+            <Container maxWidth="md" sx={{ zIndex: 2 }}>
+              <TopDecoration />
+              <BottomDecoration />
+              <Fade in={true} timeout={600}>
+                <FlowCard>
+                  <Box sx={{ mb: 3, textAlign: "center" }}>
+                    <Typography variant="h4" fontWeight="bold">
+                      Request a Router
+                    </Typography>
+                    <Typography variant="subtitle1" color="text.secondary">
+                      Complete the form steps below to submit your router request.
+                    </Typography>
+                  </Box>
+                  <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
+                    {steps.map((label, index) => (
+                        <Step key={index}>
+                          <StepLabel>{label}</StepLabel>
+                        </Step>
+                    ))}
+                  </Stepper>
+                  <form>
+                    {getStepContent(activeStep)}
+                    <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
+                      {activeStep > 0 && (
+                          <GradientButton onClick={handleBack} variant="contained">
+                            Back
+                          </GradientButton>
+                      )}
+                      {activeStep < steps.length - 1 ? (
+                          <GradientButton onClick={handleNext} variant="contained">
+                            Next
+                          </GradientButton>
+                      ) : (
+                          <GradientButton
+                              onClick={handleSubmit}
+                              variant="contained"
+                              disabled={isLoading}
+                              startIcon={isLoading ? <CircularProgress size={20} /> : null}
+                          >
+                            {isLoading ? "Submitting..." : "Submit"}
+                          </GradientButton>
+                      )}
+                    </Box>
+                  </form>
+                </FlowCard>
+              </Fade>
+              <Footer>
+                <Typography variant="caption">
+                  © 2025 BT IoT Router Services. All rights reserved.
+                </Typography>
+              </Footer>
+            </Container>
+          </Box>
+        </ContentContainer>
         <Snackbar
             open={openSnackbar}
             autoHideDuration={4000}
             onClose={() => setOpenSnackbar(false)}
             message={message}
         />
-      </>
+      </MainContainer>
   );
 };
 
