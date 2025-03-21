@@ -21,7 +21,8 @@ import {
     History as HistoryIcon,
     Analytics as AnalyticsIcon,
     Hub as RouterManagementIcon,
-    Campaign as NewsIcon // 🆕 News icon
+    Campaign as AdminNewsIcon,            
+    NotificationsActive as UserNewsIcon    
 } from '@mui/icons-material';
 import Sidebar from '../Navigation/Sidebar';
 import useAuth from "../Auth/useAuth";
@@ -37,7 +38,10 @@ const Home = () => {
         { id: 'manageRequests', title: 'Router Management', icon: RouterManagementIcon, allowedRoles: ['ADMIN'], description: 'Review and update router request statuses', path: '/manage-router-requests' },
         { id: 'history', title: 'Order History', icon: HistoryIcon, allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'], description: 'View past router requests and their status', path: '/order-history' },
         { id: 'analytics', title: 'Analytics', icon: AnalyticsIcon, allowedRoles: ['ADMIN'], description: 'View system analytics and reports', path: '/analytics' },
-        { id: 'news', title: 'News & Updates', icon: NewsIcon, allowedRoles: ['ADMIN'], description: 'Post updates, announcements, and tasks', path: '/news-management' } // 🆕 News card
+        // Admin-only card for creating posts
+        { id: 'news', title: 'News & Updates', icon: AdminNewsIcon, allowedRoles: ['ADMIN'], description: 'Post updates or announcements', path: '/news-management' },
+        // User-facing card for viewing news
+        { id: 'user-news', title: 'Announcements', icon: UserNewsIcon, allowedRoles: ['USER', 'SUPPORT_AGENT', 'ADMIN'], description: 'View latest news and admin updates', path: '/news' }
     ];
 
     const handleNavigation = (path, allowedRoles) => {

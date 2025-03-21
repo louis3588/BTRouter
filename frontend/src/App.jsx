@@ -15,8 +15,11 @@ import OrderExport from "./components/OrderHistory/OrderExport";
 import OrderTracking from './components/OrderTracking/OrderTracking';
 import RouterRequestManagement from './components/Admin/RouterRequestManagement';
 
-// 🆕 Import News Editor Component
+// 🛠️ Admin News Editor
 import NewsEditor from './components/NewsManagement/NewsEditor';
+
+// 🆕 User-Facing News Page
+import NewsPage from './components/UserNews/NewsPage';
 
 function App() {
     return (
@@ -73,10 +76,17 @@ function App() {
                     </ProtectedRoute>
                 } />
 
-                {/* 🆕 News & Updates Page */}
+                {/* 🛠️ Admin News Management */}
                 <Route path="/news-management" element={
                     <ProtectedRoute>
                         <NewsEditor />
+                    </ProtectedRoute>
+                } />
+
+                {/* 🆕 User News & Announcements */}
+                <Route path="/news" element={
+                    <ProtectedRoute>
+                        <NewsPage />
                     </ProtectedRoute>
                 } />
 
