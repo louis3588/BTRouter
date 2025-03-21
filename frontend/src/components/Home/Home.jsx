@@ -20,7 +20,8 @@ import {
     Assignment as AssignmentIcon,
     History as HistoryIcon,
     Analytics as AnalyticsIcon,
-    Hub as RouterManagementIcon // NEW ICON FOR ROUTER MANAGEMENT
+    Hub as RouterManagementIcon,
+    Campaign as NewsIcon // 🆕 News icon
 } from '@mui/icons-material';
 import Sidebar from '../Navigation/Sidebar';
 import useAuth from "../Auth/useAuth";
@@ -33,9 +34,10 @@ const Home = () => {
         { id: 'customers', title: 'Customers', icon: PeopleIcon, allowedRoles: ['ADMIN'], description: 'View and manage customer information', path: '/customers' },
         { id: 'users', title: 'Users', icon: PeopleIcon, allowedRoles: ['ADMIN'], description: 'Manage system users and permissions', path: '/users' },
         { id: 'requests', title: 'Router Request Form', icon: AssignmentIcon, allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'], description: 'Submit new router configuration requests', path: '/router-requests' },
-        { id: 'manageRequests', title: 'Router Management', icon: RouterManagementIcon, allowedRoles: ['ADMIN'], description: 'Review and update router request statuses', path: '/manage-router-requests' }, // UPDATED ICON
+        { id: 'manageRequests', title: 'Router Management', icon: RouterManagementIcon, allowedRoles: ['ADMIN'], description: 'Review and update router request statuses', path: '/manage-router-requests' },
         { id: 'history', title: 'Order History', icon: HistoryIcon, allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'], description: 'View past router requests and their status', path: '/order-history' },
-        { id: 'analytics', title: 'Analytics', icon: AnalyticsIcon, allowedRoles: ['ADMIN'], description: 'View system analytics and reports', path: '/analytics' }
+        { id: 'analytics', title: 'Analytics', icon: AnalyticsIcon, allowedRoles: ['ADMIN'], description: 'View system analytics and reports', path: '/analytics' },
+        { id: 'news', title: 'News & Updates', icon: NewsIcon, allowedRoles: ['ADMIN'], description: 'Post updates, announcements, and tasks', path: '/news-management' } // 🆕 News card
     ];
 
     const handleNavigation = (path, allowedRoles) => {
@@ -60,13 +62,12 @@ const Home = () => {
 
     return (
         <MainContainer>
-            {/* Sidebar Integration. */}
+            {/* Sidebar Integration */}
             <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} userRole={userRole} />
 
-            {/* Main Content. */}
+            {/* Main Content */}
             <Box component="main" sx={{ flexGrow: 1, height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-
-                {/* Application Header. */}
+                {/* Application Header */}
                 <HeaderBar>
                     <Toolbar>
                         <Typography
@@ -83,7 +84,7 @@ const Home = () => {
                     </Toolbar>
                 </HeaderBar>
 
-                {/* Feature Cards. */}
+                {/* Feature Cards */}
                 <ScrollableContainer component="main" sx={{ p: 3, flexGrow: 1 }}>
                     <ResponsiveGrid>
                         {featureCards.map((card, index) => (
