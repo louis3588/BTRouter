@@ -131,17 +131,26 @@ const RequestForm = () => {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [message, setMessage] = useState("");
   const [formData, setFormData] = useState({
+    /* Step 1: Customer Type. */
     customerType: "",
+
+    /* Step 2: Router Type. */
     routerType: "",
+
+    /* Step 3: Outside Connection Options. */
     primaryOutsideConnection: "",
     primaryOutsidePorts: "",
     secondaryOutsideConnection: "",
     secondaryOutsidePorts: "",
+
+    /* Step 4: Inside Connection Options. */
     primaryInsideConnection: "",
     primaryInsidePorts: "",
     vlanConfiguration: "",
     vlanAssignments: "",
     dhcpConfiguration: "",
+
+    /* Step 5: Routers and Site Details. */
     numRouters: 1,
     siteName: "",
     siteAddress: "",
@@ -150,6 +159,8 @@ const RequestForm = () => {
     siteSecondaryEmail: "",
     sitePhone: "",
     siteContactName: "",
+
+    /* Step 6: Priority Level and Extras. */
     priorityLevel: "",
     addAnotherRouter: false
   });
