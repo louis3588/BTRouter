@@ -50,12 +50,13 @@ test_back:
   before_script:
     - apt-get update && apt-get install -y mysql-server
     - service mysql start
-    
+    - mysql --user=root --password=$MYSQL_ROOT_PASSWORD -e "CREATE DATABASE IF NOT EXISTS bt_router_db;"
     - mysql --user=root --password=$MYSQL_ROOT_PASSWORD < backend/src/main/resources/schema.sql
     - mysql --user=root --password=$MYSQL_ROOT_PASSWORD < backend/src/main/resources/data.sql
 
   script:
     - cd backend
+    - mvn test
 
 test_front:
   stage: test_front
