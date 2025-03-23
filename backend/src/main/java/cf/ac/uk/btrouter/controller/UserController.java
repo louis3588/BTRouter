@@ -14,6 +14,7 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
 
+
     public final UserService userService;
 
     public UserController(UserService userService) {
