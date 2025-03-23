@@ -7,7 +7,7 @@ import {
     Link,
     Alert,
 } from '@mui/material';
-import { AuthContainer, AuthCard, Logo } from '../../styles/authStyles';
+import { AuthContainer, AuthCard, Logo } from '../../styles/AuthStyles';
 import btLogo from '../../assets/BT_logo_purple.png';
 
 const ForgotPassword = () => {

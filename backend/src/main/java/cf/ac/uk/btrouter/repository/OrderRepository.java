@@ -15,4 +15,12 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 
     @Query("SELECT o FROM Order o WHERE o.id = :orderId AND o.sitePrimaryEmail = :email")
     Order findOrderByIdAndEmail(@Param("orderId") Long orderId, @Param("email") String email);
+
+    // Fetch orders by status (e.g., Pending, Approved, Denied)
+    @Query("SELECT o FROM Order o WHERE o.status = :status ORDER BY o.orderDate DESC")
+    List<Order> findByStatus(@Param("status") String status);
+
+    // Fetch order by reference number
+    @Query("SELECT o FROM Order o WHERE o.referenceNumber = :referenceNumber")
+    Order findByReferenceNumber(@Param("referenceNumber") String referenceNumber);
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import {
     MainContainer, ScrollableContainer, HeaderBar, StyledDrawer, NavButton,
     ResponsiveGrid, FeatureCard, CardIcon
-} from "../../styles/homeStyles";
+} from "../../styles/HomeStyles";
 import { AppBar, Toolbar, Typography, Box, IconButton, List, ListItem, ListItemIcon, ListItemText, CircularProgress, Button, TextField, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import LogoutIcon from "@mui/icons-material/Logout";

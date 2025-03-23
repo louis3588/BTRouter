@@ -20,7 +20,7 @@ import {
     TableCellStyled,
     TableRowStyled,
     ActionButton,
-} from "../styles/orderHistoryStyles";
+} from "../styles/OrderHistoryStyles";
 import { styled } from "@mui/system";
 import Sidebar from "../components/Navigation/Sidebar";
 import useAuth from "../components/Auth/useAuth";
