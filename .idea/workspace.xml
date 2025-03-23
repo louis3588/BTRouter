@@ -4,8 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b792223c-755b-4464-8706-c7303f2921b4" name="Changes" comment="changed user env">
-      <change beforePath="$PROJECT_DIR$/.gitlab-ci.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.gitlab-ci.yml" afterDir="false" />
+    <list default="true" id="b792223c-755b-4464-8706-c7303f2921b4" name="Changes" comment="playing around with start db commands">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -98,7 +97,7 @@
       <recent name="D:\Code\Java\BTRouter\frontend\src\components\Admin" />
     </key>
   </component>
-  <component name="RunManager" selected="Database Script.schema.sql">
+  <component name="RunManager" selected="JUnit.BtRouterApplicationTests.contextLoads">
     <configuration name="data.sql" type="DatabaseScript" editBeforeRun="true" nameIsGenerated="true">
       <script-file value="$PROJECT_DIR$/backend/src/main/resources/data.sql" />
       <script-mode>FILE</script-mode>
@@ -229,7 +228,8 @@
       <workItem from="1741775371805" duration="452000" />
       <workItem from="1742312989049" duration="6170000" />
       <workItem from="1742395010877" duration="860000" />
-      <workItem from="1742478456507" duration="3688000" />
+      <workItem from="1742478456507" duration="7375000" />
+      <workItem from="1742745078584" duration="3615000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -399,7 +399,39 @@
       <option name="project" value="LOCAL" />
       <updated>1742480809801</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="updated .gitlab-ci.yml">
+      <option name="closed" value="true" />
+      <created>1742486947070</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1742486947070</updated>
+    </task>
+    <task id="LOCAL-00023" summary="install mysql before script">
+      <option name="closed" value="true" />
+      <created>1742487382635</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1742487382635</updated>
+    </task>
+    <task id="LOCAL-00024" summary="playing around with start db commands">
+      <option name="closed" value="true" />
+      <created>1742487702144</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1742487702144</updated>
+    </task>
+    <task id="LOCAL-00025" summary="playing around with start db commands">
+      <option name="closed" value="true" />
+      <created>1742488456015</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1742488456015</updated>
+    </task>
+    <option name="localTasksCounter" value="26" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -424,7 +456,10 @@
     <MESSAGE value="wrote user controller tests" />
     <MESSAGE value="permit endpoint points" />
     <MESSAGE value="changed user env" />
-    <option name="LAST_COMMIT_MESSAGE" value="changed user env" />
+    <MESSAGE value="updated .gitlab-ci.yml" />
+    <MESSAGE value="install mysql before script" />
+    <MESSAGE value="playing around with start db commands" />
+    <option name="LAST_COMMIT_MESSAGE" value="playing around with start db commands" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
