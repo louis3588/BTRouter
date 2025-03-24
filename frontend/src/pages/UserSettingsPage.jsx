@@ -3,25 +3,27 @@ import {
     Container,
     Typography,
     TextField,
-    FormControlLabel,
-    Checkbox,
     Button,
     Select,
     MenuItem,
     Paper,
     Divider,
-    Grid,
+    FormControlLabel,
+    Checkbox,
     Switch,
+    Snackbar,
+    Alert,
 } from "@mui/material";
+import Grid2 from "@mui/material/Grid2";
 import { styled } from "@mui/system";
 
-const SettingsContainer = styled(Paper)({
+const SettingsContainer = styled(Paper)(({ theme }) => ({
     maxWidth: "800px",
     margin: "auto",
     padding: "30px",
     marginTop: "40px",
     boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
-});
+}));
 
 const SectionTitle = styled(Typography)({
     fontSize: "18px",
@@ -31,7 +33,8 @@ const SectionTitle = styled(Typography)({
 
 const UserSettingsPage = () => {
     const [formData, setFormData] = useState({
-        fullName: "",
+        firstName: "",
+        lastName: "",
         email: "",
         phoneNumber: "",
         businessType: "",
@@ -43,31 +46,55 @@ const UserSettingsPage = () => {
         marketingEmails: false,
     });
 
+    const [originalData, setOriginalData] = useState({});
+    const [isChanged, setIsChanged] = useState(false);
+    const [successMessage, setSuccessMessage] = useState(false);
+
     useEffect(() => {
-        fetch("/api/user/settings", { credentials: "include" })
+        fetch("/api/user/settings", {
+            credentials: "include",
+            headers: {
+                Authorization: "Bearer " + localStorage.getItem("token"),
+            },
+        })
             .then((res) => res.json())
-            .then((data) => setFormData(data))
+            .then((data) => {
+                setFormData(data);
+                setOriginalData(data);
+            })
             .catch((err) => console.error("Error fetching user settings:", err));
     }, []);
 
     const handleChange = (e) => {
         const { name, type, checked, value } = e.target;
-        setFormData({
-            ...formData,
+        setFormData((prev) => ({
+            ...prev,
             [name]: type === "checkbox" ? checked : value,
-        });
+        }));
+        setIsChanged(true);
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
+
         fetch("/api/user/settings", {
             method: "PUT",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("token"),
+            },
             credentials: "include",
             body: JSON.stringify(formData),
         })
-            .then((res) => res.json())
-            .then((data) => console.log("Settings updated:", data))
+            .then((res) => {
+                if (!res.ok) throw new Error("Update failed");
+                return res.json();
+            })
+            .then(() => {
+                setSuccessMessage(true);
+                setOriginalData(formData);
+                setIsChanged(false);
+            })
             .catch((err) => console.error("Error updating settings:", err));
     };
 
@@ -84,23 +111,38 @@ const UserSettingsPage = () => {
                 <Divider sx={{ marginBottom: "20px" }} />
 
                 <form onSubmit={handleSubmit}>
-                    {/* Account Settings */}
+                    {/* ACCOUNT SETTINGS */}
                     <SectionTitle>ACCOUNT SETTINGS</SectionTitle>
-                    <TextField
-                        label="Full Name / Company Name"
-                        fullWidth
-                        margin="normal"
-                        name="fullName"
-                        value={formData.fullName}
-                        onChange={handleChange}
-                    />
+                    <Grid2 container spacing={2}>
+                        <Grid2 xs={12} sm={6}>
+                            <TextField
+                                label="First Name"
+                                fullWidth
+                                margin="normal"
+                                name="firstName"
+                                value={formData.firstName}
+                                onChange={handleChange}
+                            />
+                        </Grid2>
+                        <Grid2 xs={12} sm={6}>
+                            <TextField
+                                label="Last Name"
+                                fullWidth
+                                margin="normal"
+                                name="lastName"
+                                value={formData.lastName}
+                                onChange={handleChange}
+                            />
+                        </Grid2>
+                    </Grid2>
+
                     <TextField
                         label="Email Address"
                         fullWidth
                         margin="normal"
                         name="email"
                         value={formData.email}
-                        disabled
+                        onChange={handleChange}
                     />
                     <TextField
                         label="Phone Number"
@@ -113,7 +155,7 @@ const UserSettingsPage = () => {
 
                     <Divider sx={{ margin: "20px 0" }} />
 
-                    {/* Business & Billing */}
+                    {/* BUSINESS & BILLING */}
                     <SectionTitle>BUSINESS & BILLING</SectionTitle>
                     <Select
                         fullWidth
@@ -125,9 +167,10 @@ const UserSettingsPage = () => {
                         <MenuItem value="">Select Business Type</MenuItem>
                         <MenuItem value="Small Business">Small Business</MenuItem>
                         <MenuItem value="Enterprise">Enterprise</MenuItem>
+                        <MenuItem value="Individual">Individual</MenuItem>
                     </Select>
                     <TextField
-                        label="VAT Number (Optional)"
+                        label="VAT Number"
                         fullWidth
                         margin="normal"
                         name="vatNumber"
@@ -145,12 +188,9 @@ const UserSettingsPage = () => {
 
                     <Divider sx={{ margin: "20px 0" }} />
 
-                    {/* Security & Access */}
+                    {/* SECURITY & ACCESS */}
                     <SectionTitle>SECURITY & ACCESS</SectionTitle>
-                    <Button
-                        variant="contained"
-                        sx={{ backgroundColor: "#600d87", color: "white", marginBottom: "10px" }}
-                    >
+                    <Button variant="contained" sx={{ backgroundColor: "#600d87", color: "white", mb: 2 }}>
                         Change Password
                     </Button>
                     <FormControlLabel
@@ -166,7 +206,7 @@ const UserSettingsPage = () => {
 
                     <Divider sx={{ margin: "20px 0" }} />
 
-                    {/* Notification Preferences */}
+                    {/* NOTIFICATIONS */}
                     <SectionTitle>NOTIFICATION PREFERENCES</SectionTitle>
                     <FormControlLabel
                         control={
@@ -199,24 +239,96 @@ const UserSettingsPage = () => {
                         label="Marketing Emails"
                     />
 
-                    <Divider sx={{ margin: "20px 0" }} />
+                    <Divider sx={{ margin: "30px 0 20px" }} />
 
-                    {/* Account Management */}
-                    <SectionTitle>ACCOUNT MANAGEMENT</SectionTitle>
-                    <Grid container spacing={2}>
-                        <Grid item xs={6}>
-                            <Button variant="contained" sx={{ backgroundColor: "red", color: "white" }} fullWidth>
+                    {/* ACTION BUTTONS */}
+                    <Grid2 container spacing={2}>
+                        <Grid2 xs={12} sm={6}>
+                            <Button
+                                variant="contained"
+                                fullWidth
+                                sx={{ backgroundColor: "red", color: "white" }}
+                                onClick={() => {
+                                    fetch("/api/user/settings", {
+                                        method: "DELETE",
+                                        headers: {
+                                            Authorization: "Bearer " + localStorage.getItem("token"),
+                                        },
+                                        credentials: "include",
+                                    })
+                                        .then((res) => {
+                                            if (res.ok) {
+                                                localStorage.removeItem("token");
+                                                window.location.href = "/login";
+                                            } else {
+                                                throw new Error("Failed to delete account.");
+                                            }
+                                        })
+                                        .catch((err) => console.error("Delete error:", err));
+                                }}
+                            >
                                 Delete Account
                             </Button>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Button variant="contained" sx={{ backgroundColor: "#600d87", color: "white" }} fullWidth>
+                        </Grid2>
+
+                        <Grid2 xs={12} sm={6}>
+                            <Button
+                                variant="outlined"
+                                fullWidth
+                                sx={{ color: "#600d87", borderColor: "#600d87" }}
+                                onClick={() => {
+                                    fetch("/api/user/export", {
+                                        method: "GET",
+                                        headers: {
+                                            Authorization: "Bearer " + localStorage.getItem("token"),
+                                        },
+                                        credentials: "include",
+                                    })
+                                        .then((res) => {
+                                            if (!res.ok) throw new Error("Export failed");
+                                            return res.blob();
+                                        })
+                                        .then((blob) => {
+                                            const url = window.URL.createObjectURL(new Blob([blob]));
+                                            const link = document.createElement("a");
+                                            link.href = url;
+                                            link.setAttribute("download", "user_data_export.zip");
+                                            document.body.appendChild(link);
+                                            link.click();
+                                            link.remove();
+                                        })
+                                        .catch((err) => console.error("Export error:", err));
+                                }}
+                            >
                                 Request Data Export
                             </Button>
-                        </Grid>
-                    </Grid>
+                        </Grid2>
+
+                        <Grid2 xs={12} sx={{ mt: 2 }}>
+                            <Button
+                                type="submit"
+                                variant="contained"
+                                fullWidth
+                                sx={{ backgroundColor: "#600d87", color: "white" }}
+                                disabled={!isChanged}
+                            >
+                                Apply Changes
+                            </Button>
+                        </Grid2>
+                    </Grid2>
                 </form>
             </SettingsContainer>
+
+            {/* Snackbar */}
+            <Snackbar
+                open={successMessage}
+                autoHideDuration={3000}
+                onClose={() => setSuccessMessage(false)}
+            >
+                <Alert onClose={() => setSuccessMessage(false)} severity="success" sx={{ width: "100%" }}>
+                    Changes applied successfully!
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };

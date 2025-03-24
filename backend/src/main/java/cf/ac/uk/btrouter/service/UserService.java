@@ -90,4 +90,30 @@ public class UserService {
         user.setResetTokenExpiry(null);
         userRepository.save(user);
     }
+
+    // Update user settings
+    public User updateUserSettings(String email, User updatedUser) {
+        User user = findByEmail(email);
+
+        user.setFirstName(updatedUser.getFirstName());
+        user.setLastName(updatedUser.getLastName());
+        user.setPhoneNumber(updatedUser.getPhoneNumber());
+        user.setBusinessType(updatedUser.getBusinessType());
+        user.setVatNumber(updatedUser.getVatNumber());
+        user.setBillingAddress(updatedUser.getBillingAddress());
+
+        // Enable Two-Factor Authentication and Notification Preferences
+        user.setTwoFactorAuth(updatedUser.isTwoFactorAuth());
+        user.setOrderUpdates(updatedUser.isOrderUpdates());
+        user.setBillingNotifications(updatedUser.isBillingNotifications());
+        user.setMarketingEmails(updatedUser.isMarketingEmails());
+
+        return userRepository.save(user);
+    }
+
+    // Delete user account
+    public void deleteUser(String email) {
+        User user = findByEmail(email);
+        userRepository.delete(user);
+    }
 }
