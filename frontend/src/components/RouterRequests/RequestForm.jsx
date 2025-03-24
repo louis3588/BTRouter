@@ -4,7 +4,7 @@ import {
   FormControl, InputLabel, CircularProgress, Divider, Fade, Stepper, Step,
   StepLabel, Checkbox, FormControlLabel, Grid, Toolbar
 } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router";
 import { styled } from "@mui/system";
 import Sidebar from "../Navigation/Sidebar";
 import useAuth from "../Auth/useAuth";

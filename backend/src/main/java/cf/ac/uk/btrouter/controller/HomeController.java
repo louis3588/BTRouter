@@ -40,12 +40,6 @@ public class HomeController {
         ));
     }
 
-    // Admin-only user management endpoint
-    @GetMapping("/admin/users")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> manageUsers() {
-        return ResponseEntity.ok(Map.of("message", "User Management"));
-    }
 
     // Admin-only router management endpoint
     @GetMapping("/admin/routers")

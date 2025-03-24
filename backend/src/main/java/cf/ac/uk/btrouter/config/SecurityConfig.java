@@ -93,7 +93,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/**").permitAll()
                         .requestMatchers("/api/spreadsheet/download").permitAll()
                         .requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/admin/users").permitAll()
                         .requestMatchers("/api/routers/**").permitAll() // Temporary change.
                         .requestMatchers("/api/customers/**").permitAll() // Temporary change.
                         .requestMatchers("/api/support/**").hasAnyRole("ADMIN", "SUPPORT_AGENT")
