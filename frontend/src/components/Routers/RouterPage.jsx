@@ -24,7 +24,7 @@ import {
 import Sidebar from "../Navigation/Sidebar";
 import useAuth from "../Auth/useAuth";
 
-const RouterForm = () => {
+const RouterPage = () => {
     const { userRole, activeTab, setActiveTab } = useAuth();
     const [routers, setRouters] = useState([]);
     const [isAddingNewRouter, setIsAddingNewRouter] = useState(false);
@@ -174,13 +174,13 @@ const RouterForm = () => {
             <ContentArea>
                 <FormWrapper elevation={3}>
                     <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "center", mb: 2 }}>
-                        Configure Router
+                        Router Configurations
                     </Typography>
 
                     <FormControl fullWidth sx={{ mb: 2 }}>
                         {!isAddingNewRouter && (
                             <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                                Select a Router
+                                Select a router...
                             </InputLabel>
                         )}
                         <RouterNameContainer>
@@ -305,4 +305,4 @@ const RouterForm = () => {
     );
 };
 
-export default RouterForm;
+export default RouterPage;
