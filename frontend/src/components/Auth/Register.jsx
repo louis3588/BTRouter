@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import {
     TextField,
     Button,
@@ -10,7 +10,7 @@ import {
     IconButton
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { AuthContainer, AuthCard, Logo } from '../../styles/authStyles';
+import { AuthContainer, AuthCard, Logo } from '../../styles/AuthStyles';
 import btLogo from '../../assets/BT_logo_purple.png';
 
 const Register = () => {

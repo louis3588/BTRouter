@@ -3,3 +3,20 @@
 // expect(element).toHaveTextContent(/react/i)
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom';
+require('jest-localstorage-mock');
+import fetchMock from "jest-fetch-mock";
+import {TextDecoder, TextEncoder} from "util";
+fetchMock.enableMocks();
+
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+global.TransformStream = class {
+    constructor() {
+    };
+};
+
+global.ResizeObserver = class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+};
