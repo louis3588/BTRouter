@@ -165,3 +165,11 @@ CREATE TABLE order_tracking (
                                 INDEX idx_reference_number (reference_number),
                                 INDEX idx_order_status (status)
 );
+
+CREATE TABLE news (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    description VARCHAR(5000),
+    author VARCHAR(255),
+    created_at DATETIME
+);

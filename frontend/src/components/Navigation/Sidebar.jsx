@@ -11,7 +11,7 @@ import {
     CircularProgress
 } from "@mui/material";
 import { Menu as MenuIcon } from "@mui/icons-material";
-import { StyledDrawer, NavButton } from "../../styles/sidebarStyles"; // Modular styles
+import { StyledDrawer, NavButton } from "../../styles/SidebarStyles"; // Modular styles
 import btLogo from "../../assets/BT_logo_white.png";
 import { navItems, logoutItem } from "./navConfig";
 import useAuth from "../Auth/useAuth";
