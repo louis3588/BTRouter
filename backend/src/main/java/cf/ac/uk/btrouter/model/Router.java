@@ -43,22 +43,11 @@ public class Router {
     @Column(name = "serial_max_ports")
     private Short serialPorts;
 
-    // Will convert the comma-separated values into a list if needed.
-    public List<String> getOutsideConnectionTypesList() {
-        return Arrays.asList(outsideConnectionTypes.split(",\\s*"));
-    }
-    public List<String> getInsideConnectionTypesList() {
-        return Arrays.asList(insideConnectionTypes.split(",\\s*"));
-    }
-
-    // Will convert the list back to comma-separated string if needed.
-    public void setOutsideConnectionTypes(List<String> types) { this.outsideConnectionTypes = String.join(", ", types); }
-    public void setInsideConnectionTypes(List<String> types) { this.insideConnectionTypes = String.join(", ", types); }
-
-    // Logic for port validation.
+    /* Validation Logic. */
     @PrePersist
     @PreUpdate
-    private void validatePortSelection() {
+    private void validateRouter() {
+        // Logic for port validation.
         List<String> insideConnections = Arrays.asList(insideConnectionTypes.split(",\\s*"));
 
         if (!insideConnections.contains("Ethernet")) {
@@ -73,4 +62,14 @@ public class Router {
             throw new IllegalArgumentException("Serial ports must be specified.");
         }
     }
+
+    /* Helper Methods. */
+    // Will convert the comma-separated values into a list if needed.
+    public List<String> getOutsideConnectionTypesList() { return Arrays.asList(outsideConnectionTypes.split(",\\s*")); }
+    public List<String> getInsideConnectionTypesList() { return Arrays.asList(insideConnectionTypes.split(",\\s*")); }
+
+    // Will convert the list back to comma-separated string if needed.
+    public void setOutsideConnectionTypes(List<String> types) { this.outsideConnectionTypes = String.join(", ", types); }
+    public void setInsideConnectionTypes(List<String> types) { this.insideConnectionTypes = String.join(", ", types); }
+
 }

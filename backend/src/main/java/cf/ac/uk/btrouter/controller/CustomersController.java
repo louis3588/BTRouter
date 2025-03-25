@@ -19,6 +19,7 @@ public class CustomersController {
         this.customerService = customerService;
     }
 
+    /* CRUD Operations. */
     // Get all customers.
     @GetMapping
     public ResponseEntity<List<Customer>> getAllCustomers() {

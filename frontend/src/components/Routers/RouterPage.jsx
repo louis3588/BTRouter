@@ -32,8 +32,8 @@ const RouterPage = () => {
     const [selectedRouter, setSelectedRouter] = useState(null);
     const [outsideConnections, setOutsideConnections] = useState([]);
     const [insideConnections, setInsideConnections] = useState([]);
-    const [ethernetPorts, setEthernetPorts] = useState(null);
-    const [serialPorts, setSerialPorts] = useState(null);
+    const [ethernetPorts, setETHERNETPorts] = useState(null);
+    const [serialPorts, setSERIALPorts] = useState(null);
 
     useEffect(() => {
         fetch("http://localhost:8080/api/routers")
@@ -62,13 +62,13 @@ const RouterPage = () => {
         if (router) {
             setOutsideConnections(router.outsideConnectionTypes?.split(", ") || []);
             setInsideConnections(router.insideConnectionTypes?.split(", ") || []);
-            setEthernetPorts(router.ethernetPorts || "");
-            setSerialPorts(router.serialPorts || "");
+            setETHERNETPorts(router.ethernetPorts || "");
+            setSERIALPorts(router.serialPorts || "");
         } else {
             setOutsideConnections([]);
             setInsideConnections([]);
-            setEthernetPorts("");
-            setSerialPorts("");
+            setETHERNETPorts("");
+            setSERIALPorts("");
         }
     };
 
@@ -98,8 +98,8 @@ const RouterPage = () => {
             routerName: routerName,
             outsideConnectionTypes: outsideConnections,
             insideConnectionTypes: insideConnections,
-            ethernetPorts: insideConnections.includes("Ethernet") ? Number(ethernetPorts) : null,
-            serialPorts: insideConnections.includes("Serial") ? Number(serialPorts) : null,
+            ethernetPorts: insideConnections.includes("ETHERNET") ? Number(ethernetPorts) : null,
+            serialPorts: insideConnections.includes("SERIAL") ? Number(serialPorts) : null,
         };
 
         fetch("http://localhost:8080/api/routers", {
@@ -157,8 +157,8 @@ const RouterPage = () => {
                     setSelectedRouter(null);
                     setOutsideConnections([]);
                     setInsideConnections([]);
-                    setEthernetPorts("");
-                    setSerialPorts("");
+                    setETHERNETPorts("");
+                    setSERIALPorts("");
                 })
                 .catch(error => {
                     console.error("Delete error:", error);
@@ -218,8 +218,8 @@ const RouterPage = () => {
                                     setSelectedRouter(null);
                                     setOutsideConnections([]);
                                     setInsideConnections([]);
-                                    setEthernetPorts(null);
-                                    setSerialPorts(null);
+                                    setETHERNETPorts(null);
+                                    setSERIALPorts(null);
                                 }}
                                 className={isAddingNewRouter ? "close-mode" : ""}
                             />
@@ -247,13 +247,13 @@ const RouterPage = () => {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={insideConnections.includes("Ethernet")}
-                                    onChange={(e) => handleCheckboxChange("Ethernet", e.target.checked, false)}
+                                    checked={insideConnections.includes("ETHERNET")}
+                                    onChange={(e) => handleCheckboxChange("ETHERNET", e.target.checked, false)}
                                 />
                             }
                             label="Ethernet"
                         />
-                        {insideConnections.includes("Ethernet") && (
+                        {insideConnections.includes("ETHERNET") && (
                             <TextField
                                 fullWidth
                                 label="Maximum Ethernet Ports"
@@ -262,7 +262,7 @@ const RouterPage = () => {
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     if (value === "" || (Number(value) >= 0 && Number(value) <= 32767)) {
-                                        setEthernetPorts(value === "" ? null : Number(value));
+                                        setETHERNETPorts(value === "" ? null : Number(value));
                                     }
                                 }}
                                 sx={{ mt: 1, mb: 2 }}
@@ -272,13 +272,13 @@ const RouterPage = () => {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={insideConnections.includes("Serial")}
-                                    onChange={(e) => handleCheckboxChange("Serial", e.target.checked, false)}
+                                    checked={insideConnections.includes("SERIAL")}
+                                    onChange={(e) => handleCheckboxChange("SERIAL", e.target.checked, false)}
                                 />
                             }
                             label="Serial"
                         />
-                        {insideConnections.includes("Serial") && (
+                        {insideConnections.includes("SERIAL") && (
                             <TextField
                                 fullWidth
                                 label="Maximum Serial Ports"
@@ -287,7 +287,7 @@ const RouterPage = () => {
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     if (value === "" || (Number(value) >= 0 && Number(value) <= 32767)) {
-                                        setSerialPorts(value === "" ? null : Number(value));
+                                        setSERIALPorts(value === "" ? null : Number(value));
                                     }
                                 }}
                                 sx={{ mt: 1, mb: 2 }}
