@@ -7,14 +7,23 @@ import {
     Button,
     Alert,
     CircularProgress,
+    IconButton,
+    InputAdornment,
 } from "@mui/material";
 import { useState } from "react";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 const ChangePasswordModal = ({ open, onClose }) => {
     const [formData, setFormData] = useState({
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
+    });
+
+    const [showPassword, setShowPassword] = useState({
+        current: false,
+        new: false,
+        confirm: false,
     });
 
     const [error, setError] = useState("");
@@ -26,10 +35,13 @@ const ChangePasswordModal = ({ open, onClose }) => {
         setFormData((prev) => ({ ...prev, [name]: value }));
     };
 
+    const toggleVisibility = (field) => {
+        setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
+    };
+
     const handleSubmit = () => {
         const { currentPassword, newPassword, confirmPassword } = formData;
 
-        // Basic validation
         if (!currentPassword || !newPassword || !confirmPassword) {
             return setError("All fields are required.");
         }
@@ -64,7 +76,7 @@ const ChangePasswordModal = ({ open, onClose }) => {
                 setFormData({ currentPassword: "", newPassword: "", confirmPassword: "" });
                 setTimeout(() => {
                     setSuccess(false);
-                    onClose(); // Close after success
+                    onClose();
                 }, 2000);
             })
             .catch((err) => {
@@ -78,32 +90,65 @@ const ChangePasswordModal = ({ open, onClose }) => {
             <DialogContent>
                 {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
                 {success && <Alert severity="success" sx={{ mb: 2 }}>Password updated successfully!</Alert>}
+
+                {/* Current Password */}
                 <TextField
                     label="Current Password"
-                    type="password"
+                    type={showPassword.current ? "text" : "password"}
                     fullWidth
                     margin="dense"
                     name="currentPassword"
                     value={formData.currentPassword}
                     onChange={handleChange}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={() => toggleVisibility("current")} edge="end">
+                                    {showPassword.current ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
                 />
+
+                {/* New Password */}
                 <TextField
                     label="New Password"
-                    type="password"
+                    type={showPassword.new ? "text" : "password"}
                     fullWidth
                     margin="dense"
                     name="newPassword"
                     value={formData.newPassword}
                     onChange={handleChange}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={() => toggleVisibility("new")} edge="end">
+                                    {showPassword.new ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
                 />
+
+                {/* Confirm New Password */}
                 <TextField
                     label="Confirm New Password"
-                    type="password"
+                    type={showPassword.confirm ? "text" : "password"}
                     fullWidth
                     margin="dense"
                     name="confirmPassword"
                     value={formData.confirmPassword}
                     onChange={handleChange}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <IconButton onClick={() => toggleVisibility("confirm")} edge="end">
+                                    {showPassword.confirm ? <VisibilityOff /> : <Visibility />}
+                                </IconButton>
+                            </InputAdornment>
+                        ),
+                    }}
                 />
             </DialogContent>
             <DialogActions sx={{ px: 3, pb: 2 }}>

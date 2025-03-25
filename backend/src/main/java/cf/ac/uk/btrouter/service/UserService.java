@@ -116,4 +116,27 @@ public class UserService {
         User user = findByEmail(email);
         userRepository.delete(user);
     }
+
+    public void changePassword(String email, String currentPassword, String newPassword, String confirmPassword) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
+            throw new RuntimeException("Current password is incorrect.");
+        }
+
+        if (!newPassword.equals(confirmPassword)) {
+            throw new RuntimeException("New passwords do not match.");
+        }
+
+        if (newPassword.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters.");
+        }
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
+
+
+
 }

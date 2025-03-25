@@ -96,7 +96,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/routers/**").permitAll() // Temporary change.
                         .requestMatchers("/api/support/**").hasAnyRole("ADMIN", "SUPPORT_AGENT")
                         .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
-                        .requestMatchers("api/user/settings").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
+                        .requestMatchers("/api/user/settings").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
+                        .requestMatchers("/api/user/change-password").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -122,28 +123,61 @@ public class SecurityConfig {
 
 
     // JWT authentication filter implementation
+
     public class JwtAuthFilter extends OncePerRequestFilter {
         private final UserDetailsService userDetailsService;
         private final String jwtSecret;
 
-        // Constructor for JWT filter
         public JwtAuthFilter(UserDetailsService userDetailsService, String jwtSecret) {
             this.userDetailsService = userDetailsService;
             this.jwtSecret = jwtSecret;
         }
 
         // Process each request to validate JWT token
+//        @Override
+//        protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+//                throws ServletException, IOException {
+//            final String authHeader = request.getHeader("Authorization");
+//
+//            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+//                chain.doFilter(request, response);
+//                return;
+//            }
+//
+//            String jwt = authHeader.substring(7);
+//            String username = extractUsername(jwt);
+//            String role = extractRole(jwt);
+//
+//            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+//                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+//
+//                if (validateToken(jwt)) {
+//                    List<SimpleGrantedAuthority> authorities =
+//                            Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
+//
+//                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+//                            userDetails, null, authorities);
+//                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+//                    SecurityContextHolder.getContext().setAuthentication(authToken);
+//                }
+//            }
+//            chain.doFilter(request, response);
+//        }
+
         @Override
         protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
                 throws ServletException, IOException {
             final String authHeader = request.getHeader("Authorization");
 
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                System.out.println("❗ No valid Authorization header found.");
                 chain.doFilter(request, response);
                 return;
             }
 
             String jwt = authHeader.substring(7);
+            System.out.println("🔐 JWT received: " + jwt);
+
             String username = extractUsername(jwt);
             String role = extractRole(jwt);
 
@@ -151,6 +185,7 @@ public class SecurityConfig {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
 
                 if (validateToken(jwt)) {
+                    System.out.println("✅ Token is valid for: " + username + " with role: " + role);
                     List<SimpleGrantedAuthority> authorities =
                             Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + role));
 
@@ -158,10 +193,14 @@ public class SecurityConfig {
                             userDetails, null, authorities);
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                } else {
+                    System.out.println("❌ Invalid or expired token for: " + username);
                 }
             }
+
             chain.doFilter(request, response);
         }
+
 
         // Extract username from JWT token
         private String extractUsername(String token) {
