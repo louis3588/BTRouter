@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ChangePasswordModal from "../components/UserSettings/ChangePasswordModal";
 import {
     Container,
     Typography,
@@ -49,6 +50,7 @@ const UserSettingsPage = () => {
     const [originalData, setOriginalData] = useState({});
     const [isChanged, setIsChanged] = useState(false);
     const [successMessage, setSuccessMessage] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
 
     useEffect(() => {
         fetch("/api/user/settings", {
@@ -111,207 +113,100 @@ const UserSettingsPage = () => {
                 <Divider sx={{ marginBottom: "20px" }} />
 
                 <form onSubmit={handleSubmit}>
-                    {/* ACCOUNT SETTINGS */}
                     <SectionTitle>ACCOUNT SETTINGS</SectionTitle>
                     <Grid2 container spacing={2}>
                         <Grid2 xs={12} sm={6}>
-                            <TextField
-                                label="First Name"
-                                fullWidth
-                                margin="normal"
-                                name="firstName"
-                                value={formData.firstName}
-                                onChange={handleChange}
-                            />
+                            <TextField label="First Name" fullWidth margin="normal" name="firstName" value={formData.firstName} onChange={handleChange} />
                         </Grid2>
                         <Grid2 xs={12} sm={6}>
-                            <TextField
-                                label="Last Name"
-                                fullWidth
-                                margin="normal"
-                                name="lastName"
-                                value={formData.lastName}
-                                onChange={handleChange}
-                            />
+                            <TextField label="Last Name" fullWidth margin="normal" name="lastName" value={formData.lastName} onChange={handleChange} />
                         </Grid2>
                     </Grid2>
 
-                    <TextField
-                        label="Email Address"
-                        fullWidth
-                        margin="normal"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                    />
-                    <TextField
-                        label="Phone Number"
-                        fullWidth
-                        margin="normal"
-                        name="phoneNumber"
-                        value={formData.phoneNumber}
-                        onChange={handleChange}
-                    />
+                    <TextField label="Email Address" fullWidth margin="normal" name="email" value={formData.email} disabled />
+                    <TextField label="Phone Number" fullWidth margin="normal" name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} />
 
                     <Divider sx={{ margin: "20px 0" }} />
 
-                    {/* BUSINESS & BILLING */}
                     <SectionTitle>BUSINESS & BILLING</SectionTitle>
-                    <Select
-                        fullWidth
-                        displayEmpty
-                        name="businessType"
-                        value={formData.businessType}
-                        onChange={handleChange}
-                    >
+                    <Select fullWidth displayEmpty name="businessType" value={formData.businessType} onChange={handleChange}>
                         <MenuItem value="">Select Business Type</MenuItem>
                         <MenuItem value="Small Business">Small Business</MenuItem>
                         <MenuItem value="Enterprise">Enterprise</MenuItem>
                         <MenuItem value="Individual">Individual</MenuItem>
                     </Select>
-                    <TextField
-                        label="VAT Number"
-                        fullWidth
-                        margin="normal"
-                        name="vatNumber"
-                        value={formData.vatNumber}
-                        onChange={handleChange}
-                    />
-                    <TextField
-                        label="Billing Address"
-                        fullWidth
-                        margin="normal"
-                        name="billingAddress"
-                        value={formData.billingAddress}
-                        onChange={handleChange}
-                    />
+                    <TextField label="VAT Number" fullWidth margin="normal" name="vatNumber" value={formData.vatNumber} onChange={handleChange} />
+                    <TextField label="Billing Address" fullWidth margin="normal" name="billingAddress" value={formData.billingAddress} onChange={handleChange} />
 
                     <Divider sx={{ margin: "20px 0" }} />
 
-                    {/* SECURITY & ACCESS */}
                     <SectionTitle>SECURITY & ACCESS</SectionTitle>
-                    <Button variant="contained" sx={{ backgroundColor: "#600d87", color: "white", mb: 2 }}>
+                    <Button variant="contained" sx={{ backgroundColor: "#600d87", color: "white", mb: 2 }} onClick={() => setShowPasswordModal(true)}>
                         Change Password
                     </Button>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={formData.twoFactorAuth}
-                                onChange={handleChange}
-                                name="twoFactorAuth"
-                            />
-                        }
-                        label="Enable Two-Factor Authentication"
-                    />
+                    <FormControlLabel control={<Switch checked={formData.twoFactorAuth} onChange={handleChange} name="twoFactorAuth" />} label="Enable Two-Factor Authentication" />
 
                     <Divider sx={{ margin: "20px 0" }} />
 
-                    {/* NOTIFICATIONS */}
                     <SectionTitle>NOTIFICATION PREFERENCES</SectionTitle>
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={formData.orderUpdates}
-                                onChange={handleChange}
-                                name="orderUpdates"
-                            />
-                        }
-                        label="Order Updates"
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={formData.billingNotifications}
-                                onChange={handleChange}
-                                name="billingNotifications"
-                            />
-                        }
-                        label="Billing Notifications"
-                    />
-                    <FormControlLabel
-                        control={
-                            <Checkbox
-                                checked={formData.marketingEmails}
-                                onChange={handleChange}
-                                name="marketingEmails"
-                            />
-                        }
-                        label="Marketing Emails"
-                    />
+                    <FormControlLabel control={<Checkbox checked={formData.orderUpdates} onChange={handleChange} name="orderUpdates" />} label="Order Updates" />
+                    <FormControlLabel control={<Checkbox checked={formData.billingNotifications} onChange={handleChange} name="billingNotifications" />} label="Billing Notifications" />
+                    <FormControlLabel control={<Checkbox checked={formData.marketingEmails} onChange={handleChange} name="marketingEmails" />} label="Marketing Emails" />
 
                     <Divider sx={{ margin: "30px 0 20px" }} />
 
-                    {/* ACTION BUTTONS */}
                     <Grid2 container spacing={2}>
                         <Grid2 xs={12} sm={6}>
-                            <Button
-                                variant="contained"
-                                fullWidth
-                                sx={{ backgroundColor: "red", color: "white" }}
-                                onClick={() => {
-                                    fetch("/api/user/settings", {
-                                        method: "DELETE",
-                                        headers: {
-                                            Authorization: "Bearer " + localStorage.getItem("token"),
-                                        },
-                                        credentials: "include",
+                            <Button variant="contained" fullWidth sx={{ backgroundColor: "red", color: "white" }} onClick={() => {
+                                fetch("/api/user/settings", {
+                                    method: "DELETE",
+                                    headers: {
+                                        Authorization: "Bearer " + localStorage.getItem("token"),
+                                    },
+                                    credentials: "include",
+                                })
+                                    .then((res) => {
+                                        if (res.ok) {
+                                            localStorage.removeItem("token");
+                                            window.location.href = "/login";
+                                        } else {
+                                            throw new Error("Failed to delete account.");
+                                        }
                                     })
-                                        .then((res) => {
-                                            if (res.ok) {
-                                                localStorage.removeItem("token");
-                                                window.location.href = "/login";
-                                            } else {
-                                                throw new Error("Failed to delete account.");
-                                            }
-                                        })
-                                        .catch((err) => console.error("Delete error:", err));
-                                }}
-                            >
+                                    .catch((err) => console.error("Delete error:", err));
+                            }}>
                                 Delete Account
                             </Button>
                         </Grid2>
-
                         <Grid2 xs={12} sm={6}>
-                            <Button
-                                variant="outlined"
-                                fullWidth
-                                sx={{ color: "#600d87", borderColor: "#600d87" }}
-                                onClick={() => {
-                                    fetch("/api/user/export", {
-                                        method: "GET",
-                                        headers: {
-                                            Authorization: "Bearer " + localStorage.getItem("token"),
-                                        },
-                                        credentials: "include",
+                            <Button variant="outlined" fullWidth sx={{ color: "#600d87", borderColor: "#600d87" }} onClick={() => {
+                                fetch("/api/user/export", {
+                                    method: "GET",
+                                    headers: {
+                                        Authorization: "Bearer " + localStorage.getItem("token"),
+                                    },
+                                    credentials: "include",
+                                })
+                                    .then((res) => {
+                                        if (!res.ok) throw new Error("Export failed");
+                                        return res.blob();
                                     })
-                                        .then((res) => {
-                                            if (!res.ok) throw new Error("Export failed");
-                                            return res.blob();
-                                        })
-                                        .then((blob) => {
-                                            const url = window.URL.createObjectURL(new Blob([blob]));
-                                            const link = document.createElement("a");
-                                            link.href = url;
-                                            link.setAttribute("download", "user_data_export.zip");
-                                            document.body.appendChild(link);
-                                            link.click();
-                                            link.remove();
-                                        })
-                                        .catch((err) => console.error("Export error:", err));
-                                }}
-                            >
+                                    .then((blob) => {
+                                        const url = window.URL.createObjectURL(new Blob([blob]));
+                                        const link = document.createElement("a");
+                                        link.href = url;
+                                        link.setAttribute("download", "user_data_export.zip");
+                                        document.body.appendChild(link);
+                                        link.click();
+                                        link.remove();
+                                    })
+                                    .catch((err) => console.error("Export error:", err));
+                            }}>
                                 Request Data Export
                             </Button>
                         </Grid2>
-
                         <Grid2 xs={12} sx={{ mt: 2 }}>
-                            <Button
-                                type="submit"
-                                variant="contained"
-                                fullWidth
-                                sx={{ backgroundColor: "#600d87", color: "white" }}
-                                disabled={!isChanged}
-                            >
+                            <Button type="submit" variant="contained" fullWidth sx={{ backgroundColor: "#600d87", color: "white" }} disabled={!isChanged}>
                                 Apply Changes
                             </Button>
                         </Grid2>
@@ -319,16 +214,14 @@ const UserSettingsPage = () => {
                 </form>
             </SettingsContainer>
 
-            {/* Snackbar */}
-            <Snackbar
-                open={successMessage}
-                autoHideDuration={3000}
-                onClose={() => setSuccessMessage(false)}
-            >
+            <Snackbar open={successMessage} autoHideDuration={3000} onClose={() => setSuccessMessage(false)}>
                 <Alert onClose={() => setSuccessMessage(false)} severity="success" sx={{ width: "100%" }}>
                     Changes applied successfully!
                 </Alert>
             </Snackbar>
+
+            {/* Password Modal */}
+            <ChangePasswordModal open={showPasswordModal} onClose={() => setShowPasswordModal(false)} />
         </Container>
     );
 };
