@@ -1,5 +1,5 @@
 import { styled } from "@mui/system";
-import { Box, Button, Paper, Select, TextField } from "@mui/material";
+import { Box, Button, Paper, Select, FormControl, TextField } from "@mui/material";
 
 // Makes adjustments to existing variations of @mui/material imports.
 const sharedInputStyles = {
@@ -18,6 +18,7 @@ const sharedInputStyles = {
 
 // Exports restyled variations of existing @mui/material imports.
 export const StyledSelect = styled(Select)(sharedInputStyles);
+export const StyledFormControl = styled(FormControl)(sharedInputStyles);
 export const StyledTextField = styled(TextField)(sharedInputStyles);
 
 export const MainContainer = styled(Box)({
@@ -56,7 +57,7 @@ export const LabeledDivider = styled(Box)({
     alignItems: "center",
     textAlign: "center",
     width: "100%",
-    margin: "5px 0",
+    margin: "15px 0",
     color: "#666",
     fontWeight: "bold",
     fontSize: "14px",

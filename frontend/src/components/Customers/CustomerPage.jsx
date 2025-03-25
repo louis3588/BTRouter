@@ -1,29 +1,25 @@
 import React, { useState, useEffect } from "react";
 import {
-    TextField,
-    Typography,
-    FormControl,
     InputLabel,
     MenuItem,
-    Checkbox,
-    FormControlLabel
+    Typography
 } from "@mui/material";
 import {
     StyledSelect,
+    StyledFormControl,
     StyledTextField,
     MainContainer,
     ContentArea,
     FormWrapper,
-    LabeledDivider,
     NameContainer,
     ToggleNameButton,
-    CheckboxColumn,
     ButtonContainer,
     SaveButton,
-    DeleteButton,
+    DeleteButton
 } from "../../styles/PageStyles";
 import Sidebar from "../Navigation/Sidebar";
 import useAuth from "../Auth/useAuth";
+import RouterPresetForm from "../RouterPresets/RouterPresetsForm";
 
 const CustomerPage = () => {
     const {userRole, activeTab, setActiveTab} = useAuth();
@@ -31,7 +27,10 @@ const CustomerPage = () => {
     const [isAddingNewCustomer, setIsAddingNewCustomer] = useState(false);
     const [newCustomerName, setNewCustomerName] = useState("");
     const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [routers, setRouters] = useState([]);
+    const [routerPresets, setRouterPresets] = useState([]);
 
+    /* Lifecycle Effects. */
     useEffect(() => {
         fetch("http://localhost:8080/api/customers")
             .then((response) => response.json())
@@ -39,7 +38,32 @@ const CustomerPage = () => {
             .catch((error) => console.error("Error fetching customers:", error));
     }, []);
 
+    useEffect(() => {
+        fetch("http://localhost:8080/api/routers")
+            .then((res) => res.json())
+            .then((data) => setRouters(data))
+            .catch((err) => console.error("Error fetching routers:", err));
+    }, []);
+
+    useEffect(() => {
+        if (selectedCustomer) {
+            fetch(`http://localhost:8080/api/router-presets/customer/${selectedCustomer.customerID}`)
+                .then((res) => res.json())
+                .then((data) => setRouterPresets(data))
+                .catch((err) => console.error("Error fetching router presets:", err));
+        } else {
+            setRouterPresets([]);
+        }
+    }, [selectedCustomer]);
+
     /* Form Handlers. */
+    // Resets all form fields to their default (empty) values.
+    const clearForm = () => {
+        setNewCustomerName("");
+        setSelectedCustomer(null);
+    };
+
+    // Updates the form fields when a different selection in the drop-down box is made.
     const handleCustomerChange = (event) => {
         const selectedId = parseInt(event.target.value, 10);
         const customer = customers.find((r) => r.customerID === selectedId);
@@ -113,9 +137,7 @@ const CustomerPage = () => {
                     alert("Customer deleted successfully!");
                     // Update the list of customers in the drop-down box.
                     setCustomers(prev => prev.filter(r => r.customerID !== selectedCustomer.customerID));
-
-                    // Clear the form.
-                    setSelectedCustomer(null);
+                    clearForm();
                 })
                 .catch(error => {
                     console.error("Delete error:", error);
@@ -134,7 +156,7 @@ const CustomerPage = () => {
                         Customers
                     </Typography>
 
-                    <FormControl fullWidth sx={{ mb: 2 }}>
+                    <StyledFormControl fullWidth sx={{ mb: 2 }}>
                         {!isAddingNewCustomer && (
                             <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
                                 Select a customer...
@@ -169,22 +191,25 @@ const CustomerPage = () => {
                             <ToggleNameButton
                                 onClick={() => {
                                     setIsAddingNewCustomer(!isAddingNewCustomer);
-
-                                    // Clears all form fields.
-                                    setNewCustomerName("");
-                                    setSelectedCustomer(null);
+                                    clearForm();
                                 }}
                                 className={isAddingNewCustomer ? "close-mode" : ""}
                             />
                         </NameContainer>
-                    </FormControl>
-
-                    <LabeledDivider>Router Presets</LabeledDivider>
+                    </StyledFormControl>
 
                     <ButtonContainer>
-                        <SaveButton onClick={handleSave}>Save</SaveButton>
-                        <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
+                        <SaveButton onClick={handleSave}>Save Customer</SaveButton>
+                        <DeleteButton onClick={handleDelete}>Delete Customer</DeleteButton>
                     </ButtonContainer>
+
+                    <RouterPresetForm
+                        customer={selectedCustomer}
+                        routers={routers}
+                        routerPresets={routerPresets}
+                        setRouterPresets={setRouterPresets}
+                    />
+
                 </FormWrapper>
             </ContentArea>
         </MainContainer>
