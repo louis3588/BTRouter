@@ -14,13 +14,13 @@ import {
     MainContainer,
     ContentArea,
     FormWrapper,
-    RouterNameContainer,
-    ToggleRouterNameButton,
+    NameContainer,
+    ToggleNameButton,
     CheckboxColumn,
     ButtonContainer,
     SaveButton,
     DeleteButton,
-} from "../../styles/RouterFormStyles";
+} from "../../styles/PageStyles";
 import Sidebar from "../Navigation/Sidebar";
 import useAuth from "../Auth/useAuth";
 
@@ -183,7 +183,7 @@ const RouterPage = () => {
                                 Select a router...
                             </InputLabel>
                         )}
-                        <RouterNameContainer>
+                        <NameContainer>
                             {isAddingNewRouter ? (
                                 <StyledTextField
                                     fullWidth
@@ -209,7 +209,7 @@ const RouterPage = () => {
                                     ))}
                                 </StyledSelect>
                             )}
-                            <ToggleRouterNameButton
+                            <ToggleNameButton
                                 onClick={() => {
                                     setIsAddingNewRouter(!isAddingNewRouter);
 
@@ -223,7 +223,7 @@ const RouterPage = () => {
                                 }}
                                 className={isAddingNewRouter ? "close-mode" : ""}
                             />
-                        </RouterNameContainer>
+                        </NameContainer>
                     </FormControl>
 
                     <Typography variant="h6" sx={{ mt: 2 }}>Outside Connection Types</Typography>

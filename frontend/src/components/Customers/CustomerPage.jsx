@@ -14,13 +14,14 @@ import {
     MainContainer,
     ContentArea,
     FormWrapper,
-    RouterNameContainer,
-    ToggleRouterNameButton,
+    LabeledDivider,
+    NameContainer,
+    ToggleNameButton,
     CheckboxColumn,
     ButtonContainer,
     SaveButton,
     DeleteButton,
-} from "../../styles/RouterFormStyles";
+} from "../../styles/PageStyles";
 import Sidebar from "../Navigation/Sidebar";
 import useAuth from "../Auth/useAuth";
 
@@ -46,6 +47,7 @@ const CustomerPage = () => {
     };
 
     /* Button Handlers. */
+    // Saves the customer details to the database if the customer exists; adds the new customer if not.
     const handleSave = () => {
         const customerName = isAddingNewCustomer ? newCustomerName : selectedCustomer?.customerName;
 
@@ -54,6 +56,7 @@ const CustomerPage = () => {
             return;
         }
 
+        // Creates the customerData object with all relevant fields from the customer form.
         const customerData = {
             customerID: isAddingNewCustomer ? null : selectedCustomer?.customerID,
             customerName: customerName,
@@ -90,6 +93,7 @@ const CustomerPage = () => {
             });
     };
 
+    // Deletes a customer from the database.
     const handleDelete = () => {
         if (!selectedCustomer || !selectedCustomer.customerID) {
             alert("Please select a customer to delete.");
@@ -136,7 +140,7 @@ const CustomerPage = () => {
                                 Select a customer...
                             </InputLabel>
                         )}
-                        <RouterNameContainer>
+                        <NameContainer>
                             {isAddingNewCustomer ? (
                                 <StyledTextField
                                     fullWidth
@@ -162,7 +166,7 @@ const CustomerPage = () => {
                                     ))}
                                 </StyledSelect>
                             )}
-                            <ToggleRouterNameButton
+                            <ToggleNameButton
                                 onClick={() => {
                                     setIsAddingNewCustomer(!isAddingNewCustomer);
 
@@ -172,8 +176,10 @@ const CustomerPage = () => {
                                 }}
                                 className={isAddingNewCustomer ? "close-mode" : ""}
                             />
-                        </RouterNameContainer>
+                        </NameContainer>
                     </FormControl>
+
+                    <LabeledDivider>Router Presets</LabeledDivider>
 
                     <ButtonContainer>
                         <SaveButton onClick={handleSave}>Save</SaveButton>

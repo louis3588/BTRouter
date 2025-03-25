@@ -45,15 +45,33 @@ CREATE TABLE routers (
 CREATE TABLE router_presets (
     router_preset_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     router_id BIGINT NOT NULL,
+    customer_id BIGINT,
+    is_global BOOLEAN DEFAULT FALSE,
     router_preset_name VARCHAR(255) NOT NULL,
     primary_outside_connections VARCHAR(255) NOT NULL,
     secondary_outside_connections VARCHAR(255),
-    inside_connections VARCHAR(255) NOT NULL,
+    inside_connections ENUM('Ethernet', 'Serial', 'Ethernet, Serial') NOT NULL,
     number_of_ports SMALLINT CHECK (number_of_ports >= 0),
     vlans ENUM('Unspecified', 'Specified', 'Open Trunk') NOT NULL,
     dhcp BOOLEAN DEFAULT NULL,
 
+    -- Global preset logic. If global, customer ID is not required.
+    CHECK ((is_global = FALSE AND customer_id IS NOT NULL)
+            OR (is_global = TRUE)),
+
+    -- VLAN logic based on inside connections (only if Ethernet is selected).
+    CHECK ((inside_connections IN ('Ethernet', 'Ethernet, Serial') AND vlans IN ('Unspecified', 'Specified', 'Open Trunk'))
+            OR (inside_connections = 'Serial' AND vlans = 'Unspecified')),
+
+    -- DHCP logic based on VLANs (only if VLANs is "Open Trunk").
+    CHECK ((vlans = 'Open Trunk' AND dhcp = TRUE)
+            OR (vlans != 'Open Trunk' AND (dhcp IS NULL OR dhcp = FALSE))),
+
     FOREIGN KEY (router_id) REFERENCES routers(router_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );

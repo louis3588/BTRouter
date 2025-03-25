@@ -43,7 +43,32 @@ export const FormWrapper = styled(Paper)({
     backgroundColor: "#fff",
 });
 
-export const RouterNameContainer = styled(Box)({
+export const SectionDivider = styled(Box)({
+    height: "1px",
+    width: "100%",
+    background: "linear-gradient(to right, #ccc, #aaa, #ccc)",
+    margin: "5px 0",
+    opacity: 0.7,
+});
+
+export const LabeledDivider = styled(Box)({
+    display: "flex",
+    alignItems: "center",
+    textAlign: "center",
+    width: "100%",
+    margin: "5px 0",
+    color: "#666",
+    fontWeight: "bold",
+    fontSize: "14px",
+    '&::before, &::after': {
+        content: '""',
+        flex: 1,
+        borderBottom: "1px solid #ccc",
+        margin: "0 12px",
+    },
+});
+
+export const NameContainer = styled(Box)({
     display: "flex",
     alignItems: "center",
     gap: "8px",
@@ -52,7 +77,7 @@ export const RouterNameContainer = styled(Box)({
     position: "relative"
 });
 
-export const ToggleRouterNameButton = styled(Button)({
+export const ToggleNameButton = styled(Button)({
     color: "#5f00a7",
     minWidth: "0 !important",
     width: "56px",

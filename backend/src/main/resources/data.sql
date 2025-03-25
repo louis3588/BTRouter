@@ -2,9 +2,12 @@ INSERT INTO customers (customer_name) VALUES ('Random Customer');
 
 INSERT INTO routers (router_name, outside_connection_types, inside_connection_types, ethernet_max_ports, serial_max_ports)
 VALUES ('Router A', 'Mobile Radio - Roaming Sim', 'Ethernet', 4, NULL);
+VALUES ('Router B', 'Mobile Radio - Roaming Sim, Mobile Radio - UK SIM, SOGEA - Private Broadband', 'Ethernet, Serial', 6, 2);
 
 INSERT INTO router_presets (
     router_id,
+    customer_id,
+    is_global,
     router_preset_name,
     primary_outside_connections,
     secondary_outside_connections,
@@ -12,16 +15,8 @@ INSERT INTO router_presets (
     number_of_ports,
     vlans,
     dhcp
-) VALUES (
-    1,
-    'Random Preset',
-    'Mobile Radio',
-    NULL,
-    'Ethernet',
-    4,
-    'Unspecified',
-    FALSE
-);
+) VALUES
+(0, 0, FALSE, 'Preset 1 - Router A', 'Mobile Radio - Roaming Sim', NULL, 'Ethernet', 2, 'Specified', FALSE);
 
 INSERT INTO users (email, password, first_name, last_name, role) VALUES
 ('admin@bt.com', '$2a$10$ooitv27eorIEevquWn9SQOz3L/rRPGUjxGUm62QHGwRo/.iNGarta', 'Admin', 'User', 'ADMIN'),
