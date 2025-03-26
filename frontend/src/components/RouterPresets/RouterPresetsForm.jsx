@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useImperativeHandle, forwardRef } from "react";
 import {
     Checkbox,
     FormControlLabel,
@@ -10,7 +10,6 @@ import {
 import {
     StyledSelect,
     StyledFormControl,
-    StyledTextField,
     LabeledDivider,
     ToggleNameButton,
     CheckboxColumn,
@@ -20,7 +19,7 @@ import {
     NameContainer
 } from "../../styles/PageStyles";
 
-const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }) => {
+const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRouterPresets }, ref) => {
     const [isAddingNewPreset, setIsAddingNewPreset] = useState(false);
     const [selectedPreset, setSelectedPreset] = useState(null);
     const [presetName, setPresetName] = useState("");
@@ -41,6 +40,11 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
         }
     }, [customer]);
 
+    // Allows the parent form/page to use the listed functions.
+    useImperativeHandle(ref, () => ({
+        clearForm
+    }));
+
     /* Form Handlers. */
     // Resets all form fields to their default (empty) values.
     const clearForm = () => {
@@ -60,10 +64,11 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
     const handlePresetChange = (e) => {
         const selectedId = parseInt(e.target.value);
         const routerPreset = routerPresets.find(p => p.routerPresetID === selectedId);
+        console.log("Selected preset:", routerPreset); // <- ADD THIS
         if (routerPreset) {
             setSelectedPreset(routerPreset);
             setPresetName(routerPreset.routerPresetName);
-            setSelectedRouterName(routerPreset.routerName);
+            setSelectedRouterName(routerPreset.router.routerName);
             setPrimaryOutside(routerPreset.primaryOutsideConnections || "");
             setSecondaryOutside(routerPreset.secondaryOutsideConnections || "");
             setInsideConnections(routerPreset.insideConnections ? [routerPreset.insideConnections] : []);
@@ -79,6 +84,34 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
         setInsideConnections(prev =>
             checked ? [...prev, type] : prev.filter(item => item !== type)
         );
+    };
+
+    // Handles updates to the Ethernet port field with validation.
+    const handleEthernetPortChange = (e) => {
+        const value = Number(e.target.value);
+        if (!isNaN(value) && value >= 0 && value <= maxEthernet) {
+            setEthernetPorts(value);
+        } else if (e.target.value === "") {
+            setEthernetPorts(null);
+        }
+    };
+
+    // Handles updates to the Serial port field with validation.
+    const handleSerialPortChange = (e) => {
+        const value = Number(e.target.value);
+        if (!isNaN(value) && value >= 0 && value <= maxSerial) {
+            setSerialPorts(value);
+        } else if (e.target.value === "") {
+            setSerialPorts(null);
+        }
+    };
+
+    // Updates router selection and auto-generates a preset name based on selected router.
+    const handleRouterSelect = (e) => {
+        const selectedName = e.target.value;
+        setSelectedRouterName(selectedName);
+        const count = routerPresets.filter(p => p.routerName === selectedName).length + 1;
+        setPresetName(`Preset ${count} - ${selectedName}`);
     };
 
     /* Button Handlers. */
@@ -104,8 +137,8 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
         const presetData = {
             routerPresetID: isAddingNewPreset ? null : selectedPreset?.routerPresetID,
             routerPresetName: presetName,
-            routerName: selectedRouterName,
-            customerName: customer.customerName,
+            customer: { customerID: customer?.customerID },
+            router: { routerID: routers.find(r => r.routerName === selectedRouterName)?.routerID },
             primaryOutsideConnections: primaryOutside,
             secondaryOutsideConnections: secondaryOutside,
             insideConnections: insideConnectionString,
@@ -194,17 +227,32 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
             <StyledFormControl fullWidth sx={{ mb: 2 }}>
                 {!isAddingNewPreset && (
                     <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                        Select a preset...
+                        Router Preset
                     </InputLabel>
                 )}
                 <NameContainer>
                     {isAddingNewPreset ? (
-                        <StyledTextField
-                            label="New Preset Name"
-                            value={presetName}
-                            onChange={(e) => setPresetName(e.target.value)}
-                            disabled={!customer}
-                        />
+                        <>
+                            <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                                Router Name
+                            </InputLabel>
+                            <StyledSelect
+                                fullWidth
+                                value={selectedRouterName}
+                                onChange={handleRouterSelect}
+                                displayEmpty
+                                disabled={!customer}
+                            >
+                                <MenuItem value="" disabled>
+                                    <em>Required</em>
+                                </MenuItem>
+                                {routers.map(r => (
+                                    <MenuItem key={r.routerID} value={r.routerName}>
+                                        {r.routerName}
+                                    </MenuItem>
+                                ))}
+                            </StyledSelect>
+                        </>
                     ) : (
                         <StyledSelect
                             value={selectedPreset?.routerPresetID || ""}
@@ -213,7 +261,9 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
                             fullWidth
                             disabled={!customer}
                         >
-                            <MenuItem value="" disabled>Select a preset...</MenuItem>
+                            <MenuItem value="" disabled>
+                                <em>Required</em>
+                            </MenuItem>
                             {routerPresets.map(p => (
                                 <MenuItem key={p.routerPresetID} value={p.routerPresetID}>
                                     {p.routerPresetName}
@@ -221,6 +271,7 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
                             ))}
                         </StyledSelect>
                     )}
+
                     <ToggleNameButton
                         onClick={() => {
                             setIsAddingNewPreset(prev => !prev);
@@ -232,35 +283,20 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
                 </NameContainer>
             </StyledFormControl>
 
-            <StyledFormControl fullWidth sx={{ mb: 2 }}>
-                <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                        Select a router...
-                </InputLabel>
-                <StyledSelect
-                    fullWidth
-                    value={selectedRouterName}
-                    onChange={(e) => setSelectedRouterName(e.target.value)}
-                    displayEmpty
-                    disabled={!customer}
-                >
-                    <MenuItem value="" disabled>Select a router...</MenuItem>
-                    {routers.map(r => (
-                        <MenuItem key={r.routerID} value={r.routerName}>
-                            {r.routerName}
-                        </MenuItem>
-                    ))}
-                </StyledSelect>
-            </StyledFormControl>
-
             <Typography variant="h6" sx={{ mt: 2 }}>Outside Connection Types</Typography>
             <StyledFormControl fullWidth sx={{ mt: 2 }}>
-                <InputLabel>Primary Outside Connection</InputLabel>
+                <InputLabel id="primary-outside-label">Primary Outside Connection</InputLabel>
+
                 <StyledSelect
+                    labelId="primary-outside-label"
+                    label="Primary Outside Connection"
                     value={primaryOutside}
                     onChange={(e) => setPrimaryOutside(e.target.value)}
-                    label="Primary Outside Connection"
                     disabled={!customer || outsideOptions.length === 0}
                 >
+                    <MenuItem value="" disabled>
+                        <em>Required</em>
+                    </MenuItem>
                     {outsideOptions.map((option) => (
                         <MenuItem key={option} value={option}>
                             {option}
@@ -270,11 +306,13 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
             </StyledFormControl>
 
             <StyledFormControl fullWidth sx={{ mt: 2 }}>
-                <InputLabel>Secondary Outside Connection</InputLabel>
+                <InputLabel id="secondary-outside-label">Secondary Outside Connection</InputLabel>
+
                 <StyledSelect
+                    labelId="secondary-outside-label"
+                    label="Secondary Outside Connection"
                     value={secondaryOutside}
                     onChange={(e) => setSecondaryOutside(e.target.value)}
-                    label="Secondary Outside Connection"
                     disabled={!customer || secondaryOptions.length === 0}
                 >
                     <MenuItem value="">
@@ -306,12 +344,7 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
                         type="number"
                         label="Ethernet Ports"
                         value={ethernetPorts || ""}
-                        onChange={(e) => {
-                            const value = Number(e.target.value);
-                            if (value === null || (value >= 0 && value <= maxEthernet)) {
-                                setEthernetPorts(value === null ? null : value);
-                            }
-                        }}
+                        onChange={handleEthernetPortChange}
                         sx={{ mt: 1 }}
                         disabled={!customer}
                     />
@@ -333,32 +366,32 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
                         type="number"
                         label="Serial Ports"
                         value={serialPorts || ""}
-                        onChange={(e) => {
-                            const value = Number(e.target.value);
-                            if (value === null || (value >= 0 && value <= maxSerial)) {
-                                setSerialPorts(value === null ? null : value);
-                            }
-                        }}
+                        onChange={handleSerialPortChange}
                         sx={{ mt: 1 }}
                         disabled={!customer}
                     />
                 )}
             </CheckboxColumn>
 
-            <StyledSelect
-                fullWidth
-                label="VLANs"
-                value={vlans}
-                onChange={(e) => setVlans(e.target.value)}
-                sx={{ mt: 2 }}
-                disabled={!customer}
-            >
-                {vlanOptions.map(vlan => (
-                    <MenuItem key={vlan} value={vlan}>
-                        {vlan.replace("_", " ")}
+            <StyledFormControl fullWidth sx={{ mt: 2 }}>
+                <InputLabel id="vlans-label">VLANs</InputLabel>
+                <StyledSelect
+                    labelId="vlans-label"
+                    label="VLANs"
+                    value={vlans}
+                    onChange={(e) => setVlans(e.target.value)}
+                    disabled={!customer}
+                >
+                    <MenuItem value="">
+                        <em>Select a VLAN type...</em>
                     </MenuItem>
-                ))}
-            </StyledSelect>
+                    {vlanOptions.map(vlan => (
+                        <MenuItem key={vlan} value={vlan}>
+                            {vlan.replace("_", " ")}
+                        </MenuItem>
+                    ))}
+                </StyledSelect>
+            </StyledFormControl>
 
             {vlanWarning && (
                 <Typography color="error" variant="body2" sx={{ mt: 1 }}>
@@ -390,6 +423,6 @@ const RouterPresetForm = ({ customer, routers, routerPresets, setRouterPresets }
             </ButtonContainer>
         </>
     );
-};
+});
 
 export default RouterPresetForm;

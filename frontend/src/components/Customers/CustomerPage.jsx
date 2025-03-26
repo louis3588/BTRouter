@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
     InputLabel,
     MenuItem,
@@ -56,11 +56,17 @@ const CustomerPage = () => {
         }
     }, [selectedCustomer]);
 
+    // CustomerPage is parent of RouterPresetsForm, declaring the reference.
+    const routerPresetFormRef = useRef();
+
     /* Form Handlers. */
     // Resets all form fields to their default (empty) values.
     const clearForm = () => {
         setNewCustomerName("");
         setSelectedCustomer(null);
+
+        // Clears the child forms.
+        routerPresetFormRef.current?.clearForm();
     };
 
     // Updates the form fields when a different selection in the drop-down box is made.
@@ -159,7 +165,7 @@ const CustomerPage = () => {
                     <StyledFormControl fullWidth sx={{ mb: 2 }}>
                         {!isAddingNewCustomer && (
                             <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                                Select a customer...
+                                Customer
                             </InputLabel>
                         )}
                         <NameContainer>
@@ -179,7 +185,7 @@ const CustomerPage = () => {
                                     displayEmpty
                                 >
                                     <MenuItem value="" disabled>
-                                        Select a customer...
+                                        <em>Required</em>
                                     </MenuItem>
                                     {customers.map((customer) => (
                                         <MenuItem key={customer.customerID} value={customer.customerID}>
@@ -204,6 +210,7 @@ const CustomerPage = () => {
                     </ButtonContainer>
 
                     <RouterPresetForm
+                        ref={routerPresetFormRef}
                         customer={selectedCustomer}
                         routers={routers}
                         routerPresets={routerPresets}

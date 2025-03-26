@@ -65,8 +65,8 @@ public class Router {
 
     /* Helper Methods. */
     // Will convert the comma-separated values into a list if needed.
-    public List<String> getOutsideConnectionTypesList() { return Arrays.asList(outsideConnectionTypes.split(",\\s*")); }
-    public List<String> getInsideConnectionTypesList() { return Arrays.asList(insideConnectionTypes.split(",\\s*")); }
+    public List<String> getOutsideConnectionTypesList() { return outsideConnectionTypes != null ? Arrays.asList(outsideConnectionTypes.split(",\\s*")) : List.of(); }
+    public List<String> getInsideConnectionTypesList() { return insideConnectionTypes != null ? Arrays.asList(insideConnectionTypes.split(",\\s*")) : List.of(); }
 
     // Will convert the list back to comma-separated string if needed.
     public void setOutsideConnectionTypes(List<String> types) { this.outsideConnectionTypes = String.join(", ", types); }

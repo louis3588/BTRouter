@@ -1,6 +1,5 @@
 package cf.ac.uk.btrouter.controller;
 
-import cf.ac.uk.btrouter.dto.RouterPresetDTO;
 import cf.ac.uk.btrouter.model.RouterPreset;
 import cf.ac.uk.btrouter.service.RouterPresetService;
 import org.springframework.http.ResponseEntity;
@@ -53,9 +52,9 @@ public class RouterPresetsController {
     /* Custom Operations. */
     // Get all router presets by customer ID.
     @GetMapping("/customer/{customerId}")
-    public ResponseEntity<List<RouterPresetDTO>> getPresetsForCustomer(@PathVariable Long customerId) {
-        List<RouterPresetDTO> routerPresetsDTO = routerPresetService.getRouterPresetsByCustomerId(customerId);
-        return ResponseEntity.ok(routerPresetsDTO);
+    public ResponseEntity<List<RouterPreset>> getPresetsForCustomer(@PathVariable Long customerId) {
+        List<RouterPreset> routerPresets = routerPresetService.getRouterPresetsByCustomerId(customerId);
+        return ResponseEntity.ok(routerPresets);
     }
 
 }
