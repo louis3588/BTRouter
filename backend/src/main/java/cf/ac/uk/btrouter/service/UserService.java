@@ -5,6 +5,8 @@ import cf.ac.uk.btrouter.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PutMapping;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -92,6 +94,7 @@ public class UserService {
     }
 
     // Update user settings
+    @PutMapping("/settings")
     public User updateUserSettings(String email, User updatedUser) {
         User user = findByEmail(email);
 

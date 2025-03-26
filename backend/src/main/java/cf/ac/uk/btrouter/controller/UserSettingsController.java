@@ -30,6 +30,34 @@ public class UserSettingsController {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
+    @GetMapping("/settings")
+    public ResponseEntity<?> getUserSettings() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        User user = userService.findByEmail(email);
+
+        // Optionally, hide sensitive fields
+        user.setPassword(null);
+        user.setResetToken(null);
+        user.setResetTokenExpiry(null);
+
+        return ResponseEntity.ok(user);
+    }
+
+    @PutMapping("/settings")
+    public ResponseEntity<?> updateUserSettings(@RequestBody User updatedUser) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+
+        User savedUser = userService.updateUserSettings(email, updatedUser);
+
+        // Optionally hide sensitive info
+        savedUser.setPassword(null);
+        savedUser.setResetToken(null);
+        savedUser.setResetTokenExpiry(null);
+
+        return ResponseEntity.ok(savedUser);
+    }
 
     @PostMapping("/change-password")
     public ResponseEntity<?> changePassword(@Valid @RequestBody ChangePasswordRequestDTO request) {
