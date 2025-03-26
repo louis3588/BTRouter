@@ -4,8 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b792223c-755b-4464-8706-c7303f2921b4" name="Changes" comment="added user tests config">
+    <list default="true" id="b792223c-755b-4464-8706-c7303f2921b4" name="Changes" comment="controller param converts to bool">
+      <change afterPath="$PROJECT_DIR$/backend/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backend/wait-for-it.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/Dockerfile" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontend/nginx.conf" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -17,6 +22,7 @@
       <list>
         <option value="JavaScript File" />
         <option value="Class" />
+        <option value="Dockerfile" />
       </list>
     </option>
   </component>
@@ -28,6 +34,22 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitLabMergeRequestFiltersHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPENED&quot;,
+    &quot;assignee&quot;: {
+      &quot;type&quot;: &quot;org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue&quot;,
+      &quot;username&quot;: &quot;c21079342&quot;,
+      &quot;fullname&quot;: &quot;Louis Polly&quot;
+    }
+  }
+}</component>
+  <component name="GitLabMergeRequestsSettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;first&quot;: &quot;https://git.cardiff.ac.uk/c21079342/bt-47b.git&quot;,
+    &quot;second&quot;: &quot;ab66b15c-b00d-4c2d-abdb-3355d30debcd&quot;
+  }
+}</component>
   <component name="MavenImportPreferences">
     <option name="generalSettings">
       <MavenGeneralSettings>
@@ -44,51 +66,51 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Database Script.data.sql.executor": "Run",
-    "Database Script.schema.sql.executor": "Run",
-    "JUnit.BtRouterApplicationTests.contextLoads.executor": "Run",
-    "JUnit.BtRouterApplicationTests.executor": "Run",
-    "JUnit.UserWebTest.executor": "Run",
-    "Maven.BTRouter [clean].executor": "Run",
-    "Maven.BTRouter [compile].executor": "Run",
-    "Maven.BTRouter [install].executor": "Run",
-    "Maven.BTRouter [package].executor": "Run",
-    "Maven.BTRouter [test].executor": "Run",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "Spring Boot.BtRouterApplication (1).executor": "Run",
-    "Spring Boot.BtRouterApplication.executor": "Run",
-    "git-widget-placeholder": "testExtras",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "D:/Code/Java/BTRouter/backend",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "npm.build.executor": "Run",
-    "npm.start.executor": "Run",
-    "npm.start:backend.executor": "Run",
-    "project.structure.last.edited": "Problems",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "reference.settings.project.maven.runner",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Database Script.data.sql.executor&quot;: &quot;Run&quot;,
+    &quot;Database Script.schema.sql.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BtRouterApplicationTests.contextLoads.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BtRouterApplicationTests.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.UserWebTest.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.BTRouter [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.BTRouter [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.BTRouter [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.BTRouter [package].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.BTRouter [test].executor&quot;: &quot;Run&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;Spring Boot.BtRouterApplication (1).executor&quot;: &quot;Run&quot;,
+    &quot;Spring Boot.BtRouterApplication.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;devExtras&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/Code/Java/BTRouter/backend&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.build.executor&quot;: &quot;Run&quot;,
+    &quot;npm.start.executor&quot;: &quot;Run&quot;,
+    &quot;npm.start:backend.executor&quot;: &quot;Run&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Problems&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.project.maven.runner&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mariadb"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mariadb&quot;
     ],
-    "RunConfigurationTargetLRU": [
-      "735a5a39-fd40-4ae1-a17d-aece371f95b2"
+    &quot;RunConfigurationTargetLRU&quot;: [
+      &quot;735a5a39-fd40-4ae1-a17d-aece371f95b2&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="D:\Code\Java\BTRouter\src\main\resources" />
@@ -227,6 +249,11 @@
       <workItem from="1741696588420" duration="4037000" />
       <workItem from="1741775371805" duration="452000" />
       <workItem from="1742312989049" duration="6170000" />
+      <workItem from="1742850533539" duration="869000" />
+      <workItem from="1742851771598" duration="1111000" />
+      <workItem from="1742901982765" duration="673000" />
+      <workItem from="1742903356078" duration="1130000" />
+      <workItem from="1742906246409" duration="2909000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
