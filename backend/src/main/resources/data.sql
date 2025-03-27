@@ -33,7 +33,7 @@ INSERT INTO router_presets (
 ) VALUES
 (1, 1, 'Preset 1 - Virtual Access - GW1042M', 'Mobile Radio - Roaming Sim', 'Mobile Radio - UK SIM', 'ETHERNET', 2, NULL, 'OPEN_TRUNK', TRUE, NULL),
 (1, 2, 'Preset 1 - Virtual Access - GW1042M', 'Mobile Radio - Roaming Sim', 'Mobile Radio - UK SIM', 'ETHERNET', 1, NULL, 'UNSPECIFIED', FALSE, NULL),
-(3, 2, 'Preset 2 - Virtual Access - GW6650V', 'Mobile Radio - Roaming Sim', NULL, 'ETHERNET', 1, NULL, 'UNSPECIFIED', FALSE),
+(3, 2, 'Preset 2 - Virtual Access - GW6650V', 'Mobile Radio - Roaming Sim', NULL, 'ETHERNET', 1, NULL, 'UNSPECIFIED', FALSE, NULL),
 (1, 3, 'Preset 1 - Virtual Access - GW1042M', 'Mobile Radio - Roaming Sim', 'Mobile Radio - UK SIM', 'ETHERNET', 2, NULL, 'UNSPECIFIED', FALSE, NULL),
 (4, 3, 'Preset 2 - Westermo - Merlin-4708', 'SOGEA - Private Broadband', 'Mobile Radio - Roaming Sim', 'ETHERNET, SERIAL', 4, 1, 'UNSPECIFIED', FALSE, NULL),
 (4, 4, 'Preset 1 - Westermo - Merlin-4708', 'SOGEA - Private Broadband', 'VSAT Satellite - Internet', 'ETHERNET', 4, NULL, 'SPECIFIED', FALSE, NULL),
