@@ -195,7 +195,7 @@ const UserSettingsPage = () => {
                                         const url = window.URL.createObjectURL(new Blob([blob]));
                                         const link = document.createElement("a");
                                         link.href = url;
-                                        link.setAttribute("download", "user_data_export.zip");
+                                        link.setAttribute("download", "bt_data_export.csv");
                                         document.body.appendChild(link);
                                         link.click();
                                         link.remove();
