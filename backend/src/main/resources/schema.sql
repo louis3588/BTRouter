@@ -54,6 +54,7 @@ CREATE TABLE router_presets (
     number_of_serial_ports SMALLINT CHECK (number_of_serial_ports >= 0),
     vlans ENUM('UNSPECIFIED', 'SPECIFIED', 'OPEN_TRUNK') NOT NULL,
     dhcp BOOLEAN DEFAULT NULL,
+    additional_information VARCHAR(500),
 
     -- Only accept these inside connection types.
     CHECK (inside_connections IN ('ETHERNET', 'SERIAL', 'ETHERNET, SERIAL')),

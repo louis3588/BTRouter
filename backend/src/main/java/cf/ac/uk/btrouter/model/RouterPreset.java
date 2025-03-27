@@ -58,6 +58,9 @@ public class RouterPreset {
     @Column(name = "dhcp")
     private Boolean dhcp;
 
+    @Column(name = "additional_information", length = 500)
+    private String additionalInformation;
+
     /* Validation Logic. */
     @PrePersist
     @PreUpdate

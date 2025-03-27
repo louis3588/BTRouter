@@ -34,6 +34,7 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
     const [serialPorts, setSerialPorts] = useState(null);
     const [vlans, setVlans] = useState("");
     const [dhcp, setDhcp] = useState(false);
+    const [additionalInformation, setAdditionalInformation] = useState("");
     const [validationErrors, setValidationErrors] = useState([]);
 
     /* Lifecycle Effects. */
@@ -62,6 +63,7 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
         setSerialPorts(null);
         setVlans("");
         setDhcp(false);
+        setAdditionalInformation("");
     };
 
     // Updates the form fields when a different selection in the drop-down box is made.
@@ -80,6 +82,7 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
             setSerialPorts(routerPreset.numberOfSerialPorts || null);
             setVlans(routerPreset.vlans || "");
             setDhcp(routerPreset.dhcp || false);
+            setAdditionalInformation(routerPreset.additionalInformation || "");
         }
     };
 
@@ -147,7 +150,8 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
             numberOfEthernetPorts: insideConnections.includes("ETHERNET") ? ethernetPorts : null,
             numberOfSerialPorts: insideConnections.includes("SERIAL") ? serialPorts : null,
             vlans: insideConnections.includes("ETHERNET") ? vlans : "UNSPECIFIED",
-            dhcp
+            dhcp,
+            additionalInformation: additionalInformation.trim() || null,
         };
 
         fetch("http://localhost:8080/api/router-presets", {
@@ -230,6 +234,7 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
         if (vlans !== "OPEN_TRUNK" && dhcp) { errors.push("DHCP can only be enabled when VLANs is set to 'OPEN_TRUNK'."); }
         if (insideConnections.includes('SERIAL') && serialPorts < 1) { errors.push("At least 1 serial port required when using SERIAL connections"); }
         if (insideConnections.includes('ETHERNET') && ethernetPorts < 1) { errors.push("At least 1 ethernet port required when using ETHERNET connections"); }
+        if (additionalInformation.length > 500) { errors.push("Additional information must be less than 500 characters"); }
 
         return errors;
     };
@@ -460,6 +465,31 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
                     }
                     label="DHCP"
                     sx={{ mt: 1, mb: -1 }}
+                />
+            </Tooltip>
+
+            <Tooltip title="Any extra notes or special configuration details." arrow enterDelay={250} leaveDelay={100}>
+                <TextField
+                    fullWidth
+                    label="Additional Information"
+                    value={additionalInformation}
+                    onChange={(e) => setAdditionalInformation(e.target.value)}
+                    multiline
+                    rows={4}
+                    margin="normal"
+                    inputProps={{
+                        maxLength: 500,
+                    }}
+                    InputProps={{
+                        endAdornment: (
+                            <InputAdornment position="end">
+                                <span style={{ position: 'absolute', bottom: 8, right: 12, fontSize: '0.85em', color: '#888' }}>
+                                    {`${additionalInformation.length}/500`}
+                                </span>
+                            </InputAdornment>
+                        )
+                    }}
+                    disabled={!customer}
                 />
             </Tooltip>
 
