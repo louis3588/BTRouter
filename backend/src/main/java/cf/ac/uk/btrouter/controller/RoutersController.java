@@ -19,6 +19,7 @@ public class RoutersController {
         this.routerService = routerService;
     }
 
+    /* CRUD Operations. */
     // Get all routers.
     @GetMapping
     public ResponseEntity<List<Router>> getAllRouters() {

@@ -1,30 +1,31 @@
 import React, { useState, useEffect } from "react";
 import {
-    TextField,
-    Typography,
-    FormControl,
+    Checkbox,
+    FormControlLabel,
     InputLabel,
     MenuItem,
-    Checkbox,
-    FormControlLabel
+    TextField,
+    Tooltip,
+    Typography
 } from "@mui/material";
 import {
     StyledSelect,
+    StyledFormControl,
     StyledTextField,
     MainContainer,
     ContentArea,
     FormWrapper,
-    RouterNameContainer,
-    ToggleRouterNameButton,
+    NameContainer,
+    ToggleNameButton,
     CheckboxColumn,
     ButtonContainer,
     SaveButton,
-    DeleteButton,
-} from "../../styles/RouterFormStyles";
+    DeleteButton
+} from "../../styles/PageStyles";
 import Sidebar from "../Navigation/Sidebar";
 import useAuth from "../Auth/useAuth";
 
-const RouterForm = () => {
+const RouterPage = () => {
     const { userRole, activeTab, setActiveTab } = useAuth();
     const [routers, setRouters] = useState([]);
     const [isAddingNewRouter, setIsAddingNewRouter] = useState(false);
@@ -35,6 +36,7 @@ const RouterForm = () => {
     const [ethernetPorts, setEthernetPorts] = useState(null);
     const [serialPorts, setSerialPorts] = useState(null);
 
+    /* Lifecycle Effects. */
     useEffect(() => {
         fetch("http://localhost:8080/api/routers")
             .then((response) => response.json())
@@ -42,18 +44,17 @@ const RouterForm = () => {
             .catch((error) => console.error("Error fetching routers:", error));
     }, []);
 
-    const outsideOptions = [
-        "Mobile Radio - Roaming Sim",
-        "Mobile Radio - UK SIM",
-        "SOGEA - Private Broadband",
-        "FTTP - Private Broadband",
-        "FTTP - Internet",
-        "VSAT Satellite - Internet",
-        "ADSL - Private Broadband",
-        "ADSL - Internet",
-    ];
-
     /* Form Handlers. */
+    // Resets all form fields to their default (empty) values.
+    const clearForm = () => {
+        setSelectedRouter(null);
+        setOutsideConnections([]);
+        setInsideConnections([]);
+        setEthernetPorts("");
+        setSerialPorts("");
+    }
+
+    // Updates the form fields when a different selection in the drop-down box is made.
     const handleRouterChange = (event) => {
         const selectedId = parseInt(event.target.value, 10);
         const router = routers.find((r) => r.routerID === selectedId);
@@ -72,6 +73,7 @@ const RouterForm = () => {
         }
     };
 
+    // Toggles connection types based on checkbox state. Triggers display of relevant fields.
     const handleCheckboxChange = (type, checked, isOutside) => {
         if (isOutside) {
             setOutsideConnections((prev) =>
@@ -85,6 +87,7 @@ const RouterForm = () => {
     };
 
     /* Button Handlers. */
+    // Saves the router details to the database if the router exists; adds the new router if not.
     const handleSave = () => {
         const routerName = isAddingNewRouter ? newRouterName : selectedRouter?.routerName;
 
@@ -93,13 +96,14 @@ const RouterForm = () => {
             return;
         }
 
+        // Creates the routerData object with all relevant fields from the router form.
         const routerData = {
             routerID: isAddingNewRouter ? null : selectedRouter?.routerID,
-            routerName: routerName,
+            routerName: routerName.trim(),
             outsideConnectionTypes: outsideConnections,
             insideConnectionTypes: insideConnections,
-            ethernetPorts: insideConnections.includes("Ethernet") ? Number(ethernetPorts) : null,
-            serialPorts: insideConnections.includes("Serial") ? Number(serialPorts) : null,
+            ethernetPorts: insideConnections.includes("ETHERNET") ? Number(ethernetPorts) : null,
+            serialPorts: insideConnections.includes("SERIAL") ? Number(serialPorts) : null,
         };
 
         fetch("http://localhost:8080/api/routers", {
@@ -133,6 +137,7 @@ const RouterForm = () => {
             });
     };
 
+    // Deletes a router from the database.
     const handleDelete = () => {
         if (!selectedRouter || !selectedRouter.routerID) {
             alert("Please select a router to delete.");
@@ -152,13 +157,7 @@ const RouterForm = () => {
                     alert("Router deleted successfully!");
                     // Update the list of routers in the drop-down box.
                     setRouters(prev => prev.filter(r => r.routerID !== selectedRouter.routerID));
-
-                    // Clear the form.
-                    setSelectedRouter(null);
-                    setOutsideConnections([]);
-                    setInsideConnections([]);
-                    setEthernetPorts("");
-                    setSerialPorts("");
+                    clearForm();
                 })
                 .catch(error => {
                     console.error("Delete error:", error);
@@ -167,6 +166,19 @@ const RouterForm = () => {
         }
     };
 
+    /* Form State Helpers. */
+    // Options for the Outside Connection Types checkbox column.
+    const outsideOptions = [
+        "Mobile Radio - Roaming Sim",
+        "Mobile Radio - UK SIM",
+        "FTTP - Private Broadband",
+        "FTTP - Internet",
+        "ADSL - Private Broadband",
+        "ADSL - Internet",
+        "SOGEA - Private Broadband",
+        "VSAT Satellite - Internet",
+    ];
+
     return (
         <MainContainer>
             <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} userRole={userRole} />
@@ -174,16 +186,16 @@ const RouterForm = () => {
             <ContentArea>
                 <FormWrapper elevation={3}>
                     <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "center", mb: 2 }}>
-                        Configure Router
+                        Router Configurations
                     </Typography>
 
-                    <FormControl fullWidth sx={{ mb: 2 }}>
+                    <StyledFormControl fullWidth sx={{ mb: 2 }}>
                         {!isAddingNewRouter && (
                             <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                                Select a Router
+                                Select a router...
                             </InputLabel>
                         )}
-                        <RouterNameContainer>
+                        <NameContainer>
                             {isAddingNewRouter ? (
                                 <StyledTextField
                                     fullWidth
@@ -209,22 +221,18 @@ const RouterForm = () => {
                                     ))}
                                 </StyledSelect>
                             )}
-                            <ToggleRouterNameButton
-                                onClick={() => {
-                                    setIsAddingNewRouter(!isAddingNewRouter);
 
-                                    // Clears all form fields.
-                                    setNewRouterName("");
-                                    setSelectedRouter(null);
-                                    setOutsideConnections([]);
-                                    setInsideConnections([]);
-                                    setEthernetPorts(null);
-                                    setSerialPorts(null);
-                                }}
-                                className={isAddingNewRouter ? "close-mode" : ""}
-                            />
-                        </RouterNameContainer>
-                    </FormControl>
+                            <Tooltip title={isAddingNewRouter ? "Switch to find an existing router." : "Switch to add a new router."} arrow enterDelay={250} leaveDelay={100}>
+                                <ToggleNameButton
+                                    onClick={() => {
+                                        setIsAddingNewRouter(!isAddingNewRouter);
+                                        clearForm();
+                                    }}
+                                    className={isAddingNewRouter ? "close-mode" : ""}
+                                />
+                            </Tooltip>
+                        </NameContainer>
+                    </StyledFormControl>
 
                     <Typography variant="h6" sx={{ mt: 2 }}>Outside Connection Types</Typography>
                     <CheckboxColumn>
@@ -247,13 +255,13 @@ const RouterForm = () => {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={insideConnections.includes("Ethernet")}
-                                    onChange={(e) => handleCheckboxChange("Ethernet", e.target.checked, false)}
+                                    checked={insideConnections.includes("ETHERNET")}
+                                    onChange={(e) => handleCheckboxChange("ETHERNET", e.target.checked, false)}
                                 />
                             }
                             label="Ethernet"
                         />
-                        {insideConnections.includes("Ethernet") && (
+                        {insideConnections.includes("ETHERNET") && (
                             <TextField
                                 fullWidth
                                 label="Maximum Ethernet Ports"
@@ -272,13 +280,13 @@ const RouterForm = () => {
                         <FormControlLabel
                             control={
                                 <Checkbox
-                                    checked={insideConnections.includes("Serial")}
-                                    onChange={(e) => handleCheckboxChange("Serial", e.target.checked, false)}
+                                    checked={insideConnections.includes("SERIAL")}
+                                    onChange={(e) => handleCheckboxChange("SERIAL", e.target.checked, false)}
                                 />
                             }
                             label="Serial"
                         />
-                        {insideConnections.includes("Serial") && (
+                        {insideConnections.includes("SERIAL") && (
                             <TextField
                                 fullWidth
                                 label="Maximum Serial Ports"
@@ -296,8 +304,8 @@ const RouterForm = () => {
                     </CheckboxColumn>
 
                     <ButtonContainer>
-                        <SaveButton onClick={handleSave}>Save</SaveButton>
-                        <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
+                        <SaveButton onClick={handleSave} disabled={isAddingNewRouter ? !newRouterName.trim() : !selectedRouter}>Save</SaveButton>
+                        <DeleteButton onClick={handleDelete} disabled={!selectedRouter}>Delete</DeleteButton>
                     </ButtonContainer>
                 </FormWrapper>
             </ContentArea>
@@ -305,4 +313,4 @@ const RouterForm = () => {
     );
 };
 
-export default RouterForm;
+export default RouterPage;
