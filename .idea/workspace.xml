@@ -4,12 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b792223c-755b-4464-8706-c7303f2921b4" name="Changes" comment="used params for seperate sheets">
-      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
+    <list default="true" id="b792223c-755b-4464-8706-c7303f2921b4" name="Changes" comment="individual sheets generate successfully">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backend/src/main/java/cf/ac/uk/btrouter/service/SpreadsheetGenerationService.java" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/java/cf/ac/uk/btrouter/service/SpreadsheetGenerationService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backend/src/main/resources/data.sql" beforeDir="false" afterPath="$PROJECT_DIR$/backend/src/main/resources/data.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontend/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/OrderHistory/OrderExport.js" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/OrderHistory/OrderExport.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -200,7 +201,7 @@
       <workItem from="1741696588420" duration="4037000" />
       <workItem from="1741775371805" duration="452000" />
       <workItem from="1742837088419" duration="1745000" />
-      <workItem from="1743086395174" duration="3526000" />
+      <workItem from="1743086395174" duration="4721000" />
     </task>
     <task id="LOCAL-00001" summary="initial commit">
       <option name="closed" value="true" />
@@ -330,7 +331,15 @@
       <option name="project" value="LOCAL" />
       <updated>1743086781811</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="individual sheets generate successfully">
+      <option name="closed" value="true" />
+      <created>1743090309669</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1743090309669</updated>
+    </task>
+    <option name="localTasksCounter" value="18" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -353,7 +362,8 @@
     <MESSAGE value="input stream download spreadsheet" />
     <MESSAGE value="updated spreadsheet writer with new order headers" />
     <MESSAGE value="used params for seperate sheets" />
-    <option name="LAST_COMMIT_MESSAGE" value="used params for seperate sheets" />
+    <MESSAGE value="individual sheets generate successfully" />
+    <option name="LAST_COMMIT_MESSAGE" value="individual sheets generate successfully" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

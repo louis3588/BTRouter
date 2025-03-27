@@ -90,10 +90,6 @@ public class SpreadsheetGenerationService {
 
     }
 
-    private Object valueSanitise(Objects o){
-        return Objects.requireNonNullElse(o, " ");
-    }
-
     private void populateRows(Row row, Order order) {
 
         BiConsumer<Cell, Integer> setNumericCell = (cell, value) -> {
