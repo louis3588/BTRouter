@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.sql.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,18 +35,15 @@ public class SpreadsheetGenerationService {
         this.orderRepository = orderRepository;
     }
 
-    private List<Order> getAllOrders() {
-        return orderRepository.findAll();
-    }
 
-    private List<String> getDistinctCustomers(){
+    public List<String> getDistinctCustomers(){
         return orderRepository.findDistinctBySitePrimaryEmail();
 
     }
 
     public void write(File file, boolean separateSheets){
         try(Workbook wb = new XSSFWorkbook()){
-            writeOrders(getAllOrders(), wb);
+            writeOrders(orderRepository.findAll(), wb);
             if(separateSheets){
                 writeOrdersByCustomer(getDistinctCustomers(), wb);
             }
@@ -91,16 +90,25 @@ public class SpreadsheetGenerationService {
 
     }
 
+    private Object valueSanitise(Objects o){
+        return Objects.requireNonNullElse(o, " ");
+    }
+
     private void populateRows(Row row, Order order) {
+
+        BiConsumer<Cell, Integer> setNumericCell = (cell, value) -> {
+            if (value != null) cell.setCellValue(value.doubleValue());
+        };
+
         int colNum = 0;
         row.createCell(colNum++).setCellValue(order.getReferenceNumber());
         row.createCell(colNum++).setCellValue(order.getCustomerType());
         row.createCell(colNum++).setCellValue(order.getRouterType());
-        row.createCell(colNum++).setCellValue(order.getPrimaryInsidePorts());
+        setNumericCell.accept(row.createCell(colNum++), order.getPrimaryInsidePorts());
         row.createCell(colNum++).setCellValue(order.getPrimaryInsideConnection());
-        row.createCell(colNum++).setCellValue(order.getPrimaryOutsidePorts());
+        setNumericCell.accept(row.createCell(colNum++), order.getPrimaryOutsidePorts());
         row.createCell(colNum++).setCellValue(order.getPrimaryOutsideConnection());
-        row.createCell(colNum++).setCellValue(order.getSecondaryOutsidePorts());
+        setNumericCell.accept(row.createCell(colNum++), order.getSecondaryOutsidePorts());
         row.createCell(colNum++).setCellValue(order.getSecondaryOutsideConnection());
         row.createCell(colNum++).setCellValue(order.getVlanConfiguration());
         row.createCell(colNum++).setCellValue(order.getVlanAssignments());
