@@ -25,8 +25,8 @@ function OrderExport() {
 
     const handleDownload = () => {
         setLoading(true);
-
-        fetch(`http://localhost:8080/api/spreadsheet/download?separateSheets=${separateSheets}`, {
+        const separateSheetsToken = separateSheets.toString();
+        fetch(`http://localhost:8080/api/spreadsheet/download?separateSheets=${separateSheetsToken}`, {
             method: "GET",
             headers: {
                 "Authorization": `Bearer ${token}`
