@@ -57,6 +57,8 @@ public class RouterOrderService {
         // Ensure addAnotherRouter is always Boolean
         order.setAddAnotherRouter(orderRequest.getAddAnotherRouter() != null && orderRequest.getAddAnotherRouter());
 
+        order.setOrderDate(LocalDateTime.now()); // lowk missing datetime n shii
+
         // Save the new order
         return orderRepository.save(order);
     }
