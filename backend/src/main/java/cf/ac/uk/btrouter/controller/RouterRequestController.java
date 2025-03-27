@@ -3,6 +3,7 @@ package cf.ac.uk.btrouter.controller;
 import cf.ac.uk.btrouter.dto.OrderRequest;
 import cf.ac.uk.btrouter.model.Order;
 import cf.ac.uk.btrouter.service.RouterOrderService;
+import cf.ac.uk.btrouter.service.NewsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -18,6 +19,9 @@ public class RouterRequestController {
 
     @Autowired
     private RouterOrderService routerOrderService;
+
+    @Autowired
+    private NewsService newsService;
 
     // ✅ Create a new router request using the authenticated user's email
     @PostMapping
@@ -48,7 +52,17 @@ public class RouterRequestController {
     @PutMapping("/{id}/status")
     public ResponseEntity<?> updateRequestStatus(@PathVariable Long id, @RequestBody Map<String, String> request) {
         String newStatus = request.get("status");
-        routerOrderService.updateOrderStatus(id, newStatus);
+        Order updatedOrder = routerOrderService.updateOrderStatus(id, newStatus);
+
+        if (updatedOrder != null) {
+            // ✅ Push a system-generated announcement
+            String ref = updatedOrder.getReferenceNumber();
+            newsService.createNews(
+                "Router Request Status Updated",
+                "Your router request (" + ref + ") has been updated to **" + newStatus + "**."
+            );
+        }
+
         return ResponseEntity.ok("Status updated successfully");
     }
 
