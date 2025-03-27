@@ -86,8 +86,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
-                .cors(cors -> cors.disable())
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/news/**").permitAll()
                         .requestMatchers("/api/orders/**").permitAll()
@@ -95,6 +95,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/orders/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
                         .requestMatchers("/api/admin/users").permitAll()
                         .requestMatchers("/api/routers/**").permitAll() // Temporary change.
+                        .requestMatchers("/api/customers/**").permitAll() // Temporary change.
+                        .requestMatchers("/api/router-presets/**").permitAll() // Temporary change.
                         .requestMatchers("/api/support/**").hasAnyRole("ADMIN", "SUPPORT_AGENT")
                         .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
                         .anyRequest().authenticated()
