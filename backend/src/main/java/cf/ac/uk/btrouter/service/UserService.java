@@ -68,7 +68,7 @@ public class UserService {
 
         // Set token and expiry
         user.setResetToken(token);
-        user.setResetTokenExpiry(LocalDateTime.now().plusHours(24));
+        user.setResetTokenExpiry(LocalDateTime.now().plusMinutes(5));
         userRepository.save(user);
 
         // Send reset email
