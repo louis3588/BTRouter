@@ -27,7 +27,9 @@ INSERT INTO users (email, password, first_name, last_name, role) VALUES
 ('admin@bt.com', '$2a$10$ooitv27eorIEevquWn9SQOz3L/rRPGUjxGUm62QHGwRo/.iNGarta', 'Admin', 'User', 'ADMIN'),
 ('support@bt.com', '$2a$10$tR2UAICCTT2qhbSwxGXeVOLPB699bKAupr7W79ltooUxx64sJ/squ', 'Support', 'Agent', 'SUPPORT_AGENT'),
 ('user@bt.com', '$2a$10$xn3LI/AjqicFYZFruSwve.ODd6/B.rq4yK/AHLC4bLVW9B5r0xE7W', 'Standard', 'User', 'USER'),
-('user1@bt.com', '$2a$10$PcMFosYZpuof9buO6IkJVuD5yigjzsUniuL4c1Sr9kT3WxOwEdHp6', 'Standard', 'User', 'USER');
+('user1@bt.com', '$2a$10$PcMFosYZpuof9buO6IkJVuD5yigjzsUniuL4c1Sr9kT3WxOwEdHp6', 'Standard', 'User', 'USER'),
+('admin1@bt.com', '$2a$10$6hsrGJu63YEnhlRohQlcKevIcMAgmYTkNhfKpj2JnG6xba1KJBNwy', 'Admin', 'User', 'ADMIN');
+
 
 INSERT INTO orders (
     site_name,
@@ -50,3 +52,60 @@ INSERT INTO orders (
 ('Glasgow', 'Cisco ISR 4461', '172.16.0.250', 'Enterprise Setup', 'Fiber', 30, '55 Buchanan Street', 'Glasgow', 'G1 2HL', 'user1@bt.com', '07324578965'),
 ('Edinburgh', 'MikroTik RB4011', '192.168.50.2', 'Wireless Optimization', 'DSL', 8, '33 Princes Street', 'Edinburgh', 'EH2 2BY', 'user1@bt.com', '07011223344'),
 ('Bristol', 'Ubiquiti EdgeRouter 12', '10.10.10.10', 'Remote VPN Config', 'Cable', 12, '99 Park Avenue', 'Bristol', 'BS1 4DJ', 'user1@bt.com', '07123456789');
+
+
+-- Insert dummy data into router_orders
+INSERT INTO router_orders (
+    customer_type,
+    router_type,
+    primary_outside_connection,
+    primary_outside_ports,
+    secondary_outside_connection,
+    secondary_outside_ports,
+    primary_inside_connection,
+    primary_inside_ports,
+    vlan_configuration,
+    vlan_assignments,
+    dhcp_configuration,
+    num_routers,
+    site_name,
+    site_address,
+    site_postcode,
+    site_primary_email,
+    site_secondary_email,
+    site_phone,
+    site_contact_name,
+    priority_level,
+    ip_address,
+    configuration_details,
+    add_another_router,
+    created_at,
+    updated_at
+) VALUES
+    (
+        'Industrial Signalling',
+        'Westermo Merlin 4708',
+        'Customer Ethernet',
+        4,
+        'Radio',
+        4,
+        'Customer Ethernet',
+        4,
+        'Open Trunk',
+        'VLAN 100, VLAN 101',
+        TRUE,
+        14,
+        'Test Site',
+        'Test Address',
+        'TE57 1OL',
+        'user1@bt.com',
+        'user1_secondary@bt.com',
+        '07123 456789',
+        'Test Contact',
+        'Critical',
+        NULL,
+        NULL,
+        FALSE,
+        NOW(),
+        NOW()
+    );
