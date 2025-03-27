@@ -8,17 +8,14 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import ForgotPassword from './components/Auth/ForgotPassword';
 import ResetPassword from './components/Auth/ResetPassword';
 import RequestForm from './components/RouterRequests/RequestForm';
-import RoutersPage from './components/Routers/RouterForm';
+import RoutersPage from './components/Routers/RouterPage';
+import CustomersPage from './components/Customers/CustomerPage';
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
 import OrderExport from "./components/OrderHistory/OrderExport";
 import OrderTracking from './components/OrderTracking/OrderTracking';
 import RouterRequestManagement from './components/Admin/RouterRequestManagement';
-
-// 🛠️ Admin News Editor
 import NewsEditor from './components/NewsManagement/NewsEditor';
-
-// 🆕 User-Facing News Page
 import NewsPage from './components/UserNews/NewsPage';
 
 function App() {
@@ -48,7 +45,7 @@ function App() {
 
                 <Route path="/customers" element={
                     <ProtectedRoute>
-                        <div>Customers Page (To be implemented)</div>
+                        <CustomersPage />
                     </ProtectedRoute>
                 } />
 
