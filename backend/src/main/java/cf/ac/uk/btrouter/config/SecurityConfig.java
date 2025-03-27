@@ -97,6 +97,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/routers/**").permitAll() // Temporary change.
                         .requestMatchers("/api/support/**").hasAnyRole("ADMIN", "SUPPORT_AGENT")
                         .requestMatchers("/api/user/**").hasAnyRole("ADMIN", "SUPPORT_AGENT", "USER")
+                        .requestMatchers("/api/user-reports").authenticated()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session

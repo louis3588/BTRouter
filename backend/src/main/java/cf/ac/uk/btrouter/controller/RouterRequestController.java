@@ -5,7 +5,9 @@ import cf.ac.uk.btrouter.model.Order;
 import cf.ac.uk.btrouter.service.RouterOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 import java.util.Map;
 
@@ -17,9 +19,12 @@ public class RouterRequestController {
     @Autowired
     private RouterOrderService routerOrderService;
 
+    // ✅ Create a new router request using the authenticated user's email
     @PostMapping
-    public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderRequest) {
+    public ResponseEntity<?> createOrder(@RequestBody OrderRequest orderRequest, Authentication authentication) {
         try {
+            String email = authentication.getName(); // Extract user email from JWT
+            orderRequest.setSitePrimaryEmail(email);  // Force correct email
             Order savedOrder = routerOrderService.saveOrder(orderRequest);
             return ResponseEntity.ok(savedOrder);
         } catch (Exception e) {
@@ -27,23 +32,31 @@ public class RouterRequestController {
         }
     }
 
-    // Fetch all router requests
+    // 🔵 Fetch all router requests (admin)
     @GetMapping
     public ResponseEntity<List<Order>> getAllRequests() {
         return ResponseEntity.ok(routerOrderService.getAllRequests());
     }
 
-    // Fetch only pending router requests
+    // 🟡 Fetch only pending router requests (admin)
     @GetMapping("/pending")
     public ResponseEntity<List<Order>> getPendingRequests() {
         return ResponseEntity.ok(routerOrderService.getPendingRequests());
     }
 
-    // Update the status of a router request
+    // 🔴 Update the status of a router request (admin)
     @PutMapping("/{id}/status")
     public ResponseEntity<?> updateRequestStatus(@PathVariable Long id, @RequestBody Map<String, String> request) {
         String newStatus = request.get("status");
         routerOrderService.updateOrderStatus(id, newStatus);
         return ResponseEntity.ok("Status updated successfully");
+    }
+
+    // ✅ Fetch all router requests submitted by the currently logged-in user
+    @GetMapping("/user")
+    public ResponseEntity<List<Order>> getUserOrders(Authentication authentication) {
+        String email = authentication.getName(); // Extract user email from JWT
+        List<Order> orders = routerOrderService.getOrdersByEmail(email);
+        return ResponseEntity.ok(orders);
     }
 }

@@ -173,3 +173,15 @@ CREATE TABLE news (
     author VARCHAR(255),
     created_at DATETIME
 );
+
+CREATE TABLE user_reports (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    report_reference VARCHAR(255) NOT NULL,
+    issue_type VARCHAR(255) NOT NULL,
+    reference_number VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    date DATE NOT NULL,
+    explanation TEXT,
+    CONSTRAINT uq_report_reference UNIQUE (report_reference)
+);
+
