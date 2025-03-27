@@ -1,16 +1,27 @@
 import { styled } from "@mui/system";
-import { Box, Button, Paper, Select, FormControl, TextField } from "@mui/material";
+import { Box, Button, Paper, Select, Switch, FormControl, TextField } from "@mui/material";
 
 // Makes adjustments to existing variations of @mui/material imports.
 const sharedInputStyles = {
     height: "56px",
+
     '& .MuiOutlinedInput-root': {
         height: "56px",
-        alignItems: "center"
+        alignItems: "center",
+
+        '&.Mui-disabled': {
+            opacity: 0.3,
+        },
     },
+
     '& .MuiInputLabel-outlined': {
-        transform: "translate(14px, 18px) scale(1)"
+        transform: "translate(14px, 18px) scale(1)",
+
+        '&.Mui-disabled': {
+            color: "#aaa"
+        }
     },
+
     '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
         transform: "translate(14px, -6px) scale(0.75)"
     }
@@ -20,6 +31,34 @@ const sharedInputStyles = {
 export const StyledSelect = styled(Select)(sharedInputStyles);
 export const StyledFormControl = styled(FormControl)(sharedInputStyles);
 export const StyledTextField = styled(TextField)(sharedInputStyles);
+export const StyledSwitch = styled(Switch)({
+    '& .MuiSwitch-switchBase': {
+        color: '#9c27b0 !important',
+        '&.Mui-checked': {
+            color: '#5f00a7 !important',
+        },
+        '&.Mui-disabled': {
+            color: '#bdbdbd !important',
+        },
+    },
+
+    '& .MuiSwitch-track': {
+        backgroundColor: '#ce8ee8 !important',
+    },
+
+    '&.Mui-checked': {
+        '& .MuiSwitch-track': {
+            backgroundColor: '#5f00a7 !important',
+        },
+    },
+
+    '&.Mui-disabled': {
+        '& .MuiSwitch-track': {
+            backgroundColor: '#818181 !important',
+        },
+        opacity: '0.4 !important',
+    },
+});
 
 export const MainContainer = styled(Box)({
     display: "flex",
@@ -93,6 +132,15 @@ export const ToggleNameButton = styled(Button)({
 
     "&:active": {
         opacity: 0.6
+    },
+
+    "&.Mui-disabled": {
+        opacity: 0.4,
+        pointerEvents: "none",
+
+        "&::before, &::after": {
+            backgroundColor: "#888"
+        }
     },
 
     "&::before, &::after": {
@@ -169,6 +217,12 @@ export const BaseButton = styled(Button)(({ theme }) => ({
         minWidth: "49.5%",
         maxWidth: "49.5%",
     },
+
+    "&.Mui-disabled": {
+        background: "linear-gradient(135deg, #8a8a8a, #bfbfbf)", // dark grey → light grey
+        color: "#e0e0e0",
+        cursor: "not-allowed",
+    }
 }));
 
 export const SaveButton = styled(BaseButton)({

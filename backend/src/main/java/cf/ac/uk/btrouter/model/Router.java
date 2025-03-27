@@ -50,13 +50,13 @@ public class Router {
         // Logic for port validation.
         List<String> insideConnections = Arrays.asList(insideConnectionTypes.split(",\\s*"));
 
-        if (!insideConnections.contains("Ethernet")) {
+        if (!insideConnections.contains("ETHERNET")) {
             ethernetPorts = null;
         } else if (ethernetPorts == null || ethernetPorts < 1) {
             throw new IllegalArgumentException("Ethernet ports must be specified.");
         }
 
-        if (!insideConnections.contains("Serial")) {
+        if (!insideConnections.contains("SERIAL")) {
             serialPorts = null;
         } else if (serialPorts == null || serialPorts < 1) {
             throw new IllegalArgumentException("Serial ports must be specified.");

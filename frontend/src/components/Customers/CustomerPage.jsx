@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import {
     InputLabel,
     MenuItem,
+    Tooltip,
     Typography
 } from "@mui/material";
 import {
@@ -73,6 +74,7 @@ const CustomerPage = () => {
     const handleCustomerChange = (event) => {
         const selectedId = parseInt(event.target.value, 10);
         const customer = customers.find((r) => r.customerID === selectedId);
+        clearForm();
         setSelectedCustomer(customer || null);
     };
 
@@ -89,7 +91,7 @@ const CustomerPage = () => {
         // Creates the customerData object with all relevant fields from the customer form.
         const customerData = {
             customerID: isAddingNewCustomer ? null : selectedCustomer?.customerID,
-            customerName: customerName,
+            customerName: customerName.trim(),
         };
 
         fetch("http://localhost:8080/api/customers", {
@@ -162,7 +164,7 @@ const CustomerPage = () => {
                         Customers
                     </Typography>
 
-                    <StyledFormControl fullWidth sx={{ mb: 2 }}>
+                    <StyledFormControl fullWidth>
                         {!isAddingNewCustomer && (
                             <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
                                 Customer
@@ -194,19 +196,25 @@ const CustomerPage = () => {
                                     ))}
                                 </StyledSelect>
                             )}
-                            <ToggleNameButton
-                                onClick={() => {
-                                    setIsAddingNewCustomer(!isAddingNewCustomer);
-                                    clearForm();
-                                }}
-                                className={isAddingNewCustomer ? "close-mode" : ""}
-                            />
+                            <Tooltip title={isAddingNewCustomer ? "Switch to find an existing customer." : "Switch to add a new customer."} arrow enterDelay={250} leaveDelay={100}>
+                                <ToggleNameButton
+                                    onClick={() => {
+                                        setIsAddingNewCustomer(!isAddingNewCustomer);
+                                        clearForm();
+                                    }}
+                                    className={isAddingNewCustomer ? "close-mode" : ""}
+                                />
+                            </Tooltip>
                         </NameContainer>
                     </StyledFormControl>
 
                     <ButtonContainer>
-                        <SaveButton onClick={handleSave}>Save Customer</SaveButton>
-                        <DeleteButton onClick={handleDelete}>Delete Customer</DeleteButton>
+                        <Tooltip title={<span>Save the new customer.</span>} arrow enterDelay={250} leaveDelay={100}>
+                            <SaveButton onClick={handleSave} disabled={!isAddingNewCustomer}>Save Customer</SaveButton>
+                        </Tooltip>
+                        <Tooltip title={<span>Delete the selected customer.</span>} arrow enterDelay={250} leaveDelay={100}>
+                            <DeleteButton onClick={handleDelete} disabled={!selectedCustomer}>Delete Customer</DeleteButton>
+                        </Tooltip>
                     </ButtonContainer>
 
                     <RouterPresetForm

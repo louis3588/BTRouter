@@ -1,9 +1,22 @@
-INSERT INTO customers (customer_name) VALUES ('Random Customer');
+INSERT INTO customers (customer_name)
+VALUES
+('Industrial Signalling'),
+('Cash Machines'),
+('Water Utility 1'),
+('Water Utility 2'),
+('Water Utility 3');
 
-INSERT INTO routers (router_name, outside_connection_types, inside_connection_types, ethernet_max_ports, serial_max_ports
+INSERT INTO routers (
+    router_name,
+    outside_connection_types,
+    inside_connection_types,
+    ethernet_max_ports,
+    serial_max_ports
 ) VALUES
-('Router A', 'Mobile Radio - Roaming Sim', 'ETHERNET', 4, NULL),
-('Router B', 'Mobile Radio - Roaming Sim, Mobile Radio - UK SIM, SOGEA - Private Broadband', 'ETHERNET, SERIAL', 6, 2);
+    ('Virtual Access - GW1042M', 'Mobile Radio - Roaming Sim, Mobile Radio - UK SIM, FTTP - Private Broadband, FTTP - Internet, VSAT Satellite - Internet', 'ETHERNET, SERIAL', 4, 1),
+    ('Virtual Access - GW1400M', 'Mobile Radio - Roaming Sim, Mobile Radio - UK SIM', 'ETHERNET', 2, NULL),
+    ('Virtual Access - GW6650V', 'Mobile Radio - Roaming Sim, Mobile Radio - UK SIM, ADSL - Private Broadband, ADSL - Internet, SOGEA - Private Broadband', 'ETHERNET', 4, NULL),
+    ('Westermo - Merlin-4708', 'Mobile Radio - Roaming Sim, Mobile Radio - UK SIM, FTTP - Private Broadband, FTTP - Internet, ADSL - Private Broadband, ADSL - Internet, SOGEA - Private Broadband, VSAT Satellite - Internet', 'ETHERNET, SERIAL', 4, 2);
 
 INSERT INTO router_presets (
     router_id,
@@ -17,7 +30,13 @@ INSERT INTO router_presets (
     vlans,
     dhcp
 ) VALUES
-(1, 1, 'Preset 1 - Router A', 'Mobile Radio - Roaming Sim', NULL, 'ETHERNET', 2, NULL, 'SPECIFIED', FALSE);
+(1, 1, 'Preset 1 - Virtual Access - GW1042M', 'Mobile Radio - Roaming Sim', 'Mobile Radio - UK SIM', 'ETHERNET', 2, NULL, 'OPEN_TRUNK', TRUE),
+(1, 2, 'Preset 1 - Virtual Access - GW1042M', 'Mobile Radio - Roaming Sim', 'Mobile Radio - UK SIM', 'ETHERNET', 1, NULL, 'UNSPECIFIED', FALSE),
+(3, 2, 'Preset 2 - Virtual Access - GW6650V', 'Mobile Radio - Roaming Sim', NULL, 'ETHERNET', 1, NULL, 'UNSPECIFIED', FALSE),
+(1, 3, 'Preset 1 - Virtual Access - GW1042M', 'Mobile Radio - Roaming Sim', 'Mobile Radio - UK SIM', 'ETHERNET', 2, NULL, 'UNSPECIFIED', FALSE),
+(4, 3, 'Preset 2 - Westermo - Merlin-4708', 'SOGEA - Private Broadband', 'Mobile Radio - Roaming Sim', 'ETHERNET, SERIAL', 4, 1, 'UNSPECIFIED', FALSE),
+(4, 4, 'Preset 1 - Westermo - Merlin-4708', 'SOGEA - Private Broadband', 'VSAT Satellite - Internet', 'ETHERNET', 4, NULL, 'SPECIFIED', FALSE),
+(3, 5, 'Preset 1 - Virtual Access - GW6650V', 'Mobile Radio - Roaming Sim', NULL, 'ETHERNET', 4, NULL, 'SPECIFIED', FALSE);
 
 INSERT INTO users (email, password, first_name, last_name, role) VALUES
 ('admin@bt.com', '$2a$10$ooitv27eorIEevquWn9SQOz3L/rRPGUjxGUm62QHGwRo/.iNGarta', 'Admin', 'User', 'ADMIN'),

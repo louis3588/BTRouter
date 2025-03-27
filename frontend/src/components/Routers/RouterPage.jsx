@@ -5,6 +5,7 @@ import {
     InputLabel,
     MenuItem,
     TextField,
+    Tooltip,
     Typography
 } from "@mui/material";
 import {
@@ -98,7 +99,7 @@ const RouterPage = () => {
         // Creates the routerData object with all relevant fields from the router form.
         const routerData = {
             routerID: isAddingNewRouter ? null : selectedRouter?.routerID,
-            routerName: routerName,
+            routerName: routerName.trim(),
             outsideConnectionTypes: outsideConnections,
             insideConnectionTypes: insideConnections,
             ethernetPorts: insideConnections.includes("ETHERNET") ? Number(ethernetPorts) : null,
@@ -166,16 +167,16 @@ const RouterPage = () => {
     };
 
     /* Form State Helpers. */
-    // Drop-down options.
+    // Options for the Outside Connection Types checkbox column.
     const outsideOptions = [
         "Mobile Radio - Roaming Sim",
         "Mobile Radio - UK SIM",
-        "SOGEA - Private Broadband",
         "FTTP - Private Broadband",
         "FTTP - Internet",
-        "VSAT Satellite - Internet",
         "ADSL - Private Broadband",
         "ADSL - Internet",
+        "SOGEA - Private Broadband",
+        "VSAT Satellite - Internet",
     ];
 
     return (
@@ -220,13 +221,16 @@ const RouterPage = () => {
                                     ))}
                                 </StyledSelect>
                             )}
-                            <ToggleNameButton
-                                onClick={() => {
-                                    setIsAddingNewRouter(!isAddingNewRouter);
-                                    clearForm();
-                                }}
-                                className={isAddingNewRouter ? "close-mode" : ""}
-                            />
+
+                            <Tooltip title={isAddingNewRouter ? "Switch to find an existing router." : "Switch to add a new router."} arrow enterDelay={250} leaveDelay={100}>
+                                <ToggleNameButton
+                                    onClick={() => {
+                                        setIsAddingNewRouter(!isAddingNewRouter);
+                                        clearForm();
+                                    }}
+                                    className={isAddingNewRouter ? "close-mode" : ""}
+                                />
+                            </Tooltip>
                         </NameContainer>
                     </StyledFormControl>
 
@@ -300,8 +304,8 @@ const RouterPage = () => {
                     </CheckboxColumn>
 
                     <ButtonContainer>
-                        <SaveButton onClick={handleSave}>Save</SaveButton>
-                        <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
+                        <SaveButton onClick={handleSave} disabled={isAddingNewRouter ? !newRouterName.trim() : !selectedRouter}>Save</SaveButton>
+                        <DeleteButton onClick={handleDelete} disabled={!selectedRouter}>Delete</DeleteButton>
                     </ButtonContainer>
                 </FormWrapper>
             </ContentArea>

@@ -39,9 +39,8 @@ public class RouterPreset {
     private String secondaryOutsideConnections;
 
     @NotNull(message = "Inside connection type is required.")
-    @Enumerated(EnumType.STRING)
     @Column(name = "inside_connections", nullable = false)
-    private InsideConnectionType insideConnections;
+    private String insideConnections;
 
     @Min(value = 0, message = "Number of ethernet ports cannot be negative.")
     @Column(name = "number_of_ethernet_ports")
@@ -64,7 +63,7 @@ public class RouterPreset {
     @PreUpdate
     private void validatePreset() {
         // Logic for VLANs validation.
-        if (insideConnections == InsideConnectionType.SERIAL && vlans != VlanType.UNSPECIFIED) {
+        if (insideConnections.equals("SERIAL") && vlans != VlanType.UNSPECIFIED) {
             throw new IllegalArgumentException("Serial-only presets must have VLANs set to 'Unspecified'.");
         }
 
@@ -75,12 +74,6 @@ public class RouterPreset {
     }
 
     /* Enumeration Declarations. */
-    public enum InsideConnectionType {
-        ETHERNET,
-        SERIAL,
-        ETHERNET_SERIAL
-    }
-
     public enum VlanType {
         UNSPECIFIED,
         SPECIFIED,

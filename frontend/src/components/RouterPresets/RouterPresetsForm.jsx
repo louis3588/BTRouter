@@ -1,16 +1,19 @@
 import React, { useEffect, useState, useImperativeHandle, forwardRef } from "react";
 import {
-    Checkbox,
+    Box,
     FormControlLabel,
+    InputAdornment,
     InputLabel,
     MenuItem,
     TextField,
+    Tooltip,
     Typography
 } from "@mui/material";
 import {
     StyledSelect,
     StyledFormControl,
-    LabeledDivider,
+    SectionDivider,
+    StyledSwitch,
     ToggleNameButton,
     CheckboxColumn,
     ButtonContainer,
@@ -31,6 +34,7 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
     const [serialPorts, setSerialPorts] = useState(null);
     const [vlans, setVlans] = useState("");
     const [dhcp, setDhcp] = useState(false);
+    const [validationErrors, setValidationErrors] = useState([]);
 
     /* Lifecycle Effects. */
     useEffect(() => {
@@ -71,7 +75,7 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
             setSelectedRouterName(routerPreset.router.routerName);
             setPrimaryOutside(routerPreset.primaryOutsideConnections || "");
             setSecondaryOutside(routerPreset.secondaryOutsideConnections || "");
-            setInsideConnections(routerPreset.insideConnections ? [routerPreset.insideConnections] : []);
+            setInsideConnections(routerPreset.insideConnections ? routerPreset.insideConnections.split(', ') : []);
             setEthernetPorts(routerPreset.numberOfEthernetPorts || null);
             setSerialPorts(routerPreset.numberOfSerialPorts || null);
             setVlans(routerPreset.vlans || "");
@@ -81,9 +85,14 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
 
     // Toggles connection types based on checkbox state. Triggers display of relevant fields.
     const handleCheckboxChange = (type, checked) => {
-        setInsideConnections(prev =>
-            checked ? [...prev, type] : prev.filter(item => item !== type)
-        );
+        setInsideConnections(prev => {
+            const updated = checked ? [...prev, type] : prev.filter(item => item !== type);
+            if (type === "ETHERNET" && !checked) {
+                setVlans("");
+                setDhcp(false);
+            }
+            return updated;
+        });
     };
 
     // Handles updates to the Ethernet port field with validation.
@@ -117,21 +126,14 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
     /* Button Handlers. */
     // Saves the router preset details to the database if the router preset exists; adds the new router preset if not.
     const handleSave = () => {
-        if (!presetName || !selectedRouterName || !primaryOutside || insideConnections.length === 0 || !vlans) {
-            alert("Please complete all required fields.");
-            return;
-        }
 
-        const router = routers.find(r => r.routerName === selectedRouterName);
-        if (!router) {
-            alert("Selected router is invalid.");
-            return;
-        }
+        // Save validation implementation.
+        const errors = getValidationErrors();
+        setValidationErrors(errors);
+        if (errors.length > 0) return;
 
         // Determine combined insideConnection string
-        let insideConnectionString = insideConnections.includes("ETHERNET") && insideConnections.includes("SERIAL")
-            ? "ETHERNET_SERIAL"
-            : insideConnections[0];
+        const insideConnectionString = insideConnections.join(', ');
 
         // Creates the presetData object with all relevant fields from the router preset form.
         const presetData = {
@@ -144,7 +146,7 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
             insideConnections: insideConnectionString,
             numberOfEthernetPorts: insideConnections.includes("ETHERNET") ? ethernetPorts : null,
             numberOfSerialPorts: insideConnections.includes("SERIAL") ? serialPorts : null,
-            vlans,
+            vlans: insideConnections.includes("ETHERNET") ? vlans : "UNSPECIFIED",
             dhcp
         };
 
@@ -195,6 +197,13 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
     // Drop-down options.
     const vlanOptions = ["UNSPECIFIED", "SPECIFIED", "OPEN_TRUNK"];
 
+    // Converts enum-like strings like "OPEN_TRUNK" to "Open Trunk".
+    const formatEnumLabel = (value) =>
+        value
+            .toLowerCase()
+            .replace(/_/g, " ")
+            .replace(/\b\w/g, (char) => char.toUpperCase());
+
     // Retrieves the full router object from the selected router name.
     const selectedRouter = routers.find(r => r.routerName === selectedRouterName);
 
@@ -211,20 +220,26 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
     const secondaryOptions = outsideOptions.filter(opt => opt !== primaryOutside);
 
     /* Validation Logic. */
-    // If serial is the only inside connection, VLAN must be "UNSPECIFIED".
-    const vlanWarning =
-        insideConnections.length === 1 &&
-        insideConnections.includes("SERIAL") &&
-        vlans !== "UNSPECIFIED";
+    const getValidationErrors = () => {
+        const errors = [];
 
-    // If VLAN is not "OPEN_TRUNK", DHCP must be disabled.
-    const dhcpWarning = vlans !== "OPEN_TRUNK" && dhcp;
+        if (!presetName.trim()) { errors.push("Preset name is required."); }
+        if (!selectedRouterName.trim()) { errors.push("A router must be selected."); }
+        if (!primaryOutside) { errors.push("Primary outside connection is required."); }
+        if (insideConnections.length === 0) { errors.push("At least one inside connection type must be selected."); }
+        if (vlans !== "OPEN_TRUNK" && dhcp) { errors.push("DHCP can only be enabled when VLANs is set to 'OPEN_TRUNK'."); }
+        if (insideConnections.includes('SERIAL') && serialPorts < 1) { errors.push("At least 1 serial port required when using SERIAL connections"); }
+        if (insideConnections.includes('ETHERNET') && ethernetPorts < 1) { errors.push("At least 1 ethernet port required when using ETHERNET connections"); }
 
+        return errors;
+    };
+
+    // noinspection XmlDeprecatedElement
     return (
         <>
-            <LabeledDivider>Router Presets</LabeledDivider>
+            <SectionDivider sx={{ mt: 2, mb: 2 }}/>
 
-            <StyledFormControl fullWidth sx={{ mb: 2 }}>
+            <StyledFormControl fullWidth sx={{ mb: 0 }}>
                 {!isAddingNewPreset && (
                     <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
                         Router Preset
@@ -233,25 +248,27 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
                 <NameContainer>
                     {isAddingNewPreset ? (
                         <>
-                            <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                                Router Name
+                            <InputLabel sx={{ backgroundColor: "white", px: 0.5, pr: 1 }}>
+                                Routers
                             </InputLabel>
-                            <StyledSelect
-                                fullWidth
-                                value={selectedRouterName}
-                                onChange={handleRouterSelect}
-                                displayEmpty
-                                disabled={!customer}
-                            >
-                                <MenuItem value="" disabled>
-                                    <em>Required</em>
-                                </MenuItem>
-                                {routers.map(r => (
-                                    <MenuItem key={r.routerID} value={r.routerName}>
-                                        {r.routerName}
+                            <Tooltip title={<span>Select a <strong>router</strong> to add a new preset for.</span>} arrow enterDelay={250} leaveDelay={100}>
+                                <StyledSelect
+                                    fullWidth
+                                    value={selectedRouterName}
+                                    onChange={handleRouterSelect}
+                                    displayEmpty
+                                    disabled={!customer}
+                                >
+                                    <MenuItem value="" disabled>
+                                        <em>Required</em>
                                     </MenuItem>
-                                ))}
-                            </StyledSelect>
+                                    {routers.map(r => (
+                                        <MenuItem key={r.routerID} value={r.routerName}>
+                                            {r.routerName}
+                                        </MenuItem>
+                                    ))}
+                                </StyledSelect>
+                            </Tooltip>
                         </>
                     ) : (
                         <StyledSelect
@@ -271,15 +288,16 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
                             ))}
                         </StyledSelect>
                     )}
-
-                    <ToggleNameButton
-                        onClick={() => {
-                            setIsAddingNewPreset(prev => !prev);
-                            clearForm();
-                        }}
-                        className={isAddingNewPreset ? "close-mode" : ""}
-                        disabled={!customer}
-                    />
+                    <Tooltip title={isAddingNewPreset ? "Switch to find an existing preset." : "Switch to add a new preset."} arrow enterDelay={250} leaveDelay={100}>
+                        <ToggleNameButton
+                            onClick={() => {
+                                setIsAddingNewPreset(prev => !prev);
+                                clearForm();
+                            }}
+                            className={isAddingNewPreset ? "close-mode" : ""}
+                            disabled={!customer}
+                        />
+                    </Tooltip>
                 </NameContainer>
             </StyledFormControl>
 
@@ -287,134 +305,172 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
             <StyledFormControl fullWidth sx={{ mt: 2 }}>
                 <InputLabel id="primary-outside-label">Primary Outside Connection</InputLabel>
 
-                <StyledSelect
-                    labelId="primary-outside-label"
-                    label="Primary Outside Connection"
-                    value={primaryOutside}
-                    onChange={(e) => setPrimaryOutside(e.target.value)}
-                    disabled={!customer || outsideOptions.length === 0}
-                >
-                    <MenuItem value="" disabled>
-                        <em>Required</em>
-                    </MenuItem>
-                    {outsideOptions.map((option) => (
-                        <MenuItem key={option} value={option}>
-                            {option}
+                <Tooltip title={<span>Select the <strong>primary</strong> outside connection.</span>} arrow enterDelay={250} leaveDelay={100}>
+                    <StyledSelect
+                        labelId="primary-outside-label"
+                        label="Primary Outside Connection"
+                        value={primaryOutside}
+                        onChange={(e) => setPrimaryOutside(e.target.value)}
+                        disabled={!customer || outsideOptions.length === 0}
+                    >
+                        <MenuItem value="" disabled>
+                            <em>Required</em>
                         </MenuItem>
-                    ))}
-                </StyledSelect>
+                        {outsideOptions.map((option) => (
+                            <MenuItem key={option} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </StyledSelect>
+                </Tooltip>
             </StyledFormControl>
 
             <StyledFormControl fullWidth sx={{ mt: 2 }}>
                 <InputLabel id="secondary-outside-label">Secondary Outside Connection</InputLabel>
 
-                <StyledSelect
-                    labelId="secondary-outside-label"
-                    label="Secondary Outside Connection"
-                    value={secondaryOutside}
-                    onChange={(e) => setSecondaryOutside(e.target.value)}
-                    disabled={!customer || secondaryOptions.length === 0}
-                >
-                    <MenuItem value="">
-                        <em>None</em>
-                    </MenuItem>
-                    {secondaryOptions.map((option) => (
-                        <MenuItem key={option} value={option}>
-                            {option}
+                <Tooltip title={<span>Select the <strong>secondary</strong> outside connection. <hr /> This cannot be the same as the primary outside connection.</span>} arrow enterDelay={250} leaveDelay={100}>
+                    <StyledSelect
+                        labelId="secondary-outside-label"
+                        label="Secondary Outside Connection"
+                        value={secondaryOutside}
+                        onChange={(e) => setSecondaryOutside(e.target.value)}
+                        disabled={!customer || secondaryOptions.length === 0}
+                    >
+                        <MenuItem value="">
+                            <em>None</em>
                         </MenuItem>
-                    ))}
-                </StyledSelect>
+                        {secondaryOptions.map((option) => (
+                            <MenuItem key={option} value={option}>
+                                {option}
+                            </MenuItem>
+                        ))}
+                    </StyledSelect>
+                </Tooltip>
             </StyledFormControl>
 
             <Typography variant="h6" sx={{ mt: 2 }}>Inside Connection Types</Typography>
             <CheckboxColumn>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={insideConnections.includes("ETHERNET")}
-                            onChange={(e) => handleCheckboxChange("ETHERNET", e.target.checked)}
-                            disabled={!customer || maxEthernet === 0}
-                        />
-                    }
-                    label="Ethernet"
-                />
-                {insideConnections.includes("ETHERNET") && (
-                    <TextField
-                        fullWidth
-                        type="number"
-                        label="Ethernet Ports"
-                        value={ethernetPorts || ""}
-                        onChange={handleEthernetPortChange}
-                        sx={{ mt: 1 }}
-                        disabled={!customer}
+                <Tooltip title={<span>Select <strong>Ethernet</strong> as the inside connection.</span>} arrow enterDelay={250} leaveDelay={100}>
+                    <FormControlLabel
+                        control={
+                            <StyledSwitch
+                                checked={insideConnections.includes("ETHERNET")}
+                                onChange={(e) => handleCheckboxChange("ETHERNET", e.target.checked)}
+                                disabled={!customer || maxEthernet === 0}
+                            />
+                        }
+                        label="Ethernet"
                     />
+                </Tooltip>
+                {insideConnections.includes("ETHERNET") && (
+                    <Tooltip title={<span>Number cannot exceed the maximum port configuration.</span>} arrow enterDelay={250} leaveDelay={100}>
+                        <TextField
+                            fullWidth
+                            type="number"
+                            label="Ethernet Ports"
+                            value={ethernetPorts || ""}
+                            onChange={handleEthernetPortChange}
+                            sx={{ mt: 1, mb: 1 }}
+                            disabled={!customer}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <span style={{ fontSize: "0.85em", color: "#888", whiteSpace: "nowrap" }}>
+                                            Maximum Ports: {maxEthernet}
+                                        </span>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
+                    </Tooltip>
                 )}
 
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={insideConnections.includes("SERIAL")}
-                            onChange={(e) => handleCheckboxChange("SERIAL", e.target.checked)}
-                            disabled={!customer || maxSerial === 0}
-                        />
-                    }
-                    label="Serial"
-                />
-                {insideConnections.includes("SERIAL") && (
-                    <TextField
-                        fullWidth
-                        type="number"
-                        label="Serial Ports"
-                        value={serialPorts || ""}
-                        onChange={handleSerialPortChange}
-                        sx={{ mt: 1 }}
-                        disabled={!customer}
+                <Tooltip title={<span>Select <strong>Serial</strong> as the inside connection.</span>} arrow enterDelay={250} leaveDelay={100}>
+                    <FormControlLabel
+                        control={
+                            <StyledSwitch
+                                checked={insideConnections.includes("SERIAL")}
+                                onChange={(e) => handleCheckboxChange("SERIAL", e.target.checked)}
+                                disabled={!customer || maxSerial === 0}
+                            />
+                        }
+                        label="Serial"
                     />
+                </Tooltip>
+                {insideConnections.includes("SERIAL") && (
+                    <Tooltip title={<span>Number cannot exceed the maximum port configuration.</span>} arrow enterDelay={250} leaveDelay={100}>
+                        <TextField
+                            fullWidth
+                            type="number"
+                            label="Serial Ports"
+                            value={serialPorts || ""}
+                            onChange={handleSerialPortChange}
+                            sx={{ mt: 1, mb: 1 }}
+                            disabled={!customer}
+                            InputProps={{
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                        <span style={{ fontSize: "0.85em", color: "#888", whiteSpace: "nowrap" }}>
+                                            Maximum Ports: {maxSerial}
+                                        </span>
+                                    </InputAdornment>
+                                )
+                            }}
+                        />
+                    </Tooltip>
                 )}
             </CheckboxColumn>
 
-            <StyledFormControl fullWidth sx={{ mt: 2 }}>
-                <InputLabel id="vlans-label">VLANs</InputLabel>
-                <StyledSelect
-                    labelId="vlans-label"
-                    label="VLANs"
-                    value={vlans}
-                    onChange={(e) => setVlans(e.target.value)}
-                    disabled={!customer}
-                >
-                    <MenuItem value="">
-                        <em>Select a VLAN type...</em>
-                    </MenuItem>
-                    {vlanOptions.map(vlan => (
-                        <MenuItem key={vlan} value={vlan}>
-                            {vlan.replace("_", " ")}
+            <Tooltip title={
+                <span>If <strong>Ethernet</strong> is selected, please select a VLANs configuration.
+                    <hr /><strong>Unspecified</strong> (Default): No further action.
+                    <br /><strong>Specified</strong>: Specify in additional information.
+                    <br /><strong>Open Trunk</strong>: Specify DHCP configuration.
+                </span>
+                } arrow enterDelay={250} leaveDelay={100}>
+                <StyledFormControl fullWidth sx={{ mt: 1 }}>
+                    <InputLabel id="vlans-label">VLANs</InputLabel>
+                    <StyledSelect
+                        labelId="vlans-label"
+                        label="VLANs"
+                        value={vlans}
+                        onChange={(e) => setVlans(e.target.value)}
+                        disabled={!customer || !insideConnections.includes("ETHERNET")}
+                    >
+                        <MenuItem value="" disabled>
+                            <em>Required</em>
                         </MenuItem>
+                        {vlanOptions.map(vlan => (
+                            <MenuItem key={vlan} value={vlan}>
+                                {formatEnumLabel(vlan)}
+                            </MenuItem>
+                        ))}
+                    </StyledSelect>
+                </StyledFormControl>
+            </Tooltip>
+
+            <Tooltip title={<span>Enable or disable DHCP for this configuration.<hr />Only an option if <strong>Open Trunk</strong> is selected in VLANs.</span>} arrow enterDelay={250} leaveDelay={100}>
+                <FormControlLabel
+                    control={
+                        <StyledSwitch
+                            checked={dhcp}
+                            onChange={(e) => setDhcp(e.target.checked)}
+                            disabled={!customer || vlans !== "OPEN_TRUNK"}
+                        />
+                    }
+                    label="DHCP"
+                    sx={{ mt: 1, mb: -1 }}
+                />
+            </Tooltip>
+
+            {validationErrors.length > 0 && (
+                <Box sx={{ mt: 2 }}>
+                    {validationErrors.map((error, idx) => (
+                        <Typography key={idx} color="error" variant="body2" sx={{ mb: 0.5 }}>
+                            • {error}
+                        </Typography>
                     ))}
-                </StyledSelect>
-            </StyledFormControl>
-
-            {vlanWarning && (
-                <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-                    VLANs must be "UNSPECIFIED" when inside connection is "SERIAL"
-                </Typography>
-            )}
-
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={dhcp}
-                        onChange={(e) => setDhcp(e.target.checked)}
-                        disabled={!customer || vlans !== "OPEN_TRUNK"}
-                    />
-                }
-                label="DHCP Enabled"
-                sx={{ mt: 2 }}
-            />
-
-            {dhcpWarning && (
-                <Typography color="error" variant="body2" sx={{ mt: 1 }}>
-                    DHCP can only be enabled when VLANs is set to "OPEN_TRUNK"
-                </Typography>
+                </Box>
             )}
 
             <ButtonContainer>
@@ -422,6 +478,7 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
                 <DeleteButton onClick={handleDelete} disabled={!customer || !selectedPreset}>Delete Preset</DeleteButton>
             </ButtonContainer>
         </>
+
     );
 });
 
