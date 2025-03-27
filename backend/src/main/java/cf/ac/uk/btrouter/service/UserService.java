@@ -5,9 +5,9 @@ import cf.ac.uk.btrouter.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PutMapping;
 
 import java.time.LocalDateTime;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -25,46 +25,40 @@ public class UserService {
         this.emailService = emailService;
     }
 
-    // Find a user by email
+    // Find user by email
     public User findByEmail(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
     }
 
-    // Register a new user with encrypted password
+    // Register user
     public User registerUser(User user) {
-        // Check if email already exists
         if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new RuntimeException("Email already registered");
         }
 
-        // Set default role and encode password
         user.setRole(User.Role.USER);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
-    // Create password reset token for a user
+    // Password reset token generation
     public void createPasswordResetTokenForUser(String email) {
-        // Find user and generate token
         User user = findByEmail(email);
         String token = UUID.randomUUID().toString();
 
-        // Set token and expiry
         user.setResetToken(token);
         user.setResetTokenExpiry(LocalDateTime.now().plusHours(24));
         userRepository.save(user);
 
-        // Send reset email
         emailService.sendPasswordResetEmail(email, token);
     }
 
-    // Validate password reset token
+    // Token validation
     public String validatePasswordResetToken(String token) {
         User user = userRepository.findByResetToken(token)
                 .orElseThrow(() -> new RuntimeException("Invalid token"));
 
-        // Check if token has expired
         if (user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
             user.setResetToken(null);
             user.setResetTokenExpiry(null);
@@ -75,18 +69,15 @@ public class UserService {
         return "valid";
     }
 
-    // Reset password using token
+    // Password reset
     public void resetPassword(String token, String newPassword) {
-        // Find user by token
         User user = userRepository.findByResetToken(token)
                 .orElseThrow(() -> new RuntimeException("Invalid token"));
 
-        // Check token expiration
         if (user.getResetTokenExpiry().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Token has expired");
         }
 
-        // Update password and clear token
         user.setPassword(passwordEncoder.encode(newPassword));
         user.setResetToken(null);
         user.setResetTokenExpiry(null);
@@ -94,7 +85,6 @@ public class UserService {
     }
 
     // Update user settings
-    @PutMapping("/settings")
     public User updateUserSettings(String email, User updatedUser) {
         User user = findByEmail(email);
 
@@ -105,7 +95,6 @@ public class UserService {
         user.setVatNumber(updatedUser.getVatNumber());
         user.setBillingAddress(updatedUser.getBillingAddress());
 
-        // Enable Two-Factor Authentication and Notification Preferences
         user.setTwoFactorAuth(updatedUser.isTwoFactorAuth());
         user.setOrderUpdates(updatedUser.isOrderUpdates());
         user.setBillingNotifications(updatedUser.isBillingNotifications());
@@ -114,15 +103,15 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    // Delete user account
+    // Delete user
     public void deleteUser(String email) {
         User user = findByEmail(email);
         userRepository.delete(user);
     }
 
+    // Change password
     public void changePassword(String email, String currentPassword, String newPassword, String confirmPassword) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = findByEmail(email);
 
         if (!passwordEncoder.matches(currentPassword, user.getPassword())) {
             throw new RuntimeException("Current password is incorrect.");
@@ -140,6 +129,28 @@ public class UserService {
         userRepository.save(user);
     }
 
+    // Generate & send 2FA code
+    public void generateAndSendTwoFACode(User user) {
+        String code = String.format("%06d", new Random().nextInt(999999));
+        user.setTwoFactorCode(code);
+        user.setTwoFactorExpiry(LocalDateTime.now().plusMinutes(10));
+        userRepository.save(user);
 
+        emailService.sendTwoFactorCode(user.getEmail(), code);
+    }
 
+    // Validate 2FA code
+    public boolean validateTwoFACode(String email, String code) {
+        User user = findByEmail(email);
+        return user.getTwoFactorCode() != null &&
+                user.getTwoFactorCode().equals(code) &&
+                user.getTwoFactorExpiry().isAfter(LocalDateTime.now());
+    }
+
+    // Clear 2FA code
+    public void clearTwoFACode(User user) {
+        user.setTwoFactorCode(null);
+        user.setTwoFactorExpiry(null);
+        userRepository.save(user);
+    }
 }

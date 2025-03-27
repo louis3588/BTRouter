@@ -224,4 +224,28 @@ public class EmailService {
             throw e;
         }
     }
+
+    public void sendTwoFactorCode(String to, String code) {
+        logger.info("Sending 2FA code to: {}", to);
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("ttgzee123@gmail.com");
+        message.setTo(to);
+        message.setSubject("Your BT Two-Factor Authentication Code");
+
+        message.setText(String.format("""
+        Your BT 2FA verification code is: %s
+
+        This code will expire in 10 minutes.
+        If you did not attempt to log in, please ignore this email.
+        """, code));
+
+        try {
+            mailSender.send(message);
+            logger.info("2FA code sent successfully to: {}", to);
+        } catch (Exception e) {
+            logger.error("Failed to send 2FA code to: {}", to, e);
+            throw e;
+        }
+    }
 }

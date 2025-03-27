@@ -45,6 +45,19 @@ public class AuthController {
 
             // Generate JWT and prepare response with user details
             User user = userService.findByEmail(loginRequest.getEmail());
+
+
+            // when 2fa is enabled
+            // If 2FA is enabled, send code and return flag
+            if (user.isTwoFactorAuth()) {
+                userService.generateAndSendTwoFACode(user);
+                return ResponseEntity.ok(Map.of(
+                        "twoFARequired", true,
+                        "message", "2FA code sent to your email"
+                ));
+            }
+
+            // when 2fa is disabled
             String jwt = securityConfig.generateToken(user.getEmail(), user.getRole().name());
 
             Map<String, Object> response = new HashMap<>();
@@ -60,6 +73,30 @@ public class AuthController {
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("message", "Invalid credentials"));
         }
+    }
+
+    //2fa endpoint logic
+    @PostMapping("/verify-twofa")
+    public ResponseEntity<?> verify2FA(@RequestBody Map<String, String> payload) {
+        String email = payload.get("email");
+        String code = payload.get("code");
+
+        if (userService.validateTwoFACode(email, code)) {
+            User user = userService.findByEmail(email);
+            userService.clearTwoFACode(user);
+
+            String jwt = securityConfig.generateToken(user.getEmail(), user.getRole().name());
+
+            return ResponseEntity.ok(Map.of(
+                    "token", jwt,
+                    "role", user.getRole().name(),
+                    "email", user.getEmail(),
+                    "firstName", user.getFirstName(),
+                    "lastName", user.getLastName()
+            ));
+        }
+
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message", "Invalid or expired 2FA code"));
     }
 
     // Handle new user registration and return JWT token

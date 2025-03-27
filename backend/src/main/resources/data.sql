@@ -37,7 +37,10 @@ VALUES
 
     ('user@bt.com', '$2a$10$xn3LI/AjqicFYZFruSwve.ODd6/B.rq4yK/AHLC4bLVW9B5r0xE7W', 'Standard', 'User', 'USER', '5551112222', 'Individual', '', '789 User Road', false, false, false, false),
 
-    ('user1@bt.com', '$2a$10$PcMFosYZpuof9buO6IkJVuD5yigjzsUniuL4c1Sr9kT3WxOwEdHp6', 'Standard', 'User', 'USER', '4443332222', 'Individual', '', '987 User Lane', false, false, false, false);
+    ('user1@bt.com', '$2a$10$PcMFosYZpuof9buO6IkJVuD5yigjzsUniuL4c1Sr9kT3WxOwEdHp6', 'Standard', 'User', 'USER', '4443332222', 'Individual', '', '987 User Lane', false, false, false, false),
+
+    ('tuc21087358@gmail.com', '$2a$10$PcMFosYZpuof9buO6IkJVuD5yigjzsUniuL4c1Sr9kT3WxOwEdHp6', 'Test', 'User', 'USER', '4443332222', 'Individual', '', '987 User Lane', false, false, false, false);
+
 
 
 INSERT INTO orders (

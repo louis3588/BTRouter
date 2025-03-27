@@ -34,7 +34,10 @@ CREATE TABLE users (
     two_factor_auth BOOLEAN DEFAULT FALSE,
     order_updates BOOLEAN DEFAULT FALSE,
     billing_notifications BOOLEAN DEFAULT FALSE,
-    marketing_emails BOOLEAN DEFAULT FALSE
+    marketing_emails BOOLEAN DEFAULT FALSE,
+
+    two_factor_code VARCHAR(10),
+    two_factor_expiry TIMESTAMP
 );
 
 CREATE TABLE customers (

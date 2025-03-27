@@ -80,6 +80,13 @@ public class User {
     @Column(name = "marketing_emails")
     private boolean marketingEmails = false; //
 
+    @Column(name = "two_factor_code")
+    private String twoFactorCode;
+
+    @Column(name = "two_factor_expiry")
+    private LocalDateTime twoFactorExpiry;
+
+
     public enum Role {
         ADMIN, SUPPORT_AGENT, USER
     }
