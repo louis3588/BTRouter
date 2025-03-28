@@ -15,30 +15,18 @@ import {
     TextField,
     Divider,
     Alert,
-    List,
-    ListItem,
-    ListItemIcon,
-    ListItemText,
     Toolbar,
-    useTheme,
-    useMediaQuery,
-    Drawer
+    Container,
+    Fade
 } from '@mui/material';
+import { styled } from "@mui/system";
 import {
     LocalShipping,
     Assignment,
     Build,
     CheckCircle,
-    Warning,
     Cancel,
     Settings,
-    Dashboard as DashboardIcon,
-    Router as RouterIcon,
-    People as PeopleIcon,
-    History as HistoryIcon,
-    Analytics as AnalyticsIcon,
-    Support as SupportIcon,
-    ExitToApp as LogoutIcon,
     Menu as MenuIcon
 } from '@mui/icons-material';
 import { useParams, useNavigate } from 'react-router-dom';
@@ -46,14 +34,41 @@ import {
     MainContainer,
     AnimatedComponent,
     FeatureCard,
-    CardIcon,
     HeaderBar,
     ScrollableContainer,
-    NavButton,
-    StyledDrawer,
-    Logo
 } from '../../styles/HomeStyles';
-import btLogo from '../../assets/BT_logo_white.png';
+import Sidebar from '../Navigation/Sidebar';
+
+const BackgroundDecoration = styled("div")({
+    position: "absolute",
+    borderRadius: "50%",
+    zIndex: 0,
+    opacity: 0.2
+});
+
+const TopDecoration = styled(BackgroundDecoration)({
+    top: "-100px",
+    left: "-100px",
+    width: "300px",
+    height: "300px",
+    background: "radial-gradient(circle, #6200aa, transparent)"
+});
+
+const BottomDecoration = styled(BackgroundDecoration)({
+    bottom: "-100px",
+    right: "-100px",
+    width: "300px",
+    height: "300px",
+    background: "radial-gradient(circle, #8e24aa, transparent)"
+});
+
+const Footer = styled(Box)({
+    textAlign: "center",
+    color: "#888",
+    padding: "24px",
+    position: "relative",
+    zIndex: 1
+});
 
 const OrderTracking = () => {
     const { referenceNumber } = useParams();
@@ -66,8 +81,7 @@ const OrderTracking = () => {
     const [modifiedQuantity, setModifiedQuantity] = useState('');
     const [mobileOpen, setMobileOpen] = useState(false);
     const [userRole, setUserRole] = useState(null);
-    const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const [activeTab, setActiveTab] = useState('track-order');
 
     const steps = [
         { label: 'Order Placed', icon: Assignment },
@@ -184,103 +198,6 @@ const OrderTracking = () => {
         setMobileOpen(!mobileOpen);
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        navigate('/login');
-    };
-
-    const navItems = [
-        {
-            id: 'dashboard',
-            icon: DashboardIcon,
-            label: 'Dashboard',
-            allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
-            path: '/dashboard'
-        },
-        {
-            id: 'routers',
-            icon: RouterIcon,
-            label: 'Routers',
-            allowedRoles: ['ADMIN'],
-            path: '/routers'
-        },
-        {
-            id: 'customers',
-            icon: PeopleIcon,
-            label: 'Customers',
-            allowedRoles: ['ADMIN'],
-            path: '/customers'
-        },
-        {
-            id: 'users',
-            icon: PeopleIcon,
-            label: 'Users',
-            allowedRoles: ['ADMIN'],
-            path: '/users'
-        },
-        {
-            id: 'requests',
-            icon: Assignment,
-            label: 'Router Requests',
-            allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
-            path: '/router-requests'
-        },
-        {
-            id: 'history',
-            icon: HistoryIcon,
-            label: 'Order History',
-            allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
-            path: '/history'
-        },
-        {
-            id: 'analytics',
-            icon: AnalyticsIcon,
-            label: 'Analytics',
-            allowedRoles: ['ADMIN'],
-            path: '/analytics'
-        },
-        {
-            id: 'support',
-            icon: SupportIcon,
-            label: 'Support',
-            allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
-            path: '/support'
-        }
-    ];
-
-    const drawer = (
-        <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-            <Box sx={{ p: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Logo src={btLogo} alt="BT Logo" onClick={() => navigate('/home')} />
-            </Box>
-            <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
-            <ScrollableContainer>
-                <List>
-                    {navItems.map((item) => (
-                        <ListItem key={item.id} disablePadding>
-                            <NavButton
-                                onClick={() => navigate(item.path)}
-                                sx={{ width: '100%' }}
-                            >
-                                <ListItemIcon sx={{ color: 'white', minWidth: 40 }}>
-                                    <item.icon />
-                                </ListItemIcon>
-                                <ListItemText primary={item.label} />
-                            </NavButton>
-                        </ListItem>
-                    ))}
-                </List>
-            </ScrollableContainer>
-            <Divider sx={{ bgcolor: 'rgba(255,255,255,0.1)' }} />
-            <NavButton onClick={handleLogout} sx={{ m: 2 }}>
-                <ListItemIcon sx={{ color: 'white', minWidth: 40 }}>
-                    <LogoutIcon />
-                </ListItemIcon>
-                <ListItemText primary="Logout" />
-            </NavButton>
-        </Box>
-    );
-
     if (loading) {
         return (
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -291,7 +208,7 @@ const OrderTracking = () => {
 
     return (
         <MainContainer>
-            <StyledDrawer variant="permanent">{drawer}</StyledDrawer>
+            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} userRole={userRole} />
             <Box component="main" sx={{ flexGrow: 1, height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
                 <HeaderBar position="static">
                     <Toolbar>
@@ -323,111 +240,121 @@ const OrderTracking = () => {
                 </HeaderBar>
 
                 <ScrollableContainer>
-                    <AnimatedComponent>
-                        <FeatureCard active={true} sx={{ m: 3 }}>
-                            {error && (
-                                <Alert severity="error" sx={{ mb: 2 }}>
-                                    {error}
-                                </Alert>
-                            )}
+                    <Container maxWidth="lg" sx={{ position: 'relative', py: 4 }}>
+                        <TopDecoration />
+                        <BottomDecoration />
+                        <Fade in={true} timeout={600}>
+                            <Box>
+                                <AnimatedComponent>
+                                    <FeatureCard active={true} sx={{ m: 3 }}>
+                                        {error && (
+                                            <Alert severity="error" sx={{ mb: 2 }}>
+                                                {error}
+                                            </Alert>
+                                        )}
 
-                            <Box sx={{ mb: 4 }}>
-                                <Typography variant="h4" gutterBottom>
-                                    Order Details
-                                </Typography>
-                                <Typography variant="subtitle1" color="text.secondary">
-                                    Reference Number: {orderDetails?.referenceNumber}
-                                </Typography>
-                                {orderDetails?.status === 'CANCELLED' && (
-                                    <Alert severity="warning" sx={{ mt: 2 }}>
-                                        This order has been cancelled
-                                    </Alert>
-                                )}
-                            </Box>
+                                        <Box sx={{ mb: 4 }}>
+                                            <Typography variant="h3" gutterBottom sx={{
+                                                mb: 4,
+                                                fontWeight: 600,
+                                                background: 'linear-gradient(45deg, #6200aa 30%, #8e24aa 90%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent'
+                                            }}>
+                                                Order Details
+                                            </Typography>
+                                            <Typography variant="h6" sx={{ mb: 5, color: 'text.secondary' }}>
+                                                Reference Number: {orderDetails?.referenceNumber}
+                                            </Typography>
+                                            {orderDetails?.status === 'CANCELLED' && (
+                                                <Alert severity="warning" sx={{ mt: 2 }}>
+                                                    This order has been cancelled
+                                                </Alert>
+                                            )}
+                                        </Box>
 
-                            <Divider sx={{ my: 3 }} />
+                                        <Divider sx={{ my: 3 }} />
 
-                            <Box sx={{ mb: 4 }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Order Progress
-                                </Typography>
-                                <Stepper
-                                    activeStep={getStepIndex(orderDetails?.status)}
-                                    alternativeLabel
-                                    sx={{ mt: 3 }}
-                                >
-                                    {steps.map((step, index) => (
-                                        <Step key={index}>
-                                            <StepLabel StepIconComponent={step.icon}>
-                                                {step.label}
-                                            </StepLabel>
-                                        </Step>
-                                    ))}
-                                </Stepper>
-                            </Box>
+                                        <Box sx={{ mb: 4 }}>
+                                            <Typography variant="h5" gutterBottom sx={{
+                                                fontWeight: 600,
+                                                background: 'linear-gradient(45deg, #6200aa 30%, #8e24aa 90%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent'
+                                            }}>
+                                                Order Progress
+                                            </Typography>
+                                            <Stepper
+                                                activeStep={getStepIndex(orderDetails?.status)}
+                                                alternativeLabel
+                                                sx={{ mt: 3 }}
+                                            >
+                                                {steps.map((step, index) => (
+                                                    <Step key={index}>
+                                                        <StepLabel StepIconComponent={step.icon}>
+                                                            {step.label}
+                                                        </StepLabel>
+                                                    </Step>
+                                                ))}
+                                            </Stepper>
+                                        </Box>
 
-                            <Divider sx={{ my: 3 }} />
+                                        <Divider sx={{ my: 3 }} />
 
-                            <Box sx={{ mb: 4 }}>
-                                <Typography variant="h6" gutterBottom>
-                                    Order Information
-                                </Typography>
-                                <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
-                                    <Typography variant="body1">
-                                        Router Type: {orderDetails?.routerType}
+                                        <Box sx={{ mb: 4 }}>
+                                            <Typography variant="h5" gutterBottom sx={{
+                                                fontWeight: 600,
+                                                background: 'linear-gradient(45deg, #6200aa 30%, #8e24aa 90%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent'
+                                            }}>
+                                                Order Information
+                                            </Typography>
+                                            <Box sx={{ display: 'grid', gap: 2, gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))' }}>
+                                                <Typography variant="body1">
+                                                    Router Type: {orderDetails?.routerType}
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    Quantity: {orderDetails?.numRouters}
+                                                </Typography>
+                                                <Typography variant="body1">
+                                                    Site Name: {orderDetails?.siteName}
+                                                </Typography>
+                                            </Box>
+                                        </Box>
+
+                                        <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
+                                            <Button
+                                                variant="contained"
+                                                color="primary"
+                                                startIcon={<Settings />}
+                                                disabled={!orderDetails?.canModify}
+                                                onClick={() => setModifyDialogOpen(true)}
+                                            >
+                                                Modify Order
+                                            </Button>
+                                            <Button
+                                                variant="outlined"
+                                                color="error"
+                                                startIcon={<Cancel />}
+                                                disabled={!orderDetails?.canCancel}
+                                                onClick={() => setCancelDialogOpen(true)}
+                                            >
+                                                Cancel Order
+                                            </Button>
+                                        </Box>
+                                    </FeatureCard>
+                                </AnimatedComponent>
+                                <Footer>
+                                    <Typography variant="caption">
+                                        © 2025 BT IoT Router Services. All rights reserved.
                                     </Typography>
-                                    <Typography variant="body1">
-                                        Quantity: {orderDetails?.numRouters}
-                                    </Typography>
-                                    <Typography variant="body1">
-                                        Site Name: {orderDetails?.siteName}
-                                    </Typography>
-                                </Box>
+                                </Footer>
                             </Box>
-
-                            <Box sx={{ mt: 4, display: 'flex', justifyContent: 'space-between' }}>
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-                                    startIcon={<Settings />}
-                                    disabled={!orderDetails?.canModify}
-                                    onClick={() => setModifyDialogOpen(true)}
-                                >
-                                    Modify Order
-                                </Button>
-                                <Button
-                                    variant="outlined"
-                                    color="error"
-                                    startIcon={<Cancel />}
-                                    disabled={!orderDetails?.canCancel}
-                                    onClick={() => setCancelDialogOpen(true)}
-                                >
-                                    Cancel Order
-                                </Button>
-                            </Box>
-                        </FeatureCard>
-                    </AnimatedComponent>
+                        </Fade>
+                    </Container>
                 </ScrollableContainer>
             </Box>
-
-            <Drawer
-                variant="temporary"
-                anchor="left"
-                open={mobileOpen}
-                onClose={handleDrawerToggle}
-                ModalProps={{
-                    keepMounted: true
-                }}
-                sx={{
-                    display: { xs: 'block', sm: 'none' },
-                    '& .MuiDrawer-paper': {
-                        width: 280,
-                        bgcolor: '#6200aa'
-                    },
-                }}
-            >
-                {drawer}
-            </Drawer>
 
             <Dialog open={modifyDialogOpen} onClose={() => setModifyDialogOpen(false)}>
                 <DialogTitle>Modify Order</DialogTitle>

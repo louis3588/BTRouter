@@ -4,7 +4,6 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import Home from './components/Home/Home';
 import ProtectedRoute from './components/Auth/ProtectedRoute';
-
 import ForgotPassword from './components/Auth/ForgotPassword';
 import ResetPassword from './components/Auth/ResetPassword';
 import RequestForm from './components/RouterRequests/RequestForm';
@@ -14,6 +13,7 @@ import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
 import OrderExport from "./components/OrderHistory/OrderExport";
 import OrderTracking from './components/OrderTracking/OrderTracking';
+import TrackOrderSearch from './components/OrderTracking/TrackOrderSearch';
 import RouterRequestManagement from './components/Admin/RouterRequestManagement';
 import NewsEditor from './components/NewsManagement/NewsEditor';
 import NewsPage from './components/UserNews/NewsPage';
@@ -28,7 +28,18 @@ function App() {
                 <Route path="/forgot-password" element={<ForgotPassword />} />
                 <Route path="/reset-password" element={<ResetPassword />} />
                 <Route path="/export" element={<OrderExport />} />
-                <Route path="/track-order/:referenceNumber" element={<OrderTracking />} />
+
+                {/* Order Tracking Routes */}
+                <Route path="/track-order" element={
+                    <ProtectedRoute>
+                        <TrackOrderSearch />
+                    </ProtectedRoute>
+                } />
+                <Route path="/order-tracking/:referenceNumber" element={
+                    <ProtectedRoute>
+                        <OrderTracking />
+                    </ProtectedRoute>
+                } />
 
                 {/* Protected Routes */}
                 <Route path="/home" element={
@@ -73,14 +84,12 @@ function App() {
                     </ProtectedRoute>
                 } />
 
-                {/* 🛠️ Admin News Management */}
                 <Route path="/news-management" element={
                     <ProtectedRoute>
                         <NewsEditor />
                     </ProtectedRoute>
                 } />
 
-                {/* 🆕 User News & Announcements */}
                 <Route path="/news" element={
                     <ProtectedRoute>
                         <NewsPage />
