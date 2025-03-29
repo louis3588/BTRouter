@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import cf.ac.uk.btrouter.service.OrderTrackingService;
 
 @Service
 public class RouterOrderService {
@@ -16,13 +17,16 @@ public class RouterOrderService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private OrderTrackingService orderTrackingService;
+
     public RouterOrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
     public Order saveOrder(OrderRequest orderRequest) {
         Order order = new Order();
-        
+
         order.setReferenceNumber(UUID.randomUUID().toString()); // Unique Reference Number
         order.setCustomerType(orderRequest.getCustomerType());
         order.setRouterType(orderRequest.getRouterType());
@@ -71,6 +75,7 @@ public class RouterOrderService {
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         order.setStatus(newStatus);
         orderRepository.save(order);
+        orderTrackingService.updateOrderStatusByOrderId(orderId, newStatus);
     }
 
     public List<Order> getPendingRequests() {

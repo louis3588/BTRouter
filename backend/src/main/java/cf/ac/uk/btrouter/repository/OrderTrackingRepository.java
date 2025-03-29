@@ -10,4 +10,7 @@ public interface OrderTrackingRepository extends JpaRepository<OrderTracking, In
 
     // Find order tracking by reference number
     Optional<OrderTracking> findByReferenceNumber(String referenceNumber);
+
+    // Find order tracking by order id
+    Optional<OrderTracking> findByOrderId(Long orderId);
 }
