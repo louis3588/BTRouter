@@ -30,7 +30,7 @@ public class EmailService {
         message.setSubject("Password Reset Request");
         message.setText("To reset your password, click the link below:\n\n" +
                 "http://localhost:3000/reset-password?token=" + token + "\n\n" +
-                "This link will expire in 24 hours.\n\n" +
+                "This link will expire in 5 minutes.\n\n" +
                 "If you did not request a password reset, please ignore this email.");
         mailSender.send(message);
     }
