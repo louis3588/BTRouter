@@ -68,7 +68,6 @@ public class OrderTrackingService {
             logger.info("Sent confirmation email to: {}", order.getSitePrimaryEmail());
         } catch (Exception e) {
             logger.error("Failed to send confirmation email", e);
-            // Don't throw the exception - we still want to return the tracking info
         }
 
         return savedTracking;
@@ -209,14 +208,10 @@ public class OrderTrackingService {
                 tracking.setCanModify(true);
                 tracking.setCanCancel(true);
                 break;
-
             case "CONFIRMED":
-                // Can modify within 24 hours of creation
-                Duration timeSinceCreation = Duration.between(tracking.getCreatedAt(), LocalDateTime.now());
-                tracking.setCanModify(timeSinceCreation.toHours() < 24);
-                tracking.setCanCancel(true);
+                tracking.setCanModify(false);
+                tracking.setCanCancel(false);
                 break;
-
             case "IN_PRODUCTION":
             case "QUALITY_CHECK":
             case "READY_FOR_SHIPPING":
