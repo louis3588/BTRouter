@@ -51,7 +51,7 @@ public class EmailService {
         message.setSubject("BT Router Order Confirmation - Ref: " + referenceNumber);
 
         // Construct tracking URL
-        String trackingUrl = frontendUrl + "/track-order/" + referenceNumber;
+        String trackingUrl = frontendUrl + "/order-tracking/" + referenceNumber;
 
         // Construct email body with order details and tracking info
         String emailBody = String.format("""
@@ -111,7 +111,7 @@ public class EmailService {
         message.setSubject("BT Router Order Modified - Ref: " + referenceNumber);
 
         // Construct tracking URL
-        String trackingUrl = frontendUrl + "/track-order/" + referenceNumber;
+        String trackingUrl = frontendUrl + "/order-tracking/" + referenceNumber;
 
         // Construct email body with updated order details
         String emailBody = String.format("""
@@ -195,7 +195,7 @@ public class EmailService {
         message.setSubject("BT Router Order Status Update - Ref: " + referenceNumber);
 
         // Construct tracking URL
-        String trackingUrl = frontendUrl + "/track-order/" + referenceNumber;
+        String trackingUrl = frontendUrl + "/order-tracking/" + referenceNumber;
 
         // Construct email body for status update
         String emailBody = String.format("""

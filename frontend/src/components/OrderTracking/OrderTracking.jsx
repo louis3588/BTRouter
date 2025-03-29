@@ -287,7 +287,37 @@ const OrderTracking = () => {
                                             <Stepper
                                                 activeStep={getStepIndex(orderDetails?.status)}
                                                 alternativeLabel
-                                                sx={{ mt: 3 }}
+                                                sx={{
+                                                    mt: 3,
+                                                    '& .MuiStepLabel-root .MuiStepLabel-label': {
+                                                        color: 'text.secondary',
+                                                    },
+                                                    '& .MuiStepLabel-root .MuiStepLabel-label.Mui-active': {
+                                                        color: '#6200aa',
+                                                        fontWeight: 600,
+                                                    },
+                                                    '& .MuiStepLabel-root .MuiStepLabel-label.Mui-completed': {
+                                                        color: '#6200aa',
+                                                    },
+                                                    '& .MuiStepIcon-root': {
+                                                        color: 'grey.300',
+                                                    },
+                                                    '& .MuiStepIcon-root.Mui-active': {
+                                                        color: '#6200aa',
+                                                    },
+                                                    '& .MuiStepIcon-root.Mui-completed': {
+                                                        color: '#6200aa',
+                                                    },
+                                                    '& .MuiStepConnector-line': {
+                                                        borderColor: 'grey.300',
+                                                    },
+                                                    '& .MuiStepConnector-root.Mui-active .MuiStepConnector-line': {
+                                                        borderColor: '#6200aa',
+                                                    },
+                                                    '& .MuiStepConnector-root.Mui-completed .MuiStepConnector-line': {
+                                                        borderColor: '#6200aa',
+                                                    }
+                                                }}
                                             >
                                                 {steps.map((step, index) => (
                                                     <Step key={index}>

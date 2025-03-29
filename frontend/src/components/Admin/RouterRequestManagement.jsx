@@ -90,7 +90,7 @@ const RouterRequestManagement = () => {
         .then((response) => {
           const updatedRequests = response.data.map((req) => ({
             ...req,
-            requesterName: req.sitePrimaryEmail || "Unknown", // Use email as requester name
+            requesterName: req.sitePrimaryEmail || "Unknown",
           }));
           setRequests(updatedRequests);
           setLoading(false);
@@ -164,9 +164,9 @@ const RouterRequestManagement = () => {
                           {requests.map((req) => (
                               <StyledTableRow key={req.id}>
                                 <TableCell align="center">
-                                  <Tooltip title="Unique Reference Number">
+                                  <Tooltip title="Unique Tracking Reference">
                                     <Typography variant="body1" fontWeight="bold" color="primary">
-                                      {req.referenceNumber || "N/A"}
+                                      {req.trackingReference || "N/A"}
                                     </Typography>
                                   </Tooltip>
                                 </TableCell>
