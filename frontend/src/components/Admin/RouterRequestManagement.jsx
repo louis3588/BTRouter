@@ -87,25 +87,25 @@ const RouterRequestManagement = () => {
   useEffect(() => {
     setLoading(true);
     axios.get("/api/orders")
-      .then((response) => {
-        const updatedRequests = response.data.map((req) => ({
-          ...req,
-          requesterName: req.sitePrimaryEmail || "Unknown", // Use email as requester name
-        }));
-        setRequests(updatedRequests);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching requests:", error);
-        setLoading(false);
-      });
+        .then((response) => {
+          const updatedRequests = response.data.map((req) => ({
+            ...req,
+            requesterName: req.sitePrimaryEmail || "Unknown",
+          }));
+          setRequests(updatedRequests);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error fetching requests:", error);
+          setLoading(false);
+        });
   }, []);
 
   const updateStatus = async (id, newStatus) => {
     try {
       await axios.put(`/api/orders/${id}/status`, { status: newStatus });
       setRequests((prev) =>
-        prev.map((req) => (req.id === id ? { ...req, status: newStatus } : req))
+          prev.map((req) => (req.id === id ? { ...req, status: newStatus } : req))
       );
     } catch (error) {
       console.error("Error updating status", error);
@@ -113,119 +113,123 @@ const RouterRequestManagement = () => {
   };
 
   return (
-    <>
-      <TopBar>
-        <Typography variant="h5">📡 Admin - Router Request Management</Typography>
-      </TopBar>
-      <StyledContainer>
-        <Container maxWidth="lg">
-          <Fade in={true} timeout={600}>
-            <FlowCard>
-              <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-                <Typography variant="h4" fontWeight="bold">
-                  All Router Requests
-                </Typography>
-                <Button
-                  variant="contained"
-                  onClick={() => navigate("/home")}
-                  style={{
-                    background: "linear-gradient(45deg, #ff4081, #ff80ab)",
-                    color: "#fff",
-                    padding: "10px 20px",
-                    fontSize: "14px",
-                  }}
-                >
-                  ⬅ Back to Dashboard
-                </Button>
-              </Box>
-
-              {loading ? (
-                <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
-                  <CircularProgress size={50} />
+      <>
+        <TopBar>
+          <Typography variant="h5">📡 Admin - Router Request Management</Typography>
+        </TopBar>
+        <StyledContainer>
+          <Container maxWidth="lg">
+            <Fade in={true} timeout={600}>
+              <FlowCard>
+                <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
+                  <Typography variant="h4" fontWeight="bold">
+                    All Router Requests
+                  </Typography>
+                  <Button
+                      variant="contained"
+                      onClick={() => navigate("/home")}
+                      style={{
+                        background: "linear-gradient(45deg, #ff4081, #ff80ab)",
+                        color: "#fff",
+                        padding: "10px 20px",
+                        fontSize: "14px",
+                      }}
+                  >
+                    ⬅ Back to Dashboard
+                  </Button>
                 </Box>
-              ) : requests.length === 0 ? (
-                <Typography variant="h6" textAlign="center" color="textSecondary">
-                  🚀 No router requests found. Check back later!
-                </Typography>
-              ) : (
-                <Paper sx={{ overflowX: "auto", mt: 2, borderRadius: 2, boxShadow: "0px 10px 25px rgba(0,0,0,0.1)" }}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <StyledTableCell align="center">Reference #</StyledTableCell>
-                        <StyledTableCell align="center">Requester (Email)</StyledTableCell>
-                        <StyledTableCell align="center">Request Date</StyledTableCell>
-                        <StyledTableCell align="center">Priority</StyledTableCell>
-                        <StyledTableCell align="center">Status</StyledTableCell>
-                        <StyledTableCell align="center">Update</StyledTableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {requests.map((req) => (
-                        <StyledTableRow key={req.id}>
-                          <TableCell align="center">
-                            <Tooltip title="Unique Reference Number">
-                              <Typography variant="body1" fontWeight="bold" color="primary">
-                                {req.referenceNumber || "N/A"}
-                              </Typography>
-                            </Tooltip>
-                          </TableCell>
-                          <TableCell align="center">{req.requesterName}</TableCell>
-                          <TableCell align="center">{new Date(req.orderDate).toLocaleDateString()}</TableCell>
-                          <TableCell align="center">
-                            <Typography
-                              variant="body1"
-                              fontWeight="bold"
-                              color={
-                                req.priorityLevel === "Critical"
-                                  ? "error"
-                                  : req.priorityLevel === "High"
-                                  ? "warning"
-                                  : "textPrimary"
-                              }
-                            >
-                              {req.priorityLevel}
-                            </Typography>
-                          </TableCell>
-                          <TableCell align="center">
-                            <Typography
-                              variant="body1"
-                              fontWeight="bold"
-                              color={
-                                req.status === "Pending"
-                                  ? "warning"
-                                  : req.status === "Approved"
-                                  ? "success"
-                                  : req.status === "In Review"
-                                  ? "info"
-                                  : "error"
-                              }
-                            >
-                              {req.status}
-                            </Typography>
-                          </TableCell>
-                          <TableCell align="center">
-                            <StatusSelect
-                              value={req.status}
-                              onChange={(e) => updateStatus(req.id, e.target.value)}
-                            >
-                              <MenuItem value="Pending">Pending</MenuItem>
-                              <MenuItem value="Approved">Approved</MenuItem>
-                              <MenuItem value="In Review">In Review</MenuItem>
-                              <MenuItem value="Denied">Denied</MenuItem>
-                            </StatusSelect>
-                          </TableCell>
-                        </StyledTableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </Paper>
-              )}
-            </FlowCard>
-          </Fade>
-        </Container>
-      </StyledContainer>
-    </>
+
+                {loading ? (
+                    <Box sx={{ display: "flex", justifyContent: "center", my: 4 }}>
+                      <CircularProgress size={50} />
+                    </Box>
+                ) : requests.length === 0 ? (
+                    <Typography variant="h6" textAlign="center" color="textSecondary">
+                      🚀 No router requests found. Check back later!
+                    </Typography>
+                ) : (
+                    <Paper sx={{ overflowX: "auto", mt: 2, borderRadius: 2, boxShadow: "0px 10px 25px rgba(0,0,0,0.1)" }}>
+                      <Table>
+                        <TableHead>
+                          <TableRow>
+                            <StyledTableCell align="center">Reference #</StyledTableCell>
+                            <StyledTableCell align="center">Requester (Email)</StyledTableCell>
+                            <StyledTableCell align="center">Request Date</StyledTableCell>
+                            <StyledTableCell align="center">Priority</StyledTableCell>
+                            <StyledTableCell align="center">Status</StyledTableCell>
+                            <StyledTableCell align="center">Update</StyledTableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {requests.map((req) => (
+                              <StyledTableRow key={req.id}>
+                                <TableCell align="center">
+                                  <Tooltip title="Unique Tracking Reference">
+                                    <Typography variant="body1" fontWeight="bold" color="primary">
+                                      {req.trackingReference || "N/A"}
+                                    </Typography>
+                                  </Tooltip>
+                                </TableCell>
+                                <TableCell align="center">{req.requesterName}</TableCell>
+                                <TableCell align="center">{new Date(req.orderDate).toLocaleDateString()}</TableCell>
+                                <TableCell align="center">
+                                  <Typography
+                                      variant="body1"
+                                      fontWeight="bold"
+                                      color={
+                                        req.priorityLevel === "Critical"
+                                            ? "error"
+                                            : req.priorityLevel === "High"
+                                                ? "warning"
+                                                : "textPrimary"
+                                      }
+                                  >
+                                    {req.priorityLevel}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell align="center">
+                                  <Typography
+                                      variant="body1"
+                                      fontWeight="bold"
+                                      color={
+                                        req.status === "PENDING"
+                                            ? "warning"
+                                            : req.status === "CONFIRMED"
+                                                ? "success"
+                                                : req.status === "IN_PRODUCTION"
+                                                    ? "info"
+                                                    : "error"
+                                      }
+                                  >
+                                    {req.status}
+                                  </Typography>
+                                </TableCell>
+                                <TableCell align="center">
+                                  <StatusSelect
+                                      value={req.status}
+                                      onChange={(e) => updateStatus(req.id, e.target.value)}
+                                  >
+                                    <MenuItem value="PENDING">Pending</MenuItem>
+                                    <MenuItem value="CONFIRMED">Confirmed</MenuItem>
+                                    <MenuItem value="IN_PRODUCTION">In Production</MenuItem>
+                                    <MenuItem value="QUALITY_CHECK">Quality Check</MenuItem>
+                                    <MenuItem value="READY_FOR_SHIPPING">Ready for Shipping</MenuItem>
+                                    <MenuItem value="IN_TRANSIT">In Transit</MenuItem>
+                                    <MenuItem value="DELIVERED">Delivered</MenuItem>
+                                    <MenuItem value="CANCELLED">Cancelled</MenuItem>
+                                  </StatusSelect>
+                                </TableCell>
+                              </StyledTableRow>
+                          ))}
+                        </TableBody>
+                      </Table>
+                    </Paper>
+                )}
+              </FlowCard>
+            </Fade>
+          </Container>
+        </StyledContainer>
+      </>
   );
 };
 
