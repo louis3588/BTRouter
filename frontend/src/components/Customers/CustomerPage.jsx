@@ -189,10 +189,14 @@ const CustomerPage = () => {
                                     <MenuItem value="" disabled>
                                         <em>Required</em>
                                     </MenuItem>
-                                    {customers.map((customer) => (
-                                        <MenuItem key={customer.customerID} value={customer.customerID}>
-                                            {customer.customerName}
-                                        </MenuItem>
+                                    {[...customers]
+                                        .sort((a, b) =>
+                                            a.customerName.toLowerCase().localeCompare(b.customerName.toLowerCase())
+                                        )
+                                        .map((customer) => (
+                                            <MenuItem key={customer.customerID} value={customer.customerID}>
+                                                {customer.customerName}
+                                            </MenuItem>
                                     ))}
                                 </StyledSelect>
                             )}
