@@ -45,6 +45,7 @@ const ContactForm = styled(Paper)(({ theme }) => ({
     borderRadius: '16px',
     boxShadow: '0 8px 32px rgba(98, 0, 170, 0.1)',
     transition: 'all 0.3s ease',
+    height: '100%',
     '&:hover': {
         transform: 'translateY(-4px)',
         boxShadow: '0 12px 40px rgba(98, 0, 170, 0.2)',
@@ -52,8 +53,16 @@ const ContactForm = styled(Paper)(({ theme }) => ({
 }));
 
 const ContactCard = styled(FeatureCard)(({ theme }) => ({
-    background: 'linear-gradient(135deg, rgba(98, 0, 170, 0.05), rgba(156, 39, 176, 0.05))',
-    border: '1px solid rgba(98, 0, 170, 0.1)',
+    background: 'rgba(255, 255, 255, 0.9)',
+    backdropFilter: 'blur(10px)',
+    borderRadius: '16px',
+    boxShadow: '0 8px 32px rgba(98, 0, 170, 0.1)',
+    transition: 'all 0.3s ease',
+    height: '100%',
+    '&:hover': {
+        transform: 'translateY(-4px)',
+        boxShadow: '0 12px 40px rgba(98, 0, 170, 0.2)',
+    }
 }));
 
 const ContactLink = styled(Box)(({ theme }) => ({
@@ -99,7 +108,6 @@ const ContactUs = () => {
         if (!formData.email.trim()) newErrors.email = 'Email is required';
         else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = 'Invalid email format';
         if (!formData.phone.trim()) newErrors.phone = 'Phone number is required';
-        if (!formData.orderReference.trim()) newErrors.orderReference = 'Order Reference is required';
         if (!formData.enquiryType) newErrors.enquiryType = 'Please select an enquiry type';
         if (!formData.message.trim()) newErrors.message = 'Message is required';
         setErrors(newErrors);
@@ -294,13 +302,14 @@ const ContactUs = () => {
 
                                         <TextField
                                             fullWidth
-                                            label="Order Reference"
+                                            label="Order Reference (Optional)"
                                             name="orderReference"
                                             value={formData.orderReference}
                                             onChange={handleChange}
                                             error={!!errors.orderReference}
                                             helperText={errors.orderReference}
-                                            required
+                                            InputLabelProps={{ shrink: true }}
+                                            placeholder="Example: BT-1A2B3C4D"
                                         />
 
                                         <FormControl fullWidth error={!!errors.enquiryType}>
