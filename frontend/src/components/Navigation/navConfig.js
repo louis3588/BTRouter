@@ -60,11 +60,11 @@ export const navItems = [
         path: '/analytics'
     },
     {
-        id: 'support',
+        id: 'contact',
         icon: SupportIcon,
-        label: 'Support',
+        label: 'Contact Us',
         allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
-        path: '/support'
+        path: '/contact'
     }
 ];
 

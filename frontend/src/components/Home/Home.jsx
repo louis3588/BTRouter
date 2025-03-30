@@ -1,3 +1,4 @@
+// frontend/src/components/Home/Home.jsx
 import React from 'react';
 import {
     Typography,
@@ -21,8 +22,9 @@ import {
     History as HistoryIcon,
     Analytics as AnalyticsIcon,
     Hub as RouterManagementIcon,
-    Campaign as AdminNewsIcon,            
-    NotificationsActive as UserNewsIcon    
+    Campaign as AdminNewsIcon,
+    NotificationsActive as UserNewsIcon,
+    Support as SupportIcon
 } from '@mui/icons-material';
 import Sidebar from '../Navigation/Sidebar';
 import useAuth from "../Auth/useAuth";
@@ -41,7 +43,8 @@ const Home = () => {
         // Admin-only card for creating posts
         { id: 'news', title: 'News & Updates', icon: AdminNewsIcon, allowedRoles: ['ADMIN'], description: 'Post updates or announcements', path: '/news-management' },
         // User-facing card for viewing news
-        { id: 'user-news', title: 'Announcements', icon: UserNewsIcon, allowedRoles: ['USER', 'SUPPORT_AGENT', 'ADMIN'], description: 'View latest news and admin updates', path: '/news' }
+        { id: 'user-news', title: 'Announcements', icon: UserNewsIcon, allowedRoles: ['USER', 'SUPPORT_AGENT', 'ADMIN'], description: 'View latest news and admin updates', path: '/news' },
+        { id: 'contact', title: 'Contact Us', icon: SupportIcon, allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'], description: 'Get in touch with our support team', path: '/contact' }
     ];
 
     const handleNavigation = (path, allowedRoles) => {
