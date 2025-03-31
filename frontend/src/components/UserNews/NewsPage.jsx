@@ -22,7 +22,6 @@ import { styled } from '@mui/system';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
-/* 🔹 STYLED COMPONENTS */
 const TopBar = styled(Box)({
   width: '100%',
   background: 'linear-gradient(135deg, #6200ea, #9c27b0)',
@@ -50,7 +49,6 @@ const FlowCard = styled(Box)({
   maxWidth: '900px',
 });
 
-/* 🔹 MAIN COMPONENT */
 const NewsPage = () => {
   const [news, setNews] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -94,7 +92,6 @@ const NewsPage = () => {
 
   return (
     <>
-      {/* 🔹 HEADER */}
       <TopBar>
         <Typography variant="h5" fontWeight="bold">
           📢 News & Updates - BT IoT Router Services
@@ -105,7 +102,6 @@ const NewsPage = () => {
         <Container maxWidth="md">
           <Fade in timeout={600}>
             <FlowCard>
-              {/* 🔹 HEADER SECTION */}
               <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
                 <Box display="flex" alignItems="center" gap={2}>
                   <Typography variant="h4" fontWeight="bold" color="primary">
@@ -127,7 +123,6 @@ const NewsPage = () => {
                 </Button>
               </Box>
 
-              {/* 🔹 SEARCH BAR */}
               <TextField
                 fullWidth
                 placeholder="Search news..."
@@ -143,7 +138,6 @@ const NewsPage = () => {
                 sx={{ mb: 3, borderRadius: 2 }}
               />
 
-              {/* 🔹 NEWS LIST */}
               {loading ? (
                 <Box mt={4} textAlign="center">
                   <CircularProgress color="primary" />
@@ -171,12 +165,26 @@ const NewsPage = () => {
                             }}
                           >
                             <ListItemText
+                              disableTypography
                               primary={
-                                <Typography variant="h6" fontWeight={unreadIds.has(post.id) ? 'bold' : 'medium'}>
-                                  {post.title}
-                                </Typography>
+                                <Box>
+                                  <Typography variant="subtitle1" fontWeight="bold">
+                                    {post.title}
+                                    {post.author === 'System Notification' && (
+                                      <Typography
+                                        component="span"
+                                        variant="caption"
+                                        sx={{ color: '#6200ea', fontWeight: 'medium', ml: 1 }}
+                                      >
+                                        [Auto-Generated]
+                                      </Typography>
+                                    )}
+                                  </Typography>
+                                  <Typography variant="body2" color="text.secondary" mt={0.5}>
+                                    {post.description}
+                                  </Typography>
+                                </Box>
                               }
-                              secondary={`${post.description.slice(0, 120)}...`}
                             />
                             {unreadIds.has(post.id) && (
                               <Badge color="primary" variant="dot" sx={{ ml: 2 }} />
@@ -190,7 +198,6 @@ const NewsPage = () => {
                 </Paper>
               )}
 
-              {/* 🔹 BACK TO DASHBOARD BUTTON */}
               <Box mt={4} textAlign="center">
                 <Button
                   onClick={() => navigate('/home')}

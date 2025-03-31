@@ -68,7 +68,6 @@ public class OrderTrackingService {
             logger.info("Sent confirmation email to: {}", order.getSitePrimaryEmail());
         } catch (Exception e) {
             logger.error("Failed to send confirmation email", e);
-            // Don't throw the exception - we still want to return the tracking info
         }
 
         return savedTracking;
@@ -80,7 +79,7 @@ public class OrderTrackingService {
                 .orElseThrow(() -> new RuntimeException("Order not found with reference: " + referenceNumber));
     }
 
-    // Update order status and permissions
+    // Update order status and permissions based on reference number
     @Transactional
     public OrderTracking updateOrderStatus(String referenceNumber, String newStatus) {
         OrderTracking tracking = getOrderTracking(referenceNumber);
@@ -102,6 +101,36 @@ public class OrderTrackingService {
             emailService.sendOrderStatusUpdateEmail(
                     order.getSitePrimaryEmail(),
                     referenceNumber,
+                    newStatus
+            );
+        } catch (Exception e) {
+            logger.error("Failed to send status update email", e);
+        }
+
+        return updatedTracking;
+    }
+
+    // Update order status and permissions based on order ID
+    @Transactional
+    public OrderTracking updateOrderStatusByOrderId(Long orderId, String newStatus) {
+        OrderTracking tracking = orderTrackingRepository.findByOrderId(orderId)
+                .orElseThrow(() -> new RuntimeException("OrderTracking not found for order ID: " + orderId));
+
+        // Update status and modification permissions
+        tracking.setStatus(newStatus);
+        updateModificationPermissions(tracking, newStatus);
+
+        OrderTracking updatedTracking = orderTrackingRepository.save(tracking);
+
+        // Get the associated order
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        // Send status update email
+        try {
+            emailService.sendOrderStatusUpdateEmail(
+                    order.getSitePrimaryEmail(),
+                    tracking.getReferenceNumber(),
                     newStatus
             );
         } catch (Exception e) {
@@ -179,14 +208,10 @@ public class OrderTrackingService {
                 tracking.setCanModify(true);
                 tracking.setCanCancel(true);
                 break;
-
             case "CONFIRMED":
-                // Can modify within 24 hours of creation
-                Duration timeSinceCreation = Duration.between(tracking.getCreatedAt(), LocalDateTime.now());
-                tracking.setCanModify(timeSinceCreation.toHours() < 24);
-                tracking.setCanCancel(true);
+                tracking.setCanModify(false);
+                tracking.setCanCancel(false);
                 break;
-
             case "IN_PRODUCTION":
             case "QUALITY_CHECK":
             case "READY_FOR_SHIPPING":
