@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
+    Container,
     Checkbox,
     FormControlLabel,
     InputLabel,
@@ -12,21 +13,23 @@ import {
     StyledSelect,
     StyledFormControl,
     StyledTextField,
+    CardContainer,
     MainContainer,
-    ContentArea,
-    FormWrapper,
     NameContainer,
     ToggleNameButton,
     CheckboxColumn,
     ButtonContainer,
     SaveButton,
-    DeleteButton
+    DeleteButton,
+    TopDecoration,
+    BottomDecoration,
+    Footer
 } from "../../styles/PageStyles";
 import Sidebar from "../Navigation/Sidebar";
 import useAuth from "../Auth/useAuth";
 
 const RouterPage = () => {
-    const { userRole, activeTab, setActiveTab } = useAuth();
+    const {userRole, activeTab, setActiveTab} = useAuth();
     const [routers, setRouters] = useState([]);
     const [isAddingNewRouter, setIsAddingNewRouter] = useState(false);
     const [newRouterName, setNewRouterName] = useState("");
@@ -108,7 +111,7 @@ const RouterPage = () => {
 
         fetch("http://localhost:8080/api/routers", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify(routerData),
         })
             .then((response) => {
@@ -181,17 +184,20 @@ const RouterPage = () => {
 
     return (
         <MainContainer>
-            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} userRole={userRole} />
+            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} userRole={userRole}/>
 
-            <ContentArea>
-                <FormWrapper elevation={3}>
-                    <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "center", mb: 2 }}>
+            <Container maxWidth="md" sx={{position: "relative", py: 4}}>
+                <TopDecoration/>
+                <BottomDecoration/>
+
+                <CardContainer active={true} sx={{m: 3}}>
+                    <Typography variant="h5" sx={{fontWeight: "bold", textAlign: "center", mb: 2}}>
                         Router Configurations
                     </Typography>
 
-                    <StyledFormControl fullWidth sx={{ mb: 2 }}>
+                    <StyledFormControl fullWidth sx={{mb: 2}}>
                         {!isAddingNewRouter && (
-                            <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                            <InputLabel sx={{backgroundColor: "white", px: 0.5}}>
                                 Select a router...
                             </InputLabel>
                         )}
@@ -222,7 +228,9 @@ const RouterPage = () => {
                                 </StyledSelect>
                             )}
 
-                            <Tooltip title={isAddingNewRouter ? "Switch to find an existing router." : "Switch to add a new router."} arrow enterDelay={250} leaveDelay={100}>
+                            <Tooltip
+                                title={isAddingNewRouter ? "Switch to find an existing router." : "Switch to add a new router."}
+                                arrow enterDelay={250} leaveDelay={100}>
                                 <ToggleNameButton
                                     onClick={() => {
                                         setIsAddingNewRouter(!isAddingNewRouter);
@@ -234,7 +242,7 @@ const RouterPage = () => {
                         </NameContainer>
                     </StyledFormControl>
 
-                    <Typography variant="h6" sx={{ mt: 2 }}>Outside Connection Types</Typography>
+                    <Typography variant="h6" sx={{mt: 2}}>Outside Connection Types</Typography>
                     <CheckboxColumn>
                         {outsideOptions.map((type) => (
                             <FormControlLabel
@@ -250,7 +258,7 @@ const RouterPage = () => {
                         ))}
                     </CheckboxColumn>
 
-                    <Typography variant="h6" sx={{ mt: 2 }}>Inside Connection Types</Typography>
+                    <Typography variant="h6" sx={{mt: 2}}>Inside Connection Types</Typography>
                     <CheckboxColumn>
                         <FormControlLabel
                             control={
@@ -266,14 +274,14 @@ const RouterPage = () => {
                                 fullWidth
                                 label="Maximum Ethernet Ports"
                                 type="number"
-                                value={ethernetPorts || ""}  // Show empty when null
+                                value={ethernetPorts || ""}
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     if (value === "" || (Number(value) >= 0 && Number(value) <= 32767)) {
                                         setEthernetPorts(value === "" ? null : Number(value));
                                     }
                                 }}
-                                sx={{ mt: 1, mb: 2 }}
+                                sx={{mt: 1, mb: 2}}
                             />
                         )}
 
@@ -291,26 +299,37 @@ const RouterPage = () => {
                                 fullWidth
                                 label="Maximum Serial Ports"
                                 type="number"
-                                value={serialPorts || ""}  // Show empty when null
+                                value={serialPorts || ""}
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     if (value === "" || (Number(value) >= 0 && Number(value) <= 32767)) {
                                         setSerialPorts(value === "" ? null : Number(value));
                                     }
                                 }}
-                                sx={{ mt: 1, mb: 2 }}
+                                sx={{mt: 1, mb: 2}}
                             />
                         )}
                     </CheckboxColumn>
 
                     <ButtonContainer>
-                        <SaveButton onClick={handleSave} disabled={isAddingNewRouter ? !newRouterName.trim() : !selectedRouter}>Save</SaveButton>
-                        <DeleteButton onClick={handleDelete} disabled={!selectedRouter}>Delete</DeleteButton>
+                        <SaveButton onClick={handleSave}
+                                    disabled={isAddingNewRouter ? !newRouterName.trim() : !selectedRouter}>
+                            Save
+                        </SaveButton>
+                        <DeleteButton onClick={handleDelete} disabled={!selectedRouter}>
+                            Delete
+                        </DeleteButton>
                     </ButtonContainer>
-                </FormWrapper>
-            </ContentArea>
+                </CardContainer>
+
+                <Footer>
+                    <Typography variant="caption">
+                        © 2025 BT IoT Router Services. All rights reserved.
+                    </Typography>
+                </Footer>
+            </Container>
         </MainContainer>
     );
-};
+}
 
 export default RouterPage;

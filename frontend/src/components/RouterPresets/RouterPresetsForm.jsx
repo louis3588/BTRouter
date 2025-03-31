@@ -430,7 +430,7 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
                 <span>If <strong>Ethernet</strong> is selected, please select a VLANs configuration.
                     <hr /><strong>Unspecified</strong> (Default): No further action.
                     <br /><strong>Specified</strong>: Specify in additional information.
-                    <br /><strong>Open Trunk</strong>: Specify DHCP configuration.
+                    <br /><strong>Open Trunk</strong>: Choose to enable or disable DHCP.
                 </span>
                 } arrow enterDelay={250} leaveDelay={100}>
                 <StyledFormControl fullWidth sx={{ mt: 1 }}>
@@ -454,7 +454,12 @@ const RouterPresetForm = forwardRef(({ customer, routers, routerPresets, setRout
                 </StyledFormControl>
             </Tooltip>
 
-            <Tooltip title={<span>Enable or disable DHCP for this configuration.<hr />Only an option if <strong>Open Trunk</strong> is selected in VLANs.</span>} arrow enterDelay={250} leaveDelay={100}>
+            <Tooltip title={
+                <span>Enable or disable DHCP for this configuration.
+                    <hr />Only an option if <strong>Open Trunk</strong> is selected in VLANs.
+                </span>
+                } arrow enterDelay={250} leaveDelay={100}
+            >
                 <FormControlLabel
                     control={
                         <StyledSwitch
