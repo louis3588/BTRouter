@@ -3,35 +3,38 @@ import {
     InputLabel,
     MenuItem,
     Tooltip,
-    Typography
+    Typography,
+    Container
 } from "@mui/material";
 import {
     StyledSelect,
     StyledFormControl,
     StyledTextField,
+    CardContainer,
     MainContainer,
-    ContentArea,
-    FormWrapper,
     NameContainer,
     ToggleNameButton,
     ButtonContainer,
     SaveButton,
-    DeleteButton
+    DeleteButton,
+    TopDecoration,
+    BottomDecoration,
+    Footer
 } from "../../styles/PageStyles";
 import Sidebar from "../Navigation/Sidebar";
 import useAuth from "../Auth/useAuth";
 import RouterPresetForm from "../RouterPresets/RouterPresetsForm";
 
 const CustomerPage = () => {
-    const {userRole, activeTab, setActiveTab} = useAuth();
+    const { userRole, activeTab, setActiveTab } = useAuth();
     const [customers, setCustomers] = useState([]);
     const [isAddingNewCustomer, setIsAddingNewCustomer] = useState(false);
     const [newCustomerName, setNewCustomerName] = useState("");
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [routers, setRouters] = useState([]);
     const [routerPresets, setRouterPresets] = useState([]);
+    const routerPresetFormRef = useRef();
 
-    /* Lifecycle Effects. */
     useEffect(() => {
         fetch("http://localhost:8080/api/customers")
             .then((response) => response.json())
@@ -57,20 +60,12 @@ const CustomerPage = () => {
         }
     }, [selectedCustomer]);
 
-    // CustomerPage is parent of RouterPresetsForm, declaring the reference.
-    const routerPresetFormRef = useRef();
-
-    /* Form Handlers. */
-    // Resets all form fields to their default (empty) values.
     const clearForm = () => {
         setNewCustomerName("");
         setSelectedCustomer(null);
-
-        // Clears the child forms.
         routerPresetFormRef.current?.clearForm();
     };
 
-    // Updates the form fields when a different selection in the drop-down box is made.
     const handleCustomerChange = (event) => {
         const selectedId = parseInt(event.target.value, 10);
         const customer = customers.find((r) => r.customerID === selectedId);
@@ -78,17 +73,13 @@ const CustomerPage = () => {
         setSelectedCustomer(customer || null);
     };
 
-    /* Button Handlers. */
-    // Saves the customer details to the database if the customer exists; adds the new customer if not.
     const handleSave = () => {
         const customerName = isAddingNewCustomer ? newCustomerName : selectedCustomer?.customerName;
-
         if (!customerName?.trim()) {
             alert("Please enter a customer name before saving.");
             return;
         }
 
-        // Creates the customerData object with all relevant fields from the customer form.
         const customerData = {
             customerID: isAddingNewCustomer ? null : selectedCustomer?.customerID,
             customerName: customerName.trim(),
@@ -100,23 +91,20 @@ const CustomerPage = () => {
             body: JSON.stringify(customerData),
         })
             .then((response) => {
-                if (!response.ok) {
-                    throw new Error("Failed to save customer.");
-                }
+                if (!response.ok) throw new Error("Failed to save customer.");
                 return response.json();
             })
             .then((data) => {
                 alert("Customer saved successfully!");
                 setCustomers((prev) => {
-                    const existingCustomerIndex = prev.findIndex((r) => r.customerID === data.customerID);
-                    if (existingCustomerIndex !== -1) {
-                        const updatedCustomers = [...prev];
-                        updatedCustomers[existingCustomerIndex] = data;
-                        return updatedCustomers;
+                    const existingIndex = prev.findIndex((r) => r.customerID === data.customerID);
+                    if (existingIndex !== -1) {
+                        const updated = [...prev];
+                        updated[existingIndex] = data;
+                        return updated;
                     }
                     return [...prev, data];
                 });
-
                 setSelectedCustomer(data);
             })
             .catch((error) => {
@@ -125,9 +113,8 @@ const CustomerPage = () => {
             });
     };
 
-    // Deletes a customer from the database.
     const handleDelete = () => {
-        if (!selectedCustomer || !selectedCustomer.customerID) {
+        if (!selectedCustomer?.customerID) {
             alert("Please select a customer to delete.");
             return;
         }
@@ -136,14 +123,11 @@ const CustomerPage = () => {
             fetch(`http://localhost:8080/api/customers/${selectedCustomer.customerID}`, {
                 method: "DELETE",
             })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Failed to delete customer.");
-                    }
+                .then((response) => {
+                    if (!response.ok) throw new Error("Failed to delete customer.");
                 })
                 .then(() => {
                     alert("Customer deleted successfully!");
-                    // Update the list of customers in the drop-down box.
                     setCustomers(prev => prev.filter(r => r.customerID !== selectedCustomer.customerID));
                     clearForm();
                 })
@@ -158,8 +142,11 @@ const CustomerPage = () => {
         <MainContainer>
             <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} userRole={userRole} />
 
-            <ContentArea>
-                <FormWrapper elevation={3}>
+            <Container maxWidth="md" sx={{ position: "relative", py: 4 }}>
+                <TopDecoration />
+                <BottomDecoration />
+
+                <CardContainer active={true} sx={{ m: 3 }}>
                     <Typography variant="h5" sx={{ fontWeight: "bold", textAlign: "center", mb: 2 }}>
                         Customers
                     </Typography>
@@ -189,14 +176,19 @@ const CustomerPage = () => {
                                     <MenuItem value="" disabled>
                                         <em>Required</em>
                                     </MenuItem>
-                                    {customers.map((customer) => (
-                                        <MenuItem key={customer.customerID} value={customer.customerID}>
-                                            {customer.customerName}
-                                        </MenuItem>
-                                    ))}
+                                    {[...customers]
+                                        .sort((a, b) => a.customerName.localeCompare(b.customerName))
+                                        .map((customer) => (
+                                            <MenuItem key={customer.customerID} value={customer.customerID}>
+                                                {customer.customerName}
+                                            </MenuItem>
+                                        ))}
                                 </StyledSelect>
                             )}
-                            <Tooltip title={isAddingNewCustomer ? "Switch to find an existing customer." : "Switch to add a new customer."} arrow enterDelay={250} leaveDelay={100}>
+                            <Tooltip
+                                title={isAddingNewCustomer ? "Switch to find an existing customer." : "Switch to add a new customer."}
+                                arrow enterDelay={250} leaveDelay={100}
+                            >
                                 <ToggleNameButton
                                     onClick={() => {
                                         setIsAddingNewCustomer(!isAddingNewCustomer);
@@ -209,11 +201,15 @@ const CustomerPage = () => {
                     </StyledFormControl>
 
                     <ButtonContainer>
-                        <Tooltip title={<span>Save the new customer.</span>} arrow enterDelay={250} leaveDelay={100}>
-                            <SaveButton onClick={handleSave} disabled={!isAddingNewCustomer}>Save Customer</SaveButton>
+                        <Tooltip title="Save the new customer." arrow enterDelay={250} leaveDelay={100}>
+                            <SaveButton onClick={handleSave} disabled={!isAddingNewCustomer}>
+                                Save Customer
+                            </SaveButton>
                         </Tooltip>
-                        <Tooltip title={<span>Delete the selected customer.</span>} arrow enterDelay={250} leaveDelay={100}>
-                            <DeleteButton onClick={handleDelete} disabled={!selectedCustomer}>Delete Customer</DeleteButton>
+                        <Tooltip title="Delete the selected customer." arrow enterDelay={250} leaveDelay={100}>
+                            <DeleteButton onClick={handleDelete} disabled={!selectedCustomer}>
+                                Delete Customer
+                            </DeleteButton>
                         </Tooltip>
                     </ButtonContainer>
 
@@ -224,9 +220,14 @@ const CustomerPage = () => {
                         routerPresets={routerPresets}
                         setRouterPresets={setRouterPresets}
                     />
+                </CardContainer>
 
-                </FormWrapper>
-            </ContentArea>
+                <Footer>
+                    <Typography variant="caption">
+                        © 2025 BT IoT Router Services. All rights reserved.
+                    </Typography>
+                </Footer>
+            </Container>
         </MainContainer>
     );
 };
