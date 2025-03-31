@@ -45,15 +45,22 @@ CREATE TABLE routers (
 CREATE TABLE router_presets (
     router_preset_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     router_id BIGINT NOT NULL,
+    customer_id BIGINT NOT NULL,
     router_preset_name VARCHAR(255) NOT NULL,
     primary_outside_connections VARCHAR(255) NOT NULL,
     secondary_outside_connections VARCHAR(255),
     inside_connections VARCHAR(255) NOT NULL,
-    number_of_ports SMALLINT CHECK (number_of_ports >= 0),
-    vlans ENUM('Unspecified', 'Specified', 'Open Trunk') NOT NULL,
+    number_of_ethernet_ports SMALLINT CHECK (number_of_ethernet_ports >= 0),
+    number_of_serial_ports SMALLINT CHECK (number_of_serial_ports >= 0),
+    vlans ENUM('UNSPECIFIED', 'SPECIFIED', 'OPEN_TRUNK') NOT NULL,
     dhcp BOOLEAN DEFAULT NULL,
+    additional_information VARCHAR(500),
 
     FOREIGN KEY (router_id) REFERENCES routers(router_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 );
@@ -70,7 +77,7 @@ CREATE TABLE router_requests (
     secondary_email VARCHAR(255),
     phone_number VARCHAR(50) NOT NULL,
     name_of_correspondence VARCHAR(255) NOT NULL,
-    priority_level ENUM('Critical', 'Urgent', 'High', 'Medium', 'Low') NOT NULL,
+    priority_level ENUM('CRITICAL', 'URGENT', 'HIGH', 'MEDIUM', 'LOW') NOT NULL,
     additional_information TEXT,
 
     FOREIGN KEY (customer_id) REFERENCES customers(customer_id)
@@ -110,7 +117,7 @@ CREATE TABLE requested_routers (
     inside_connections TEXT NOT NULL,
     number_of_ethernet_ports SMALLINT CHECK (number_of_ethernet_ports >= 0),
     number_of_serial_ports SMALLINT CHECK (number_of_serial_ports >= 0),
-    vlans ENUM('Unspecified', 'Specified', 'Open Trunk') NOT NULL,
+    vlans ENUM('UNSPECIFIED', 'SPECIFIED', 'OPEN_TRUNK') NOT NULL,
     dhcp BOOLEAN DEFAULT NULL,
     number_of_routers SMALLINT NOT NULL CHECK (number_of_routers > 0),
 
@@ -128,13 +135,10 @@ CREATE TABLE router_orders (
     customer_type VARCHAR(50) NOT NULL,
     router_type VARCHAR(50) NOT NULL,
     primary_outside_connection VARCHAR(50) NOT NULL,
-    primary_outside_ports INT NOT NULL CHECK (primary_outside_ports >= 1),
     secondary_outside_connection VARCHAR(50),
-    secondary_outside_ports INT CHECK (secondary_outside_ports >= 0),
-    primary_inside_connection VARCHAR(50) NOT NULL,
-    primary_inside_ports INT NOT NULL CHECK (primary_inside_ports >= 1),
+    primary_inside_connection VARCHAR(50),
+    primary_inside_ports INT,
     vlan_configuration VARCHAR(50) NOT NULL,
-    vlan_assignments VARCHAR(255),
     dhcp_configuration BOOLEAN NOT NULL,
     num_routers INT NOT NULL DEFAULT 1 CHECK (num_routers > 0),
     site_name VARCHAR(100) NOT NULL,
@@ -173,3 +177,15 @@ CREATE TABLE news (
     author VARCHAR(255),
     created_at DATETIME
 );
+
+CREATE TABLE user_reports (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    report_reference VARCHAR(255) NOT NULL,
+    issue_type VARCHAR(255) NOT NULL,
+    reference_number VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    date DATE NOT NULL,
+    explanation TEXT,
+    CONSTRAINT uq_report_reference UNIQUE (report_reference)
+);
+

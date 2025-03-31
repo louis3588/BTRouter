@@ -1,237 +1,270 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  TextField, Button, Typography, Box, Container, Snackbar, MenuItem, Select,
-  FormControl, InputLabel, CircularProgress, Divider, Fade, Stepper, Step,
-  StepLabel, Checkbox, FormControlLabel, Grid, Toolbar
+  Button, Typography, Box, Container, Snackbar, MenuItem,
+  InputLabel, CircularProgress, Fade, Stepper, Step,
+  StepLabel, Checkbox, FormControlLabel, Tooltip, InputAdornment,
 } from "@mui/material";
-import { useNavigate } from "react-router";
-import { styled } from "@mui/system";
+import {
+  StyledButtonGroup,
+  StyledSelect,
+  StyledSlider,
+  StyledSwitch,
+  StyledFormControl,
+  StyledTextField,
+  CardContainer,
+  MainContainer,
+  TopDecoration,
+  BottomDecoration,
+  Footer
+} from "../../styles/PageStyles";
 import Sidebar from "../Navigation/Sidebar";
 import useAuth from "../Auth/useAuth";
 
-/* TOP BAR */
-const TopBar = styled(Box)({
-  width: "100%",
-  background: "linear-gradient(135deg, #5f00a7, #9b42c3)",
-  color: "#fff",
-  padding: "16px",
-  boxShadow: "0px 4px 10px rgba(0,0,0,0.1)",
-  textAlign: "center",
-  position: "relative",
-  zIndex: 2
-});
-
-/* MAIN CONTAINER */
-const MainContainer = styled(Box)({
-  display: 'flex',
-  minHeight: '100vh',
-  background: "linear-gradient(to bottom right, #f7f3fc 0%, #ece6f4 100%)",
-  position: "relative",
-  overflow: "hidden"
-});
-
-const ContentContainer = styled(Box)({
-  flexGrow: 1,
-  height: '100vh',
-  overflow: 'hidden',
-  display: 'flex',
-  flexDirection: 'column'
-});
-
-/* DECORATIVE BACKGROUNDS */
-const BackgroundDecoration = styled("div")({
-  position: "absolute",
-  borderRadius: "50%",
-  zIndex: 0,
-  opacity: 0.2
-});
-
-const TopDecoration = styled(BackgroundDecoration)({
-  top: "-100px",
-  left: "-100px",
-  width: "300px",
-  height: "300px",
-  background: "radial-gradient(circle, #6200aa, transparent)"
-});
-
-const BottomDecoration = styled(BackgroundDecoration)({
-  bottom: "-100px",
-  right: "-100px",
-  width: "300px",
-  height: "300px",
-  background: "radial-gradient(circle, #8e24aa, transparent)"
-});
-
-/* FLOW CARD */
-const FlowCard = styled(Box)(({ theme }) => ({
-  position: "relative",
-  padding: theme.spacing(4, 4),
-  background: "#ffffff",
-  borderRadius: "16px",
-  boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-  transition: "transform 0.3s, box-shadow 0.3s",
-  zIndex: 2,
-  "&:hover": {
-    transform: "translateY(-5px)",
-    boxShadow: "0 15px 45px rgba(0,0,0,0.15)"
-  }
-}));
-
-/* CUSTOM TEXTFIELD */
-const StyledTextField = styled(TextField)({
-  "& label.Mui-focused": {
-    color: "#6200aa"
-  },
-  "& .MuiOutlinedInput-root": {
-    "& fieldset": {
-      borderColor: "#ccc"
-    },
-    "&:hover fieldset": {
-      borderColor: "#6200aa"
-    },
-    "&.Mui-focused fieldset": {
-      borderColor: "#6200aa"
-    }
-  }
-});
-
-/* GRADIENT BUTTON */
-const GradientButton = styled(Button)({
-  background: "linear-gradient(45deg, #6200aa 30%, #8e24aa 90%)",
-  color: "#fff",
-  fontWeight: "bold",
-  padding: "10px 20px",
-  "&:hover": {
-    background: "linear-gradient(45deg, #5a0099 30%, #7e1e9e 90%)"
-  }
-});
-
-/* FOOTER */
-const Footer = styled(Box)({
-  textAlign: "center",
-  color: "#888",
-  marginTop: "24px"
-});
-
 /* STEP TITLES */
 const steps = [
-  "Customer Type",
-  "Router Type",
+  "Customer",
+  "Router Model",
   "Outside Connection",
   "Inside Connection",
-  "Routers & Site Info",
-  "Priority & Extras"
+  "Contact Details",
+  "Additional Information"
 ];
 
 const RequestForm = () => {
-  const navigate = useNavigate();
   const { activeTab, setActiveTab } = useAuth();
+
+  // Customer-related
+  const [customers, setCustomers] = useState([]);
+  const [isAddingNewCustomer, setIsAddingNewCustomer] = useState(false);
+  const [newCustomerName, setNewCustomerName] = useState("");
+
+  // Router-related
+  const [routers, setRouters] = useState([]);
+  const [usePresetMode, setUsePresetMode] = useState(true);
+  const [routerPresets, setRouterPresets] = useState([]);
+  const [filteredPresets, setFilteredPresets] = useState([]);
+
+  // Form-related
   const [activeStep, setActiveStep] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [message, setMessage] = useState("");
+  const [validationErrors, setValidationErrors] = useState([]);
+
   const [formData, setFormData] = useState({
-    /* Step 1: Customer Type. */
-    customerType: "",
-
-    /* Step 2: Router Type. */
+    customerID: "",
     routerType: "",
-
-    /* Step 3: Outside Connection Options. */
+    routerPresetID: "",
     primaryOutsideConnection: "",
     primaryOutsidePorts: "",
     secondaryOutsideConnection: "",
     secondaryOutsidePorts: "",
-
-    /* Step 4: Inside Connection Options. */
-    primaryInsideConnection: "",
-    primaryInsidePorts: "",
-    vlanConfiguration: "",
-    vlanAssignments: "",
-    dhcpConfiguration: "",
-
-    /* Step 5: Routers and Site Details. */
+    insideConnections: [],
+    ethernetPorts: "",
+    serialPorts: "",
+    vlans: "",
+    dhcp: false,
     numRouters: 1,
     siteName: "",
     siteAddress: "",
     sitePostcode: "",
     sitePrimaryEmail: "",
     siteSecondaryEmail: "",
-    sitePhone: "",
+    sitePhoneNumber: "",
     siteContactName: "",
-
-    /* Step 6: Priority Level and Extras. */
-    priorityLevel: "",
-    addAnotherRouter: false
+    priorityLevel: "Low",
+    addAnotherRouter: false,
+    additionalInformation: ""
   });
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/customers")
+        .then(res => res.json())
+        .then(setCustomers)
+        .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/routers")
+        .then((res) => res.json())
+        .then(setRouters)
+        .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/router-presets")
+        .then(res => res.json())
+        .then(setRouterPresets)
+        .catch(console.error);
+  }, []);
+
+  useEffect(() => {
+    const customerPresets = routerPresets.filter(p => p.customer?.customerID === formData.customerID);
+    setFilteredPresets(customerPresets);
+  }, [formData.customerID, routerPresets]);
+
+  const getSelectedRouter = () => {
+    return routers.find(
+        (r) =>
+            r.routerName === formData.routerType ||
+            r.routerID === routerPresets.find((p) => p.routerPresetID === Number(formData.routerPresetID))?.router?.routerID
+    );
+  };
+
+  const getMaxPorts = () => {
+    const selected = getSelectedRouter();
+    return {
+      maxEthernet: selected?.ethernetPorts ?? 0,
+      maxSerial: selected?.serialPorts ?? 0
+    };
+  };
+
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: type === "checkbox" ? checked : value }));
+
+    if (name === "routerPresetID") {
+      const preset = routerPresets.find(p => p.routerPresetID === Number(value));
+      if (preset) {
+        const hasEthernet = preset.insideConnections?.includes("ETHERNET");
+        const hasSerial = preset.insideConnections?.includes("SERIAL");
+
+        setFormData(prev => ({
+          ...prev,
+          routerPresetID: preset.routerPresetID,
+          routerType: preset.router?.routerName || "",
+          primaryOutsideConnection: preset.primaryOutsideConnections || "",
+          secondaryOutsideConnection: preset.secondaryOutsideConnections || "",
+          insideConnections: preset.insideConnections?.split(", ") || [],
+          ethernetPorts: hasEthernet ? preset.numberOfEthernetPorts || "" : "",
+          serialPorts: hasSerial ? preset.numberOfSerialPorts || "" : "",
+          vlans: preset.vlans || "",
+          dhcp: !!preset.dhcp,
+          additionalInformation: preset.additionalInformation || ""
+        }));
+      }
+      return;
+    }
+
+    if (name === "routerType") {
+      setFormData(prev => ({
+        ...prev,
+        routerType: value,
+        routerPresetID: ""
+      }));
+      return;
+    }
+
+    const { maxEthernet, maxSerial } = getMaxPorts();
+    if (name === "ethernetPorts" && Number(value) > maxEthernet) return;
+    if (name === "serialPorts" && Number(value) > maxSerial) return;
+
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value
+    }));
+  };
+
+  const handleInsideConnectionToggle = (type, checked) => {
+    setFormData(prev => {
+      const updated = checked
+          ? [...prev.insideConnections, type]
+          : prev.insideConnections.filter(c => c !== type);
+
+      return {
+        ...prev,
+        insideConnections: updated,
+        vlans: updated.includes("ETHERNET") ? prev.vlans : "",
+        dhcp: updated.includes("ETHERNET") && prev.vlans === "OPEN_TRUNK" ? prev.dhcp : false
+      };
+    });
+  };
+
+  const formatEnumLabel = (value) =>
+      value.toLowerCase().replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+  const getValidationErrors = () => {
+    const errors = [];
+
+    switch(activeStep) {
+      case 0:
+        if (!formData.customerID && !isAddingNewCustomer) errors.push("Customer selection is required.");
+        if (isAddingNewCustomer && !newCustomerName.trim()) errors.push("New customer name is required.");
+        break;
+
+      case 1:
+        if (usePresetMode && !formData.routerPresetID) errors.push("Router preset is required.");
+        if (!usePresetMode && !formData.routerType) errors.push("Router model is required.");
+        break;
+
+      case 2:
+        if (!formData.primaryOutsideConnection) errors.push("Primary outside connection is required.");
+        break;
+
+      case 3:
+        if (formData.insideConnections.length === 0) errors.push("At least one inside connection type must be selected.");
+        const { maxEthernet} = getMaxPorts();
+
+        if (formData.insideConnections.includes("ETHERNET")) {
+          if (!formData.ethernetPorts) errors.push("Ethernet ports required.");
+          if (formData.ethernetPorts > maxEthernet) errors.push(`Ethernet ports cannot exceed ${maxEthernet}.`);
+        }
+
+        if (formData.insideConnections.includes("SERIAL") && !formData.serialPorts) {
+          errors.push("Serial ports required");
+        }
+        break;
+
+      case 4:
+        if (!formData.siteName.trim()) errors.push("Site name is required.");
+        if (!formData.siteAddress.trim()) errors.push("Address is required.");
+        if (!formData.sitePostcode.trim()) errors.push("Postcode is required.");
+
+        if (!formData.sitePrimaryEmail.trim()) {
+          errors.push("Primary email is required.");
+        } else {
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailRegex.test(formData.sitePrimaryEmail)) {
+            errors.push("Primary email must be a valid email address.");
+          }
+        }
+
+        if (!formData.sitePhoneNumber.trim()) errors.push("Phone number is required.");
+        if (!formData.siteContactName.trim()) errors.push("Contact name is required.");
+        break;
+
+
+      case 5:
+        if (!formData.priorityLevel) errors.push("Priority level is required.");
+        if (formData.additionalInformation.length > 500) errors.push("Additional information must be less than 500 characters.");
+        break;
+
+      default:
+        break;
+    }
+
+    return errors;
   };
 
   const handleNext = () => {
-    if (!validateStep(activeStep)) return;
-    setActiveStep((prev) => prev + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prev) => prev - 1);
-  };
-
-  const validateStep = (step) => {
-    switch (step) {
-      case 0:
-        if (!formData.customerType) {
-          setMessage("Please select a customer type.");
-          setOpenSnackbar(true);
-          return false;
-        }
-        return true;
-      case 1:
-        if (!formData.routerType) {
-          setMessage("Please select a router type.");
-          setOpenSnackbar(true);
-          return false;
-        }
-        return true;
-      case 2:
-        if (!formData.primaryOutsideConnection || !formData.primaryOutsidePorts) {
-          setMessage("Please complete the primary outside connection details.");
-          setOpenSnackbar(true);
-          return false;
-        }
-        return true;
-      case 3:
-        if (!formData.primaryInsideConnection || !formData.primaryInsidePorts || !formData.vlanConfiguration || !formData.dhcpConfiguration) {
-          setMessage("Please complete the primary inside connection details.");
-          setOpenSnackbar(true);
-          return false;
-        }
-        return true;
-      case 4:
-        if (!formData.siteName || !formData.siteAddress || !formData.sitePostcode || !formData.sitePrimaryEmail || !formData.sitePhone || !formData.siteContactName) {
-          setMessage("Please complete the site information.");
-          setOpenSnackbar(true);
-          return false;
-        }
-        return true;
-      case 5:
-        if (!formData.priorityLevel) {
-          setMessage("Please select a priority level.");
-          setOpenSnackbar(true);
-          return false;
-        }
-        return true;
-      default:
-        return true;
+    const errors = getValidationErrors();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
     }
+    setValidationErrors([]);
+    setActiveStep((prev) => prev + 1);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const errors = getValidationErrors();
+    if (errors.length > 0) {
+      setValidationErrors(errors);
+      return;
+    }
+
     setIsLoading(true);
-    setMessage("");
 
     const token = localStorage.getItem('token');
     const headers = {
@@ -239,405 +272,608 @@ const RequestForm = () => {
       'Authorization': `Bearer ${token}`
     };
 
-    for (const key in formData) {
-      if (formData[key] === "" && key !== "configurationDetails") {
-        setMessage(`Please fill in the ${key} field.`);
-        setIsLoading(false);
+    try {
+      const res = await fetch("/api/orders", {
+        method: "POST",
+        headers,
+        body: JSON.stringify(formData)
+      });
+
+      if (!res.ok) {
+        setMessage("Failed to submit order.");
         setOpenSnackbar(true);
+        setIsLoading(false);
         return;
       }
-    }
 
-    const finalData = {
-      ...formData,
-      numRouters: formData.numRouters || 1,
-    };
+      const saved = await res.json();
 
-    try {
-      const response = await fetch("/api/orders", {
+      const trackingRes = await fetch("/api/order-tracking/create", {
         method: "POST",
-        headers: headers,
-        body: JSON.stringify(finalData),
+        headers,
+        body: JSON.stringify({ orderId: saved.id })
       });
 
-      if (!response.ok) {
-        throw new Error("Failed to submit order.");
+      if (!trackingRes.ok) {
+        setMessage("Failed to create tracking.");
+        setOpenSnackbar(true);
+        setIsLoading(false);
+        return;
       }
 
-      const savedOrder = await response.json();
+      const tracking = await trackingRes.json();
 
-      const trackingResponse = await fetch("/api/order-tracking/create", {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify({ orderId: savedOrder.id }),
-      });
-
-      if (!trackingResponse.ok) {
-        throw new Error("Failed to create tracking.");
-      }
-
-      const trackingData = await trackingResponse.json();
-
-      setMessage(`Order submitted! Reference number: ${trackingData.referenceNumber}. Please check your email for tracking details.`);
+      setMessage(`Order submitted! Reference: ${tracking.referenceNumber}`);
       setFormData({
-        customerType: "",
-        routerType: "",
-        primaryOutsideConnection: "",
-        primaryOutsidePorts: "",
-        secondaryOutsideConnection: "",
-        secondaryOutsidePorts: "",
-        primaryInsideConnection: "",
-        primaryInsidePorts: "",
-        vlanConfiguration: "",
-        vlanAssignments: "",
-        dhcpConfiguration: "",
-        numRouters: 1,
-        siteName: "",
-        siteAddress: "",
-        sitePostcode: "",
-        sitePrimaryEmail: "",
-        siteSecondaryEmail: "",
-        sitePhone: "",
-        siteContactName: "",
-        priorityLevel: "",
-        addAnotherRouter: false
+        customerID: "", routerType: "", routerPresetID: "", primaryOutsideConnection: "",
+        primaryOutsidePorts: "", secondaryOutsideConnection: "", secondaryOutsidePorts: "",
+        insideConnections: [], ethernetPorts: "", serialPorts: "", vlans: "", dhcp: false,
+        numRouters: 1, siteName: "", siteAddress: "", sitePostcode: "", sitePrimaryEmail: "",
+        siteSecondaryEmail: "", sitePhoneNumber: "", siteContactName: "", priorityLevel: "",
+        addAnotherRouter: false, additionalInformation: ""
       });
       setActiveStep(0);
     } catch (err) {
-      setMessage(`Error: ${err.message}`);
+      setMessage("An unexpected error occurred.");
     } finally {
-      setIsLoading(false);
       setOpenSnackbar(true);
+      setIsLoading(false);
     }
   };
 
   const getStepContent = (step) => {
+    const selectedRouterForInside = routers.find(
+        r => r.routerName === formData.routerType ||
+            r.routerID === routerPresets.find((p) => p.routerPresetID === Number(formData.routerPresetID))?.router?.routerID
+    );
+
+    const { maxEthernet, maxSerial } = getMaxPorts();
+
     switch (step) {
       case 0:
         return (
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Step 1: Customer Type
-              </Typography>
-              <FormControl fullWidth margin="normal">
-                <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                  Customer Type
-                </InputLabel>
-                <Select
-                    name="customerType"
-                    value={formData.customerType}
-                    onChange={handleChange}
-                    required
-                >
-                  {[
-                    "Water Utility 1",
-                    "Water Utility 2",
-                    "Water Utility 3",
-                    "Industrial Signalling",
-                    "Cash Machines",
-                    "Other (Custom)"
-                  ].map((option, index) => (
-                      <MenuItem key={index} value={option}>
-                        {option}
+            <>
+              <Tooltip title="Select an existing customer or create a new one" arrow>
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                  <StyledButtonGroup variant="contained" disableElevation>
+                    <Button
+                        onClick={() => setIsAddingNewCustomer(false)}
+                        variant={!isAddingNewCustomer ? "contained" : "text"}
+                    >
+                      Existing Customer
+                    </Button>
+                    <Button
+                        onClick={() => setIsAddingNewCustomer(true)}
+                        variant={isAddingNewCustomer ? "contained" : "text"}
+                    >
+                      New Customer
+                    </Button>
+                  </StyledButtonGroup>
+                </Box>
+              </Tooltip>
+
+              {isAddingNewCustomer ? (
+                  <StyledFormControl fullWidth>
+                    <StyledTextField
+                        fullWidth
+                        label="New Customer"
+                        value={newCustomerName}
+                        onChange={(e) => setNewCustomerName(e.target.value)}
+                        autoFocus
+                        error={validationErrors.some(e => e.includes("New customer name"))}
+                    />
+                  </StyledFormControl>
+              ) : (
+                  <StyledFormControl fullWidth>
+                    <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                      Customer
+                    </InputLabel>
+                    <StyledSelect
+                        value={formData.customerID || ""}
+                        onChange={(e) => setFormData((prev) => ({ ...prev, customerID: e.target.value }))}
+                        fullWidth
+                        displayEmpty
+                        error={validationErrors.some(e => e.includes("Customer selection"))}
+                    >
+                      <MenuItem value="" disabled>
+                        <em>Required</em>
                       </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
+                      {customers.map((c) => (
+                          <MenuItem key={c.customerID} value={c.customerID}>
+                            {c.customerName}
+                          </MenuItem>
+                      ))}
+                    </StyledSelect>
+                  </StyledFormControl>
+              )}
+
+              {validationErrors.length > 0 && (
+                  <Box sx={{ mt: 2, mb: 2 }}>
+                    {validationErrors.map((error, idx) => (
+                        <Typography key={idx} color="error" variant="body2" sx={{ mb: 0.5 }}>
+                          • {error}
+                        </Typography>
+                    ))}
+                  </Box>
+              )}
+            </>
         );
+
       case 1:
         return (
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Step 2: Router Type
-              </Typography>
-              <FormControl fullWidth margin="normal">
+            <>
+              <Box sx={{ display: "flex", justifyContent: "center" }}>
+                <StyledButtonGroup variant="contained" disableElevation>
+                  <Button
+                      onClick={() => setUsePresetMode(true)}
+                      variant={usePresetMode ? "contained" : "text"}
+                  >
+                    Preset Configuration
+                  </Button>
+                  <Button
+                      onClick={() => setUsePresetMode(false)}
+                      variant={!usePresetMode ? "contained" : "text"}
+                  >
+                    New Configuration
+                  </Button>
+                </StyledButtonGroup>
+              </Box>
+
+              {usePresetMode ? (
+                  <StyledFormControl fullWidth sx={{ mb: 0 }}>
+                    <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                      Router Preset
+                    </InputLabel>
+                    <StyledSelect
+                        value={formData.routerPresetID || ""}
+                        onChange={(e) => handleChange({ target: { name: "routerPresetID", value: e.target.value } })}
+                        fullWidth
+                        displayEmpty
+                        error={validationErrors.some(e => e.includes("Router preset"))}
+                    >
+                      <MenuItem value="" disabled>
+                        <em>Required</em>
+                      </MenuItem>
+                      {filteredPresets.map((preset) => (
+                          <MenuItem key={preset.routerPresetID} value={preset.routerPresetID}>
+                            {preset.routerPresetName}
+                          </MenuItem>
+                      ))}
+                    </StyledSelect>
+                  </StyledFormControl>
+              ) : (
+                  <StyledFormControl fullWidth sx={{ mb: 0 }}>
+                    <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                      Router Model
+                    </InputLabel>
+                    <StyledSelect
+                        value={formData.routerType || ""}
+                        onChange={(e) => setFormData(prev => ({
+                          ...prev,
+                          routerType: e.target.value,
+                          routerPresetID: ""
+                        }))}
+                        fullWidth
+                        displayEmpty
+                        error={validationErrors.some(e => e.includes("Router type"))}
+                    >
+                      <MenuItem value="" disabled>
+                        <em>Required</em>
+                      </MenuItem>
+                      {routers.map((router) => (
+                          <MenuItem key={router.routerID} value={router.routerName}>
+                            {router.routerName}
+                          </MenuItem>
+                      ))}
+                    </StyledSelect>
+                  </StyledFormControl>
+              )}
+
+              {validationErrors.length > 0 && (
+                  <Box sx={{ mt: 2, mb: 2 }}>
+                    {validationErrors.map((error, idx) => (
+                        <Typography key={idx} color="error" variant="body2" sx={{ mb: 0.5 }}>
+                          • {error}
+                        </Typography>
+                    ))}
+                  </Box>
+              )}
+            </>
+        );
+
+      case 2:
+        const selectedRouter = routers.find(
+            r => r.routerName === formData.routerType ||
+                r.routerID === routerPresets.find((p) => p.routerPresetID === Number(formData.routerPresetID))?.router?.routerID
+        );
+
+        const availableOutsideConnections = selectedRouter?.outsideConnectionTypes
+            ? selectedRouter.outsideConnectionTypes.split(",").map((t) => t.trim())
+            : [];
+
+        return (
+            <Box sx={{ width: "100%", maxWidth: 600, mx: "auto" }}>
+              <StyledFormControl fullWidth sx={{ mb: 3 }}>
                 <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                  Router Type
+                  Primary Outside Connection
                 </InputLabel>
-                <Select
-                    name="routerType"
-                    value={formData.routerType}
-                    onChange={handleChange}
-                    required
+                <StyledSelect
+                    value={formData.primaryOutsideConnection || ""}
+                    onChange={(e) => setFormData((prev) => ({
+                      ...prev,
+                      primaryOutsideConnection: e.target.value,
+                      secondaryOutsideConnection:
+                          e.target.value === prev.secondaryOutsideConnection ? "" : prev.secondaryOutsideConnection
+                    }))}
+                    fullWidth
+                    displayEmpty
+                    error={validationErrors.some(e => e.includes("Primary outside"))}
                 >
-                  {(
-                      formData.customerType === "Water Utility 1"
-                          ? ["GW1042M", "Westermo Merlin 4708"]
-                          : ["GW1042M", "Westermo Merlin 4708"]
-                  ).map((option, index) => (
-                      <MenuItem key={index} value={option}>
-                        {option}
+                  <MenuItem value="" disabled>
+                    <em>Required</em>
+                  </MenuItem>
+                  {availableOutsideConnections.map((opt) => (
+                      <MenuItem key={opt} value={opt}>
+                        {opt}
                       </MenuItem>
                   ))}
-                </Select>
-              </FormControl>
-            </Box>
-        );
-      case 2:
-        return (
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Step 3: Outside Connection Options
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={8}>
-                  <FormControl fullWidth margin="normal">
-                    <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                      Primary Outside Connection
-                    </InputLabel>
-                    <Select
-                        name="primaryOutsideConnection"
-                        value={formData.primaryOutsideConnection}
-                        onChange={handleChange}
-                        required
-                    >
-                      {["Radio", "Customer Ethernet", "FTTP", "VDSL", "Customer Serial"].map((option, index) => (
-                          <MenuItem key={index} value={option}>
-                            {option}
+                </StyledSelect>
+              </StyledFormControl>
+
+              <StyledFormControl fullWidth>
+                <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
+                  Secondary Outside Connection (Optional)
+                </InputLabel>
+                <StyledSelect
+                    value={formData.secondaryOutsideConnection || ""}
+                    onChange={(e) => setFormData((prev) => ({
+                      ...prev,
+                      secondaryOutsideConnection: e.target.value
+                    }))}
+                    fullWidth
+                    displayEmpty
+                >
+                  <MenuItem value="">
+                    <em>Optional</em>
+                  </MenuItem>
+                  {availableOutsideConnections
+                      .filter((opt) => opt !== formData.primaryOutsideConnection)
+                      .map((opt) => (
+                          <MenuItem key={opt} value={opt}>
+                            {opt}
                           </MenuItem>
                       ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <StyledTextField
-                      fullWidth
-                      margin="normal"
-                      label="Ports"
-                      type="number"
-                      name="primaryOutsidePorts"
-                      value={formData.primaryOutsidePorts}
-                      onChange={handleChange}
-                      required
-                  />
-                </Grid>
-                <Grid item xs={12} sm={8}>
-                  <FormControl fullWidth margin="normal">
-                    <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                      Secondary Outside Connection (Optional)
-                    </InputLabel>
-                    <Select
-                        name="secondaryOutsideConnection"
-                        value={formData.secondaryOutsideConnection}
-                        onChange={handleChange}
-                    >
-                      {["Radio", "Customer Ethernet", "FTTP", "VDSL", "Customer Serial"].map((option, index) => (
-                          <MenuItem key={index} value={option}>
-                            {option}
-                          </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <StyledTextField
-                      fullWidth
-                      margin="normal"
-                      label="Ports"
-                      type="number"
-                      name="secondaryOutsidePorts"
-                      value={formData.secondaryOutsidePorts}
-                      onChange={handleChange}
-                  />
-                </Grid>
-              </Grid>
+                </StyledSelect>
+              </StyledFormControl>
+
+              {validationErrors.length > 0 && (
+                  <Box sx={{ mt: 2, mb: 2 }}>
+                    {validationErrors.map((error, idx) => (
+                        <Typography key={idx} color="error" variant="body2" sx={{ mb: 0.5 }}>
+                          • {error}
+                        </Typography>
+                    ))}
+                  </Box>
+              )}
             </Box>
         );
+
       case 3:
         return (
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Step 4: Inside Connection Selection
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={8}>
-                  <FormControl fullWidth margin="normal">
-                    <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                      Primary Inside Connection
+            <>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                <Tooltip
+                    title={
+                      !selectedRouterForInside?.insideConnectionTypes?.includes("SERIAL")
+                          ? <span><strong>Disabled</strong>: Ethernet is not a valid option for this router model.</span>
+                          : <span>Select <strong>Ethernet</strong> as the inside connection.</span>
+                    }
+                    arrow
+                >
+                  <FormControlLabel
+                      control={
+                        <StyledSwitch
+                            checked={formData.insideConnections.includes("ETHERNET")}
+                            onChange={(e) => handleInsideConnectionToggle("ETHERNET", e.target.checked)}
+                            disabled={!selectedRouterForInside?.insideConnectionTypes?.includes("ETHERNET")}
+                        />
+                      }
+                      label="Ethernet"
+                      sx={{ mb: -1 }}
+                  />
+                </Tooltip>
+
+                {formData.insideConnections.includes("ETHERNET") && (
+                    <Tooltip title="Number cannot exceed the maximum port configuration" arrow>
+                      <StyledTextField
+                          fullWidth
+                          type="number"
+                          label="Ethernet Ports"
+                          name="ethernetPorts"
+                          value={formData.ethernetPorts}
+                          onChange={handleChange}
+                          error={validationErrors.some(e => e.includes("Ethernet ports"))}
+                          InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                          <span style={{ fontSize: "0.85em", color: "#888", whiteSpace: "nowrap" }}>
+                            Maximum Ports: {maxEthernet}
+                          </span>
+                                </InputAdornment>
+                            )
+                          }}
+                          disabled={!selectedRouterForInside || maxEthernet === 0}
+                      />
+                    </Tooltip>
+                )}
+
+                <Tooltip
+                    title={
+                      !selectedRouterForInside?.insideConnectionTypes?.includes("SERIAL")
+                          ? <span><strong>Disabled</strong>: Serial is not a valid option for this router model.</span>
+                          : <span>Select <strong>Serial</strong> as the inside connection.</span>
+                    }
+                    arrow
+                >
+                  <FormControlLabel
+                      control={
+                        <StyledSwitch
+                            checked={formData.insideConnections.includes("SERIAL")}
+                            onChange={(e) => handleInsideConnectionToggle("SERIAL", e.target.checked)}
+                            disabled={!selectedRouterForInside?.insideConnectionTypes?.includes("SERIAL")}
+                        />
+                      }
+                      label="Serial"
+                      sx={{ mb: -1 }}
+                  />
+                </Tooltip>
+
+                {formData.insideConnections.includes("SERIAL") && (
+                    <Tooltip title="Number cannot exceed the maximum port configuration" arrow>
+                      <StyledTextField
+                          fullWidth
+                          type="number"
+                          label="Serial Ports"
+                          name="serialPorts"
+                          value={formData.serialPorts}
+                          onChange={handleChange}
+                          error={validationErrors.some(e => e.includes("Serial ports"))}
+                          InputProps={{
+                            endAdornment: (
+                                <InputAdornment position="end">
+                          <span style={{ fontSize: "0.85em", color: "#888", whiteSpace: "nowrap" }}>
+                            Maximum Ports: {maxSerial}
+                          </span>
+                                </InputAdornment>
+                            )
+                          }}
+                          disabled={!selectedRouterForInside || maxSerial === 0}
+                      />
+                    </Tooltip>
+                )}
+
+                <Tooltip title={
+                  <span>If <strong>Ethernet</strong> is selected, please select a VLANs configuration.
+                    <hr /><strong>Unspecified</strong> (Default): No further action.
+                    <br /><strong>Specified</strong>: Specify in additional information.
+                    <br /><strong>Open Trunk</strong>: Choose to enable or disable DHCP.
+                </span>
+                } arrow enterDelay={250} leaveDelay={100}>
+                  <StyledFormControl fullWidth sx={{ mb: -1 }}>
+                    <InputLabel sx={{ backgroundColor: "white", px: 1 }}>
+                      VLANs
                     </InputLabel>
-                    <Select
-                        name="primaryInsideConnection"
-                        value={formData.primaryInsideConnection}
+                    <StyledSelect
+                        name="vlans"
+                        value={formData.vlans}
                         onChange={handleChange}
-                        required
+                        disabled={!formData.insideConnections.includes("ETHERNET")}
+                        fullWidth
+                        displayEmpty
+                        error={validationErrors.some(e => e.includes("VLAN configuration"))}
                     >
-                      {["Radio", "Customer Ethernet", "FTTP", "VDSL", "Customer Serial"].map((option, index) => (
-                          <MenuItem key={index} value={option}>
-                            {option}
+                      <MenuItem value="" disabled>
+                        <em>Required</em>
+                      </MenuItem>
+                      {["UNSPECIFIED", "SPECIFIED", "OPEN_TRUNK"].map((opt) => (
+                          <MenuItem key={opt} value={opt}>
+                            {formatEnumLabel(opt)}
                           </MenuItem>
                       ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <StyledTextField
-                      fullWidth
-                      margin="normal"
-                      label="Ports"
-                      type="number"
-                      name="primaryInsidePorts"
-                      value={formData.primaryInsidePorts}
-                      onChange={handleChange}
-                      required
+                    </StyledSelect>
+                  </StyledFormControl>
+                </Tooltip>
+
+                <Tooltip title={
+                  <span>Enable or disable DHCP for this configuration.
+                    <hr />Only an option if <strong>Open Trunk</strong> is selected in VLANs.
+                  </span>
+                  } arrow enterDelay={250} leaveDelay={100}
+                >
+                  <FormControlLabel
+                      control={
+                        <StyledSwitch
+                            checked={formData.dhcp}
+                            onChange={(e) => setFormData(prev => ({ ...prev, dhcp: e.target.checked }))}
+                            disabled={formData.vlans !== "OPEN_TRUNK"}
+                        />
+                      }
+                      label="DHCP"
+                      sx={{ mt: 1, mb: -1 }}
                   />
-                </Grid>
-              </Grid>
-              <FormControl fullWidth margin="normal">
-                <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                  VLAN Configuration
-                </InputLabel>
-                <Select
-                    name="vlanConfiguration"
-                    value={formData.vlanConfiguration}
-                    onChange={handleChange}
-                    required
-                >
-                  {["Specified per port", "Open Trunk"].map((option, index) => (
-                      <MenuItem key={index} value={option}>
-                        {option}
-                      </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <StyledTextField
-                  fullWidth
-                  margin="normal"
-                  label="VLAN Assignments"
-                  name="vlanAssignments"
-                  value={formData.vlanAssignments}
-                  onChange={handleChange}
-                  helperText="Example: Port 1: VLAN 100, Port 2: VLAN 101"
-              />
-              <FormControl fullWidth margin="normal">
-                <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                  DHCP Configuration
-                </InputLabel>
-                <Select
-                    name="dhcpConfiguration"
-                    value={formData.dhcpConfiguration.toString()}
-                    onChange={handleChange}
-                    required
-                >
-                  <MenuItem value="true">Yes</MenuItem>
-                  <MenuItem value="false">No</MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
+                </Tooltip>
+              </Box>
+
+              {validationErrors.length > 0 && (
+                  <Box sx={{ mt: 2, mb: 2 }}>
+                    {validationErrors.map((error, idx) => (
+                        <Typography key={idx} color="error" variant="body2" sx={{ mb: 0.5 }}>
+                          • {error}
+                        </Typography>
+                    ))}
+                  </Box>
+              )}
+            </>
         );
+
       case 4:
         return (
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Step 5: Routers & Site Information
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item xs={12} sm={4}>
-                  <StyledTextField
-                      fullWidth
-                      margin="normal"
-                      label="Number of Routers"
-                      type="number"
-                      name="numRouters"
-                      value={formData.numRouters}
-                      onChange={handleChange}
-                      required
-                  />
-                </Grid>
-              </Grid>
-              <Divider sx={{ my: 2 }} />
-              <Typography variant="subtitle1" gutterBottom>
-                Site Information
-              </Typography>
+            <>
               <StyledTextField
                   fullWidth
-                  margin="normal"
                   label="Site Name"
                   name="siteName"
                   value={formData.siteName}
                   onChange={handleChange}
                   required
+                  error={validationErrors.some(e => e.includes("Site name"))}
+                  sx={{ mb: 2 }}
               />
               <StyledTextField
                   fullWidth
-                  margin="normal"
-                  label="Site Address"
+                  label="Address"
                   name="siteAddress"
                   value={formData.siteAddress}
                   onChange={handleChange}
                   required
+                  error={validationErrors.some(e => e.includes("Address"))}
+                  sx={{ mb: 2 }}
               />
               <StyledTextField
                   fullWidth
-                  margin="normal"
-                  label="Site Postcode"
+                  label="Postcode"
                   name="sitePostcode"
                   value={formData.sitePostcode}
                   onChange={handleChange}
                   required
+                  error={validationErrors.some(e => e.includes("Postcode"))}
+                  sx={{ mb: 2 }}
               />
               <StyledTextField
                   fullWidth
-                  margin="normal"
-                  label="Site Primary Email"
-                  type="email"
+                  label="Primary Email"
                   name="sitePrimaryEmail"
                   value={formData.sitePrimaryEmail}
                   onChange={handleChange}
                   required
+                  error={validationErrors.some(e => e.includes("Primary email"))}
+                  sx={{ mb: 2 }}
               />
               <StyledTextField
                   fullWidth
-                  margin="normal"
-                  label="Site Secondary Email"
-                  type="email"
+                  label="Secondary Email (Optional)"
                   name="siteSecondaryEmail"
                   value={formData.siteSecondaryEmail}
                   onChange={handleChange}
+                  sx={{ mb: 2 }}
               />
               <StyledTextField
                   fullWidth
-                  margin="normal"
-                  label="Site Phone Number"
-                  name="sitePhone"
-                  value={formData.sitePhone}
+                  label="Phone Number"
+                  name="sitePhoneNumber"
+                  value={formData.sitePhoneNumber}
                   onChange={handleChange}
                   required
+                  error={validationErrors.some(e => e.includes("Phone number"))}
+                  sx={{ mb: 2 }}
               />
               <StyledTextField
                   fullWidth
-                  margin="normal"
-                  label="Site Contact Name"
+                  label="Contact Name"
                   name="siteContactName"
                   value={formData.siteContactName}
                   onChange={handleChange}
                   required
+                  error={validationErrors.some(e => e.includes("Contact name"))}
               />
-            </Box>
+
+              {validationErrors.length > 0 && (
+                  <Box sx={{ mt: 2, mb: 2 }}>
+                    {validationErrors.map((error, idx) => (
+                        <Typography key={idx} color="error" variant="body2" sx={{ mb: 0.5 }}>
+                          • {error}
+                        </Typography>
+                    ))}
+                  </Box>
+              )}
+            </>
         );
+
       case 5:
+        const priorityLabels = ["Low", "Medium", "High", "Urgent", "Critical"];
+        const priorityMarks = priorityLabels.map((label, index) => ({
+          value: index,
+          label,
+        }));
+        const priorityIndex = priorityLabels.indexOf(formData.priorityLevel);
+
         return (
-            <Box>
-              <Typography variant="h6" gutterBottom>
-                Step 6: Priority Level & Extras
-              </Typography>
-              <FormControl fullWidth margin="normal">
-                <InputLabel sx={{ backgroundColor: "white", px: 0.5 }}>
-                  Priority Level
-                </InputLabel>
-                <Select
-                    name="priorityLevel"
-                    value={formData.priorityLevel}
+            <>
+              <Tooltip title="Select the number of the configured routers the customer wants to order." arrow>
+                <StyledTextField
+                    fullWidth
+                    type="number"
+                    label="Number of Routers"
+                    name="numRouters"
+                    value={formData.numRouters}
                     onChange={handleChange}
-                    required
-                >
-                  {["Critical", "Urgent", "High", "Medium", "Low"].map((option, index) => (
-                      <MenuItem key={index} value={option}>
-                        {option}
-                      </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+                    inputProps={{ min: 1 }}
+                    sx={{ mb: 2 }}
+                />
+              </Tooltip>
+
+              <Tooltip title="Select the priority level for this request" arrow>
+                <Box sx={{ mt: 0.5, px: 1 }}>
+                  <Typography sx={{ textAlign: "center", mb: -2 }}>Priority Level</Typography>
+                  <StyledSlider
+                      value={priorityIndex !== -1 ? priorityIndex : 0}
+                      onChange={(e, newValue) => setFormData(prev => ({
+                        ...prev,
+                        priorityLevel: priorityLabels[newValue],
+                      }))}
+                      step={1}
+                      marks={priorityMarks}
+                      min={0}
+                      max={4}
+                      valueLabelDisplay="off"
+                      sx={{ mt: 2 }}
+                  />
+                </Box>
+              </Tooltip>
+
+              <Tooltip title="Additional configuration details (max 500 characters)" arrow>
+                <StyledTextField
+                    fullWidth
+                    label="Additional Information"
+                    name="additionalInformation"
+                    value={formData.additionalInformation}
+                    onChange={handleChange}
+                    multiline
+                    rows={4}
+                    margin="normal"
+                    error={validationErrors.some(e => e.includes("Additional information"))}
+                    inputProps={{
+                      maxLength: 500,
+                    }}
+                    InputProps={{
+                      endAdornment: (
+                          <InputAdornment position="end">
+                      <span style={{
+                        position: "absolute",
+                        bottom: 8,
+                        right: 12,
+                        fontSize: "0.85em",
+                        color: validationErrors.some(e => e.includes("Additional information"))
+                            ? "#d32f2f" : "#888",
+                      }}>
+                        {`${formData.additionalInformation.length}/500`}
+                      </span>
+                          </InputAdornment>
+                      ),
+                    }}
+                />
+              </Tooltip>
+
               <FormControlLabel
                   control={
                     <Checkbox
@@ -647,10 +883,20 @@ const RequestForm = () => {
                     />
                   }
                   label="Add another router?"
-                  sx={{ mt: 2 }}
               />
-            </Box>
+
+              {validationErrors.length > 0 && (
+                  <Box sx={{ mt: 2, mb: 2 }}>
+                    {validationErrors.map((error, idx) => (
+                        <Typography key={idx} color="error" variant="body2" sx={{ mb: 0.5 }}>
+                          • {error}
+                        </Typography>
+                    ))}
+                  </Box>
+              )}
+            </>
         );
+
       default:
         return <Typography>Unknown Step</Typography>;
     }
@@ -659,69 +905,132 @@ const RequestForm = () => {
   return (
       <MainContainer>
         <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-        <ContentContainer>
-          <TopBar>
-            <Toolbar>
-              <Typography variant="h5" fontWeight="bold">
-                BT IoT Router Services - Router Request Form
-              </Typography>
-            </Toolbar>
-          </TopBar>
-          <Box sx={{ flexGrow: 1, overflow: 'auto', p: 3 }}>
-            <Container maxWidth="md" sx={{ zIndex: 2 }}>
-              <TopDecoration />
-              <BottomDecoration />
-              <Fade in={true} timeout={600}>
-                <FlowCard>
-                  <Box sx={{ mb: 3, textAlign: "center" }}>
-                    <Typography variant="h4" fontWeight="bold">
-                      Request a Router
-                    </Typography>
-                    <Typography variant="subtitle1" color="text.secondary">
-                      Complete the form steps below to submit your router request.
-                    </Typography>
-                  </Box>
-                  <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 4 }}>
-                    {steps.map((label, index) => (
-                        <Step key={index}>
-                          <StepLabel>{label}</StepLabel>
-                        </Step>
-                    ))}
-                  </Stepper>
-                  <form>
-                    {getStepContent(activeStep)}
-                    <Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
-                      {activeStep > 0 && (
-                          <GradientButton onClick={handleBack} variant="contained">
-                            Back
-                          </GradientButton>
-                      )}
-                      {activeStep < steps.length - 1 ? (
-                          <GradientButton onClick={handleNext} variant="contained">
-                            Next
-                          </GradientButton>
-                      ) : (
-                          <GradientButton
-                              onClick={handleSubmit}
-                              variant="contained"
-                              disabled={isLoading}
-                              startIcon={isLoading ? <CircularProgress size={20} /> : null}
-                          >
-                            {isLoading ? "Submitting..." : "Submit"}
-                          </GradientButton>
-                      )}
-                    </Box>
-                  </form>
-                </FlowCard>
-              </Fade>
-              <Footer>
-                <Typography variant="caption">
-                  © 2025 BT IoT Router Services. All rights reserved.
+        <Container
+            maxWidth="md"
+            sx={{
+              position: "relative",
+              py: 4,
+              minHeight: "100vh", // full height of viewport
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center", // vertical centering
+              alignItems: "center",     // optional: horizontal centering
+            }}
+        >
+          <TopDecoration />
+          <BottomDecoration />
+          <Fade in timeout={600}>
+            <CardContainer active={true} sx={{ m: 3 }}>
+              <Box sx={{ textAlign: "center" }}>
+                <Typography variant="h4" fontWeight="bold" gutterBottom>
+                  Request a Router
                 </Typography>
-              </Footer>
-            </Container>
-          </Box>
-        </ContentContainer>
+                <Typography variant="subtitle1" color="text.secondary" gutterBottom>
+                  Complete the form steps below to submit your router request.
+                </Typography>
+              </Box>
+              <Stepper activeStep={activeStep} alternativeLabel sx={{ mt: 2, mb: 4 }}>
+                {steps.map((label, idx) => (
+                    <Step key={idx}>
+                      <StepLabel
+                          sx={{
+                            '& .MuiStepIcon-root': {
+                              background: "linear-gradient(90deg, #6200aa 0%, #c51688 100%)",
+                              borderRadius: '50%',
+                              color: 'transparent',
+                            },
+                            '& .MuiStepIcon-root::before': {
+                              content: '""',
+                              position: 'absolute',
+                              top: 0,
+                              left: 0,
+                              right: 0,
+                              bottom: 0,
+                              background: "inherit",
+                              borderRadius: 'inherit',
+                            },
+                            '& .MuiStepIcon-root.Mui-completed': {
+                              color: '#fff',
+                              border: '1px solid #6200aa',
+                            },
+                            '& .Mui-active .MuiStepIcon-root': {
+                              boxShadow: '0 0 4px 2px rgba(197, 22, 136, 0.6)',
+                            },
+                          }}
+                      >
+                        {label}
+                      </StepLabel>
+                    </Step>
+                ))}
+              </Stepper>
+              <form>
+                {getStepContent(activeStep)}
+                <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: activeStep === 0 ? "flex-end" : "space-between",
+                      mt: 4
+                    }}
+                >
+                  {activeStep > 0 && (
+                      <Button
+                          onClick={() => {
+                            setValidationErrors([]);
+                            setActiveStep((prev) => prev - 1);
+                          }}
+                          sx={{
+                            background: "linear-gradient(45deg, #6200aa 30%, #8e24aa 90%)",
+                            color: "#fff",
+                            fontWeight: "bold",
+                            px: 3,
+                            '&:hover': {
+                              background: "linear-gradient(45deg, #5a0099 30%, #7e1e9e 90%)"
+                            }
+                          }}
+                      >
+                        Back
+                      </Button>
+                  )}
+                  {activeStep < steps.length - 1 ? (
+                      <Button
+                          onClick={handleNext}
+                          sx={{
+                            background: "linear-gradient(45deg, #6200aa 30%, #8e24aa 90%)",
+                            color: "#fff",
+                            fontWeight: "bold",
+                            px: 3,
+                            '&:hover': {
+                              background: "linear-gradient(45deg, #5a0099 30%, #7e1e9e 90%)"
+                            }
+                          }}
+                      >
+                        Next
+                      </Button>
+                  ) : (
+                      <Button
+                          onClick={handleSubmit} // only fires when user explicitly clicks Submit
+                          disabled={isLoading}
+                          sx={{
+                            background: "linear-gradient(45deg, #6200aa 30%, #8e24aa 90%)",
+                            color: "#fff",
+                            fontWeight: "bold",
+                            px: 3,
+                            '&:hover': {
+                              background: "linear-gradient(45deg, #5a0099 30%, #7e1e9e 90%)"
+                            }
+                          }}
+                      >
+                        {isLoading ? <CircularProgress size={20} /> : "Submit"}
+                      </Button>
+                  )}
+                </Box>
+              </form>
+            </CardContainer>
+          </Fade>
+          <Footer>
+            <Typography variant="caption">© 2025 BT IoT Router Services. All rights reserved.</Typography>
+          </Footer>
+        </Container>
         <Snackbar
             open={openSnackbar}
             autoHideDuration={4000}
