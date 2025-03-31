@@ -1,5 +1,6 @@
 package cf.ac.uk.btrouter.service;
 
+import cf.ac.uk.btrouter.dto.ContactFormDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
