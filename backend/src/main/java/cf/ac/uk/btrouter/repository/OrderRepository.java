@@ -23,4 +23,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     // Fetch order by reference number
     @Query("SELECT o FROM Order o WHERE o.referenceNumber = :referenceNumber")
     Order findByReferenceNumber(@Param("referenceNumber") String referenceNumber);
+
+    @Query("SELECT DISTINCT o.sitePrimaryEmail FROM Order o")
+    List<String> findDistinctBySitePrimaryEmail();
 }

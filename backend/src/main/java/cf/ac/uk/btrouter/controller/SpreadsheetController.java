@@ -26,9 +26,10 @@ public class SpreadsheetController {
     }
 
     @GetMapping("/download")
-    public ResponseEntity<Resource> downloadSpreadsheet(@RequestParam(required = false, defaultValue = "false") boolean separateCustomers) {
+    public ResponseEntity<Resource> downloadSpreadsheet(@RequestParam(name = "separateSheets", required = false) String separateCustomers) {
         File file = new File("orders.xlsx");
-        spreadsheetService.write(file, separateCustomers);
+        boolean isSeparate = Boolean.parseBoolean(separateCustomers);
+        spreadsheetService.write(file, isSeparate);
 
         try {
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));

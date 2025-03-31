@@ -6,16 +6,8 @@
   <component name="ChangeListManager">
     <list default="true" id="160730ab-59b2-422b-8cc6-fe5a922fa0d1" name="Changes" comment="ejected and frontend test passed">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/App.test.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/ForgotPassword.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/ForgotPassword.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/Login.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/Login.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/ProtectedRoute.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/ProtectedRoute.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/Register.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/Register.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/ResetPassword.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/ResetPassword.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/Auth/useAuth.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Auth/useAuth.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/OrderHistory/OrderExport.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/OrderHistory/OrderExport.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/components/RouterRequests/RequestForm.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/RouterRequests/RequestForm.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/UserList/User.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/UserList/User.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +24,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$/.." value="adminFeaturesFix" />
+        <entry key="$PROJECT_DIR$/.." value="64-integrate-customers-routers-and-router-presets-into-the-router-request-form" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
@@ -70,7 +62,7 @@
     "Jest.renders user list correctly.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "extras",
+    "git-widget-placeholder": "!26 on spreadsheetWriter",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.standard": "true",
     "node.js.detected.package.tslint": "true",
@@ -81,6 +73,7 @@
     "nodejs_package_manager_path": "npm",
     "npm.build.executor": "Run",
     "npm.start.executor": "Run",
+    "npm.start:frontend.executor": "Run",
     "npm.test.executor": "Run",
     "settings.editor.selected.configurable": "settings.javascript.linters.eslint",
     "vue.rearranger.settings.migration": "true"
@@ -151,11 +144,11 @@
       <envs />
       <method v="2" />
     </configuration>
-    <configuration name="test" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+    <configuration name="start:frontend" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
       <package-json value="$PROJECT_DIR$/package.json" />
       <command value="run" />
       <scripts>
-        <script value="test" />
+        <script value="start:frontend" />
       </scripts>
       <node-interpreter value="project" />
       <envs />
@@ -164,10 +157,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="npm.start" />
+        <item itemvalue="npm.start:frontend" />
         <item itemvalue="npm.build" />
         <item itemvalue="Jest.renders user list correctly" />
         <item itemvalue="Jest.renders learn react link" />
-        <item itemvalue="npm.test" />
       </list>
     </recent_temporary>
   </component>
@@ -186,6 +179,7 @@
       <workItem from="1742385925530" duration="642000" />
       <workItem from="1742386727993" duration="5738000" />
       <workItem from="1742393312045" duration="1584000" />
+      <workItem from="1743085420342" duration="5565000" />
     </task>
     <task id="LOCAL-00001" summary="start backend reflects new strcuture">
       <option name="closed" value="true" />

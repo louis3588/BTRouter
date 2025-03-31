@@ -25,7 +25,7 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* 🌐 Public Routes */}
+
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -58,17 +58,18 @@ function App() {
           </ProtectedRoute>
         } />
 
+        <Route path="/users" element={
+          <ProtectedRoute>
+            <User url="http://localhost:8080/api/admin/users"/>
+          </ProtectedRoute>
+        } />
+
         <Route path="/customers" element={
           <ProtectedRoute>
             <CustomersPage />
           </ProtectedRoute>
         } />
 
-        <Route path="/users" element={
-          <ProtectedRoute>
-            <User />
-          </ProtectedRoute>
-        } />
 
         <Route path="/router-requests" element={
           <ProtectedRoute>
@@ -88,7 +89,6 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* 📰 News */}
         <Route path="/news-management" element={
           <ProtectedRoute>
             <NewsEditor />
@@ -101,7 +101,6 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* 📝 Reports */}
         <Route path="/user-report" element={
           <ProtectedRoute>
             <UserReportPage />
@@ -114,10 +113,10 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* ➡️ Redirect root to home */}
+
         <Route path="/" element={<Navigate to="/home" replace />} />
 
-        {/* ❌ 404 Fallback */}
+
         <Route path="*" element={<div>404 - Page Not Found</div>} />
       </Routes>
     </Router>

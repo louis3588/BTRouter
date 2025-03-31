@@ -10,8 +10,11 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,24 +22,30 @@ public class SpreadsheetGenerationService {
 
     private final OrderRepository orderRepository;
 
+
     public String[] HEADERS = {
-            "Order ID", "Site Name", "Router Model", "IP Address", "Configuration Details", "Router Type", "Quantity",
-            "Address", "Postcode", "Email", "Phone Number"
+            "Reference Number", "Customer Type", "Router Type", "Primary Inside Ports", "Primary Inside Connection",
+            "Primary Outside Ports", "Primary Outside Connection", "Secondary Outside Ports", "Secondary Outside Connection",
+            "VLAN Configuration", "VLAN Assignments", "DHCP Configuration", "Number of Routers", "Site name", "Address",
+            "Postcode", "Primary Email", "Phone number", "Contact name", "Priority level", "Current Status", "IP Address",
+            "Additional Configuration Details", "Order date"
     };
 
     public SpreadsheetGenerationService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
     }
 
-    public List<Order> getAllOrders() {
-        return orderRepository.findAll();
+
+    public List<String> getDistinctCustomers(){
+        return orderRepository.findDistinctBySitePrimaryEmail();
+
     }
 
     public void write(File file, boolean separateSheets){
         try(Workbook wb = new XSSFWorkbook()){
-            writeOrders(getAllOrders(), wb);
+            writeOrders(orderRepository.findAll(), wb);
             if(separateSheets){
-                writeOrdersByCustomer(getAllOrders(), wb);
+                writeOrdersByCustomer(getDistinctCustomers(), wb);
             }
 
             try (FileOutputStream fos = new FileOutputStream(file)){
@@ -64,14 +73,13 @@ public class SpreadsheetGenerationService {
 
     }
 
-    private void writeOrdersByCustomer(List<Order> orders, Workbook wb) {
-        Map<String, List<Order>> ordersByCustomer = orders.stream().collect(Collectors.groupingBy(Order::getEmail));
-
-        for (Map.Entry<String, List<Order>> entry : ordersByCustomer.entrySet()) {
-            Sheet sheet = wb.createSheet(entry.getKey());
+    private void writeOrdersByCustomer(List<String> distinctCustomers, Workbook wb) {
+        for (String customerEmail : distinctCustomers) {
+            Sheet sheet = wb.createSheet(customerEmail);
             createHeaderRow(sheet);
             int rowNum = 1;
-            for (Order order : entry.getValue()) {
+            List<Order> customerOrders = orderRepository.findOrdersByEmail(customerEmail);
+            for (Order order : customerOrders) {
                 Row row = sheet.createRow(rowNum++);
                 populateRows(row, order);
             }
@@ -79,21 +87,40 @@ public class SpreadsheetGenerationService {
                 sheet.autoSizeColumn(i);
             }
         }
+
     }
 
     private void populateRows(Row row, Order order) {
+
+        BiConsumer<Cell, Integer> setNumericCell = (cell, value) -> {
+            if (value != null) cell.setCellValue(value.doubleValue());
+        };
+
         int colNum = 0;
-        row.createCell(colNum++).setCellValue(String.valueOf(order.getId()));
-        row.createCell(colNum++).setCellValue(order.getSiteName());
-        row.createCell(colNum++).setCellValue(order.getRouterModel());
-        row.createCell(colNum++).setCellValue(order.getIpAddress());
-        row.createCell(colNum++).setCellValue(order.getConfigurationDetails());
+        row.createCell(colNum++).setCellValue(order.getReferenceNumber());
+        row.createCell(colNum++).setCellValue(order.getCustomerType());
         row.createCell(colNum++).setCellValue(order.getRouterType());
-        row.createCell(colNum++).setCellValue(String.valueOf(order.getNumberOfRouters()));
+        setNumericCell.accept(row.createCell(colNum++), order.getPrimaryInsidePorts());
+        row.createCell(colNum++).setCellValue(order.getPrimaryInsideConnection());
+        setNumericCell.accept(row.createCell(colNum++), order.getPrimaryOutsidePorts());
+        row.createCell(colNum++).setCellValue(order.getPrimaryOutsideConnection());
+        setNumericCell.accept(row.createCell(colNum++), order.getSecondaryOutsidePorts());
+        row.createCell(colNum++).setCellValue(order.getSecondaryOutsideConnection());
+        row.createCell(colNum++).setCellValue(order.getVlanConfiguration());
+        row.createCell(colNum++).setCellValue(order.getVlanAssignments());
+        row.createCell(colNum++).setCellValue(order.getDhcpConfiguration());
+        row.createCell(colNum++).setCellValue(order.getNumRouters());
+        row.createCell(colNum++).setCellValue(order.getSiteName());
         row.createCell(colNum++).setCellValue(order.getAddress());
         row.createCell(colNum++).setCellValue(order.getPostcode());
         row.createCell(colNum++).setCellValue(order.getEmail());
         row.createCell(colNum++).setCellValue(order.getPhoneNumber());
+        row.createCell(colNum++).setCellValue(order.getSiteContactName());
+        row.createCell(colNum++).setCellValue(order.getPriorityLevel());
+        row.createCell(colNum++).setCellValue(order.getStatus());
+        row.createCell(colNum++).setCellValue(order.getIpAddress());
+        row.createCell(colNum++).setCellValue(order.getConfigurationDetails());
+        row.createCell(colNum++).setCellValue(order.getOrderDate());
     }
 
     private void createHeaderRow(Sheet sheet) {

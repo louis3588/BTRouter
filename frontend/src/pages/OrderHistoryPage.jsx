@@ -24,6 +24,7 @@ import {
 import { styled } from "@mui/system";
 import Sidebar from "../components/Navigation/Sidebar";
 import useAuth from "../components/Auth/useAuth";
+import OrderExport from "../components/OrderHistory/OrderExport";
 
 const MainContainer = styled(Box)({
     display: "flex",
@@ -34,9 +35,24 @@ const MainContainer = styled(Box)({
 const ContentArea = styled(Box)({
     flexGrow: 1,
     display: "flex",
-    justifyContent: "center",
-    alignItems: "center",
     padding: "40px",
+    gap: "32px", // Adds spacing between columns
+});
+
+const MainContent = styled(Box)({
+    flex: 3, // 75% of available space
+    minWidth: 0, // Fixes flex item overflow
+    paddingRight: "24px",
+    borderRight: "1px solid #e0e0e0",
+});
+
+const ExportAside = styled(Box)({
+    flex: 1, // 25% of available space
+    minWidth: "300px",
+    paddingLeft: "24px",
+    display: "flex",
+    flexDirection: "column",
+    gap: "24px",
 });
 
 const StyledPaper = styled(Paper)({
@@ -118,60 +134,68 @@ const OrderHistoryPage = () => {
             <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} userRole={userRole} />
 
             <ContentArea>
-                <StyledPaper elevation={3}>
-                    <Title>Order History</Title>
-                    <Description>
-                        View your previous orders or reorder your most frequently purchased items below.
-                    </Description>
+                <MainContent>
+                    <StyledPaper elevation={3}>
+                        <Title>Order History</Title>
+                        <Description>
+                            View your previous orders or reorder your most frequently purchased items below.
+                        </Description>
 
-                    {loading ? (
-                        <CircularProgress />
-                    ) : orders.length === 0 ? (
-                        <Description>No orders found.</Description>
-                    ) : (
-                        <TableWrapper>
-                            <TableContainer component={Paper}>
-                                <Table>
-                                    <StyledTableHead>
-                                        <TableRow>
-                                            <TableCellStyled>ORDER ID</TableCellStyled>
-                                            <TableCellStyled>ROUTER TYPE</TableCellStyled>
-                                            <TableCellStyled>ORDER DATE</TableCellStyled>
-                                            <TableCellStyled>ORDER STATUS</TableCellStyled>
-                                            <TableCellStyled>ACTIONS</TableCellStyled>
-                                        </TableRow>
-                                    </StyledTableHead>
-                                    <TableBody>
-                                        {orders.map((order) => (
-                                            <TableRowStyled key={order.id}>
-                                                <TableCellStyled>{order.id}</TableCellStyled>
-                                                <TableCellStyled>{order.routerModel}</TableCellStyled>
-                                                <TableCellStyled>{new Date(order.orderDate).toLocaleDateString()}</TableCellStyled>
-                                                <TableCellStyled>Processing</TableCellStyled>
-                                                <TableCellStyled>
-                                                    <StyledActionButton onClick={() => handleViewDetails(order.id)}>
-                                                        View Details
-                                                    </StyledActionButton>
-                                                    <StyledActionButton onClick={() => handleReorder(order.id)}>
-                                                        Re-order Router
-                                                    </StyledActionButton>
-                                                </TableCellStyled>
-                                            </TableRowStyled>
-                                        ))}
-                                    </TableBody>
-                                </Table>
-                            </TableContainer>
-                        </TableWrapper>
-                    )}
+                        {loading ? (
+                            <CircularProgress />
+                        ) : orders.length === 0 ? (
+                            <Description>No orders found.</Description>
+                        ) : (
+                            <TableWrapper>
+                                <TableContainer component={Paper}>
+                                    <Table>
+                                        <StyledTableHead>
+                                            <TableRow>
+                                                <TableCellStyled>ORDER ID</TableCellStyled>
+                                                <TableCellStyled>ROUTER TYPE</TableCellStyled>
+                                                <TableCellStyled>ORDER DATE</TableCellStyled>
+                                                <TableCellStyled>ORDER STATUS</TableCellStyled>
+                                                <TableCellStyled>ACTIONS</TableCellStyled>
+                                            </TableRow>
+                                        </StyledTableHead>
+                                        <TableBody>
+                                            {orders.map((order) => (
+                                                <TableRowStyled key={order.id}>
+                                                    <TableCellStyled>{order.id}</TableCellStyled>
+                                                    <TableCellStyled>{order.routerModel}</TableCellStyled>
+                                                    <TableCellStyled>{new Date(order.orderDate).toLocaleDateString()}</TableCellStyled>
+                                                    <TableCellStyled>Processing</TableCellStyled>
+                                                    <TableCellStyled>
+                                                        <StyledActionButton onClick={() => handleViewDetails(order.id)}>
+                                                            View Details
+                                                        </StyledActionButton>
+                                                        <StyledActionButton onClick={() => handleReorder(order.id)}>
+                                                            Re-order Router
+                                                        </StyledActionButton>
+                                                    </TableCellStyled>
+                                                </TableRowStyled>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </TableContainer>
+                            </TableWrapper>
+                        )}
 
-                    <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-                        <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
-                            {snackbar.message}
-                        </Alert>
-                    </Snackbar>
+                        <Snackbar open={snackbar.open} autoHideDuration={3000} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+                            <Alert severity={snackbar.severity} onClose={() => setSnackbar({ ...snackbar, open: false })}>
+                                {snackbar.message}
+                            </Alert>
+                        </Snackbar>
 
-                    <RouterDetailsModal open={modalOpen} onClose={() => setModalOpen(false)} order={selectedOrder} />
-                </StyledPaper>
+                        <RouterDetailsModal open={modalOpen} onClose={() => setModalOpen(false)} order={selectedOrder} />
+                    </StyledPaper>
+                </MainContent>
+
+                <ExportAside>
+                    <StyledPaper elevation={3} sx={{ height: "fit-content" }}>
+                        <OrderExport />
+                    </StyledPaper>
+                </ExportAside>
             </ContentArea>
         </MainContainer>
     );
