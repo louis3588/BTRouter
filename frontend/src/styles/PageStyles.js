@@ -1,5 +1,15 @@
 import { styled } from "@mui/system";
-import { Box, Button, Paper, Select, Switch, FormControl, TextField } from "@mui/material";
+import {
+    Box,
+    Button,
+    ButtonGroup,
+    Paper,
+    Select,
+    Slider,
+    Switch,
+    FormControl,
+    TextField, Card
+} from "@mui/material";
 
 // Makes adjustments to existing variations of @mui/material imports.
 const sharedInputStyles = {
@@ -60,10 +70,156 @@ export const StyledSwitch = styled(Switch)({
     },
 });
 
+export const StyledSlider = styled(Slider)(({ theme }) => ({
+    height: 8,
+    padding: "13px 0",
+
+    "& .MuiSlider-track": {
+        height: 8,
+        border: "none",
+        background: "none",
+    },
+
+    "& .MuiSlider-rail": {
+        height: 8,
+        opacity: 1,
+        background: "linear-gradient(90deg, #6200aa 0%, #c51688 100%)",
+    },
+
+    "& .MuiSlider-thumb": {
+        height: 20,
+        width: 20,
+        background: "linear-gradient(90deg, #6200aa 0%, #c51688 100%)",
+        border: "2px solid #fff",
+        boxShadow: "0 2px 6px rgba(0,0,0,0.5)",
+        transition: "0.3s",
+        "&:hover, &.Mui-focusVisible": {
+            boxShadow: "0 0 0 8px rgba(197, 22, 136, 0.55)",
+        },
+        "&:active": {
+            boxShadow: "0 0 0 14px rgba(197, 22, 136, 0.75)",
+        },
+    },
+
+    "& .MuiSlider-mark": {
+        backgroundColor: "#fff",
+        height: 5,
+        width: 5,
+        borderRadius: "50%",
+        top: "50%",
+        transform: "translate(-50%, -50%)",
+    },
+
+    "& .MuiSlider-markLabel": {
+        color: "rgba(0,0,0,0.87)",
+        fontSize: "0.9rem",
+    },
+}));
+
+export const StyledButtonGroup = styled(ButtonGroup)(({ theme }) => ({
+    borderRadius: 8,
+    overflow: "hidden",
+    marginBottom: theme.spacing(2),
+
+    "& .MuiButton-root": {
+        border: "none",
+        padding: "6px 20px",
+        fontWeight: 600,
+        fontSize: "0.875rem",
+        textTransform: "none",
+        backgroundColor: "#f3e5f5",
+        color: "#6200aa",
+        transition: "all 0.3s ease-in-out",
+
+        "&:hover": {
+            backgroundColor: "#e0d4f3",
+            color: "#6200aa"
+        }
+    },
+
+    // Left button.
+    "& .MuiButton-root:first-of-type.MuiButton-contained": {
+        background: "linear-gradient(45deg, #6200aa 0%, #8e24aa 100%)",
+        color: "#fff"
+    },
+
+    // Right button.
+    "& .MuiButton-root:last-of-type.MuiButton-contained": {
+        background: "linear-gradient(45deg, #8e24aa 0%, #6200aa 100%)", // reversed
+        color: "#fff"
+    }
+}));
+
+export const CardContainer = styled(Card)(({ theme, active }) => ({
+    padding: theme.spacing(3),
+    transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+    background: '#fff',
+    position: 'relative',
+    overflow: 'hidden',
+
+    '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '4px',
+        background: active ? 'linear-gradient(90deg, #6200aa, #9c27b0, #6200aa)' : '#cccccc',
+        backgroundSize: '200% 200%',
+    }
+}));
+
+export const BackgroundDecoration = styled("div")({
+    position: "absolute",
+    borderRadius: "50%",
+    zIndex: 0,
+    opacity: 0.2
+});
+
+export const TopDecoration = styled(BackgroundDecoration)({
+    top: "-100px",
+    left: "-100px",
+    width: "300px",
+    height: "300px",
+    background: "radial-gradient(circle, #6200aa, transparent)"
+});
+
+export const BottomDecoration = styled(BackgroundDecoration)({
+    bottom: "-100px",
+    right: "-100px",
+    width: "300px",
+    height: "300px",
+    background: "radial-gradient(circle, #8e24aa, transparent)"
+});
+
+export const Footer = styled(Box)({
+    textAlign: "center",
+    color: "#888",
+    padding: "24px",
+    position: "relative",
+    zIndex: 1
+});
+
 export const MainContainer = styled(Box)({
     display: "flex",
     minHeight: "100vh",
     background: "linear-gradient(to bottom right, #f7f3fc 0%, #ece6f4 100%)",
+
+    flexGrow: 1,
+    overflow: 'auto',
+    '&::-webkit-scrollbar': {
+        width: '6px',
+    },
+    '&::-webkit-scrollbar-track': {
+        background: 'rgba(255,255,255,0.1)',
+    },
+    '&::-webkit-scrollbar-thumb': {
+        background: 'rgba(255,255,255,0.2)',
+        borderRadius: '3px',
+    },
+    '&::-webkit-scrollbar-thumb:hover': {
+        background: 'rgba(255,255,255,0.3)',
+    }
 });
 
 export const ContentArea = styled(Box)({
