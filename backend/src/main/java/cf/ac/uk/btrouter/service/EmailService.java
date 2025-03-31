@@ -224,4 +224,46 @@ public class EmailService {
             throw e;
         }
     }
+
+    //Contact Us Form Submission
+    public void sendContactFormEmail(ContactFormDTO contactForm) {
+        logger.info("Sending contact form email from: {}", contactForm.getEmail());
+
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("ttgzee123@gmail.com");
+        message.setTo("ttgzee123@gmail.com"); // Send to your support email
+        message.setSubject("New Contact Form Submission - " + contactForm.getEnquiryType());
+
+        String emailBody = String.format("""
+        New Contact Form Submission
+        
+        Company: %s
+        Name: %s
+        Email: %s
+        Phone: %s
+        Order Reference: %s
+        Enquiry Type: %s
+        
+        Message:
+        %s
+        """,
+                contactForm.getCompanyName(),
+                contactForm.getName(),
+                contactForm.getEmail(),
+                contactForm.getPhone(),
+                contactForm.getOrderReference(),
+                contactForm.getEnquiryType(),
+                contactForm.getMessage()
+        );
+
+        message.setText(emailBody);
+
+        try {
+            mailSender.send(message);
+            logger.info("Contact form email sent successfully");
+        } catch (Exception e) {
+            logger.error("Failed to send contact form email", e);
+            throw e;
+        }
+    }
 }
