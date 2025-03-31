@@ -9,12 +9,16 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import cf.ac.uk.btrouter.service.OrderTrackingService;
 
 @Service
 public class RouterOrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderTrackingService orderTrackingService;
 
     public RouterOrderService(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
@@ -70,7 +74,9 @@ public class RouterOrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         order.setStatus(newStatus);
-        return orderRepository.save(order);
+        orderRepository.save(order);
+        orderTrackingService.updateOrderStatusByOrderId(orderId, newStatus);
+        return order;
     }
 
     public List<Order> getPendingRequests() {

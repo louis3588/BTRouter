@@ -8,11 +8,13 @@ import ProtectedRoute from './components/Auth/ProtectedRoute';
 import ForgotPassword from './components/Auth/ForgotPassword';
 import ResetPassword from './components/Auth/ResetPassword';
 import RequestForm from './components/RouterRequests/RequestForm';
-import RoutersPage from './components/Routers/RouterForm';
+import RoutersPage from './components/Routers/RouterPage';
+import CustomersPage from './components/Customers/CustomerPage';
 import OrderHistoryPage from "./pages/OrderHistoryPage";
 import User from "./components/UserList/User";
 import OrderExport from "./components/OrderHistory/OrderExport";
 import OrderTracking from './components/OrderTracking/OrderTracking';
+import TrackOrderSearch from './components/OrderTracking/TrackOrderSearch';
 import RouterRequestManagement from './components/Admin/RouterRequestManagement';
 import NewsEditor from './components/NewsManagement/NewsEditor';
 import NewsPage from './components/UserNews/NewsPage';
@@ -23,15 +25,27 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Public Routes */}
+        {/* 🌐 Public Routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="/export" element={<OrderExport />} />
+
+        {/* 🔎 Order Tracking */}
+        <Route path="/track-order" element={
+          <ProtectedRoute>
+            <TrackOrderSearch />
+          </ProtectedRoute>
+        } />
+        <Route path="/order-tracking/:referenceNumber" element={
+          <ProtectedRoute>
+            <OrderTracking />
+          </ProtectedRoute>
+        } />
         <Route path="/track-order/:referenceNumber" element={<OrderTracking />} />
 
-        {/* Protected Routes */}
+        {/* 🔐 Protected Routes */}
         <Route path="/home" element={
           <ProtectedRoute>
             <Home />
@@ -46,7 +60,7 @@ function App() {
 
         <Route path="/customers" element={
           <ProtectedRoute>
-            <div>Customers Page (To be implemented)</div>
+            <CustomersPage />
           </ProtectedRoute>
         } />
 
@@ -74,38 +88,36 @@ function App() {
           </ProtectedRoute>
         } />
 
-        {/* 🛠️ Admin News Management */}
+        {/* 📰 News */}
         <Route path="/news-management" element={
           <ProtectedRoute>
             <NewsEditor />
           </ProtectedRoute>
         } />
 
-        {/* 🆕 User News & Announcements */}
         <Route path="/news" element={
           <ProtectedRoute>
             <NewsPage />
           </ProtectedRoute>
         } />
 
-        {/* ✅ User Report Page */}
+        {/* 📝 Reports */}
         <Route path="/user-report" element={
           <ProtectedRoute>
             <UserReportPage />
           </ProtectedRoute>
         } />
 
-        {/* ✅ Admin Reports Page */}
         <Route path="/admin/reports" element={
           <ProtectedRoute>
             <AdminReportsPage />
           </ProtectedRoute>
         } />
 
-        {/* Redirect root to home */}
+        {/* ➡️ Redirect root to home */}
         <Route path="/" element={<Navigate to="/home" replace />} />
 
-        {/* Catch-all 404 */}
+        {/* ❌ 404 Fallback */}
         <Route path="*" element={<div>404 - Page Not Found</div>} />
       </Routes>
     </Router>

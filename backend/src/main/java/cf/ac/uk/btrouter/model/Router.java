@@ -43,40 +43,33 @@ public class Router {
     @Column(name = "serial_max_ports")
     private Short serialPorts;
 
-    // Will convert the comma-separated values into a list.
-    public List<String> getOutsideConnectionTypesList() {
-        return Arrays.asList(outsideConnectionTypes.split(",\\s*"));
-    }
-
-    public List<String> getInsideConnectionTypesList() {
-        return Arrays.asList(insideConnectionTypes.split(",\\s*"));
-    }
-
-    // Will convert the list back to comma-separated string if needed.
-    public void setOutsideConnectionTypes(List<String> types) {
-        this.outsideConnectionTypes = String.join(", ", types);
-    }
-
-    public void setInsideConnectionTypes(List<String> types) {
-        this.insideConnectionTypes = String.join(", ", types);
-    }
-
-    // Logic for port validation.
+    /* Validation Logic. */
     @PrePersist
     @PreUpdate
-    private void validatePortSelection() {
-        List<String> insideConnections = getInsideConnectionTypesList();
+    private void validateRouter() {
+        // Logic for port validation.
+        List<String> insideConnections = Arrays.asList(insideConnectionTypes.split(",\\s*"));
 
-        if (!insideConnections.contains("Ethernet")) {
+        if (!insideConnections.contains("ETHERNET")) {
             ethernetPorts = null;
         } else if (ethernetPorts == null || ethernetPorts < 1) {
-            throw new IllegalArgumentException("Ethernet is selected, but the maximum number of ports are not specified.");
+            throw new IllegalArgumentException("Ethernet ports must be specified.");
         }
 
-        if (!insideConnections.contains("Serial")) {
+        if (!insideConnections.contains("SERIAL")) {
             serialPorts = null;
         } else if (serialPorts == null || serialPorts < 1) {
-            throw new IllegalArgumentException("Serial is selected, but the maximum number of ports are not specified.");
+            throw new IllegalArgumentException("Serial ports must be specified.");
         }
     }
+
+    /* Helper Methods. */
+    // Will convert the comma-separated values into a list if needed.
+    public List<String> getOutsideConnectionTypesList() { return outsideConnectionTypes != null ? Arrays.asList(outsideConnectionTypes.split(",\\s*")) : List.of(); }
+    public List<String> getInsideConnectionTypesList() { return insideConnectionTypes != null ? Arrays.asList(insideConnectionTypes.split(",\\s*")) : List.of(); }
+
+    // Will convert the list back to comma-separated string if needed.
+    public void setOutsideConnectionTypes(List<String> types) { this.outsideConnectionTypes = String.join(", ", types); }
+    public void setInsideConnectionTypes(List<String> types) { this.insideConnectionTypes = String.join(", ", types); }
+
 }

@@ -3,8 +3,11 @@ import {
   Typography,
   Box,
   CircularProgress,
-  Toolbar
+  Toolbar,
+  Container,
+  Fade
 } from '@mui/material';
+import { styled } from "@mui/system";
 import {
   MainContainer,
   FeatureCard,
@@ -24,10 +27,43 @@ import {
   Campaign as AdminNewsIcon,
   NotificationsActive as UserNewsIcon,
   ReportProblem as ReportIcon,
-  GppMaybe as AdminReportIcon // ✅ Unique icon for admin reports
+  GppMaybe as AdminReportIcon,
+  LocalShipping as LocalShippingIcon
 } from '@mui/icons-material';
 import Sidebar from '../Navigation/Sidebar';
 import useAuth from "../Auth/useAuth";
+
+/* 💠 Decorations */
+const BackgroundDecoration = styled("div")({
+  position: "absolute",
+  borderRadius: "50%",
+  zIndex: 0,
+  opacity: 0.2
+});
+
+const TopDecoration = styled(BackgroundDecoration)({
+  top: "-100px",
+  left: "-100px",
+  width: "300px",
+  height: "300px",
+  background: "radial-gradient(circle, #6200aa, transparent)"
+});
+
+const BottomDecoration = styled(BackgroundDecoration)({
+  bottom: "-100px",
+  right: "-100px",
+  width: "300px",
+  height: "300px",
+  background: "radial-gradient(circle, #8e24aa, transparent)"
+});
+
+const Footer = styled(Box)({
+  textAlign: "center",
+  color: "#888",
+  padding: "24px",
+  position: "relative",
+  zIndex: 1
+});
 
 const Home = () => {
   const { userRole, loading, navigate, activeTab, setActiveTab, isAllowed } = useAuth();
@@ -43,14 +79,8 @@ const Home = () => {
     { id: 'news', title: 'News & Updates', icon: AdminNewsIcon, allowedRoles: ['ADMIN'], description: 'Post updates or announcements', path: '/news-management' },
     { id: 'user-news', title: 'Announcements', icon: UserNewsIcon, allowedRoles: ['USER', 'SUPPORT_AGENT', 'ADMIN'], description: 'View latest news and admin updates', path: '/news' },
     { id: 'user-report', title: 'Submit a Report', icon: ReportIcon, allowedRoles: ['USER', 'SUPPORT_AGENT', 'ADMIN'], description: 'Report an issue or give feedback', path: '/user-report' },
-    {
-      id: 'admin-reports',
-      title: 'View User Reports',
-      icon: AdminReportIcon, // ✅ Unique admin report icon
-      allowedRoles: ['ADMIN'],
-      description: 'View all user-submitted router issue reports',
-      path: '/admin/reports'
-    }
+    { id: 'admin-reports', title: 'View User Reports', icon: AdminReportIcon, allowedRoles: ['ADMIN'], description: 'View all user-submitted router issue reports', path: '/admin/reports' },
+    { id: 'track-order', title: 'Track Order', icon: LocalShippingIcon, allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'], description: 'Track the status of your router orders', path: '/track-order' }
   ];
 
   const handleNavigation = (path, allowedRoles) => {
@@ -75,12 +105,8 @@ const Home = () => {
 
   return (
     <MainContainer>
-      {/* Sidebar Integration */}
       <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} userRole={userRole} />
-
-      {/* Main Content */}
       <Box component="main" sx={{ flexGrow: 1, height: '100vh', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-        {/* Application Header */}
         <HeaderBar>
           <Toolbar>
             <Typography
@@ -97,28 +123,40 @@ const Home = () => {
           </Toolbar>
         </HeaderBar>
 
-        {/* Feature Cards */}
         <ScrollableContainer component="main" sx={{ p: 3, flexGrow: 1 }}>
-          <ResponsiveGrid>
-            {featureCards.map((card, index) => (
-              <AnimatedComponent key={card.id} delay={index * 0.1}>
-                <FeatureCard
-                  active={isAllowed(card.allowedRoles)}
-                  onClick={() => handleNavigation(card.path, card.allowedRoles)}
-                >
-                  <CardIcon active={isAllowed(card.allowedRoles)}>
-                    <card.icon />
-                  </CardIcon>
-                  <Typography variant="h6" sx={{ mb: 1 }}>
-                    {card.title}
+          <Container maxWidth="xl" sx={{ position: 'relative' }}>
+            <TopDecoration />
+            <BottomDecoration />
+            <Fade in={true} timeout={600}>
+              <Box>
+                <ResponsiveGrid>
+                  {featureCards.map((card, index) => (
+                    <AnimatedComponent key={card.id} delay={index * 0.1}>
+                      <FeatureCard
+                        active={isAllowed(card.allowedRoles)}
+                        onClick={() => handleNavigation(card.path, card.allowedRoles)}
+                      >
+                        <CardIcon active={isAllowed(card.allowedRoles)}>
+                          <card.icon />
+                        </CardIcon>
+                        <Typography variant="h6" sx={{ mb: 1 }}>
+                          {card.title}
+                        </Typography>
+                        <Typography variant="body2" color="text.secondary">
+                          {isAllowed(card.allowedRoles) ? card.description : 'Access restricted'}
+                        </Typography>
+                      </FeatureCard>
+                    </AnimatedComponent>
+                  ))}
+                </ResponsiveGrid>
+                <Footer>
+                  <Typography variant="caption">
+                    © 2025 BT IoT Router Services. All rights reserved.
                   </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    {isAllowed(card.allowedRoles) ? card.description : 'Access restricted'}
-                  </Typography>
-                </FeatureCard>
-              </AnimatedComponent>
-            ))}
-          </ResponsiveGrid>
+                </Footer>
+              </Box>
+            </Fade>
+          </Container>
         </ScrollableContainer>
       </Box>
     </MainContainer>
