@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import {
-    MainContainer, ScrollableContainer, HeaderBar, StyledDrawer, NavButton,
+    MainContainer, ScrollableContainer, HeaderBar,
     ResponsiveGrid, FeatureCard, CardIcon
 } from "../../styles/HomeStyles";
-import { AppBar, Toolbar, Typography, Box, IconButton, List, ListItem, ListItemIcon, ListItemText, CircularProgress, Button, TextField, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
+import { Toolbar, Typography, Box, IconButton, CircularProgress, Button, TextField, MenuItem, Select, FormControl, InputLabel } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import LogoutIcon from "@mui/icons-material/Logout";
-import FileDownloadIcon from '@mui/icons-material/FileDownload';
+
 import PeopleIcon from "@mui/icons-material/People";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import HomeIcon from "@mui/icons-material/Home"
+
 import { useNavigate } from "react-router";
+import Sidebar from "../Navigation/Sidebar";
+import useAuth from "../Auth/useAuth";
 
 function User({url}) {
     const [users, setUsers] = useState([]);
@@ -21,7 +22,7 @@ function User({url}) {
     const [showUpdateOverlay, setShowUpdateOverlay] = useState(false);
     const [updatedUser, setUpdatedUser] = useState({});
     const token = localStorage.getItem("token");
-    const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState("")
 
     useEffect(() => {
         fetchUsers();
@@ -117,48 +118,6 @@ function User({url}) {
     const handleDrawerToggle = () => {
         setSelectedUser(null);
     };
-
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        navigate("/login");
-    };
-
-    const drawer = (
-        <Box sx={{ height: "100%", display: "flex", flexDirection: "column", overflow: "hidden" }}>
-            <Box sx={{ p: 2, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <Typography variant="h6" sx={{ color: "white", fontWeight: 600 }}>
-                    Admin Panel
-                </Typography>
-            </Box>
-            <List>
-                <ListItem disablePadding>
-                    <NavButton onClick={() => navigate("/home")} sx={{ width: "100%" }}>
-                        <ListItemIcon sx={{ color: "white", minWidth: 40 }}>
-                            <HomeIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Back to Home" />
-                    </NavButton>
-                </ListItem>
-                <ListItem disablePadding>
-                    <Button onClick={() => navigate("/export")} sx={{ width: "100%", justifyContent: "flex-start" }}>
-                        <ListItemIcon sx={{ color: "white", minWidth: 40 }}>
-                            <FileDownloadIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Order History spreadsheet" />
-                    </Button>
-                </ListItem>
-                <ListItem disablePadding>
-                    <NavButton onClick={handleLogout} sx={{ width: "100%" }}>
-                        <ListItemIcon sx={{ color: "white", minWidth: 40 }}>
-                            <LogoutIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Logout" />
-                    </NavButton>
-                </ListItem>
-            </List>
-        </Box>
-    );
-
     if (loading) {
         return (
             <Box sx={{
@@ -177,8 +136,7 @@ function User({url}) {
 
     return (
         <MainContainer>
-            <StyledDrawer variant="permanent">{drawer}</StyledDrawer>
-
+            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
             <Box component="main" sx={{ flexGrow: 1, height: "100vh", overflow: "hidden", display: "flex", flexDirection: "column" }}>
                 <HeaderBar position="static">
                     <Toolbar>
