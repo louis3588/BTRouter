@@ -70,12 +70,13 @@ public class RouterOrderService {
         return Optional.ofNullable(orderRepository.findOrderByIdAndEmail(orderId, userEmail));
     }
 
-    public void updateOrderStatus(Long orderId, String newStatus) {
+    public Order updateOrderStatus(Long orderId, String newStatus) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
         order.setStatus(newStatus);
         orderRepository.save(order);
         orderTrackingService.updateOrderStatusByOrderId(orderId, newStatus);
+        return order;
     }
 
     public List<Order> getPendingRequests() {
