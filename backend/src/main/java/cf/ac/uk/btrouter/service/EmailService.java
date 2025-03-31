@@ -230,12 +230,13 @@ public class EmailService {
     public void sendContactFormEmail(ContactFormDTO contactForm) {
         logger.info("Sending contact form email from: {}", contactForm.getEmail());
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("ttgzee123@gmail.com");
-        message.setTo("ttgzee123@gmail.com"); // Send to your support email
-        message.setSubject("New Contact Form Submission - " + contactForm.getEnquiryType());
+        // Send to support team
+        SimpleMailMessage supportMessage = new SimpleMailMessage();
+        supportMessage.setFrom("ttgzee123@gmail.com");
+        supportMessage.setTo("ttgzee123@gmail.com"); // Support email
+        supportMessage.setSubject("New Contact Form Submission - " + contactForm.getEnquiryType());
 
-        String emailBody = String.format("""
+        String supportEmailBody = String.format("""
         New Contact Form Submission
         
         Company: %s
@@ -257,13 +258,46 @@ public class EmailService {
                 contactForm.getMessage()
         );
 
-        message.setText(emailBody);
+        supportMessage.setText(supportEmailBody);
+
+        // Send acknowledgment to user
+        SimpleMailMessage userMessage = new SimpleMailMessage();
+        userMessage.setFrom("ttgzee123@gmail.com");
+        userMessage.setTo(contactForm.getEmail());
+        userMessage.setSubject("Thank you for contacting BT Router Services");
+
+        String userEmailBody = String.format("""
+        Dear %s,
+
+        Thank you for contacting BT Router Services. We have received your enquiry and will respond to you within 24 hours during business days.
+
+        For your reference, here are the details of your enquiry:
+        - Company: %s
+        - Enquiry Type: %s
+        - Order Reference: %s
+
+        If you need immediate assistance, please don't hesitate to contact our support team at:
+        Email: admin@bt.com
+        Phone: +44 2920 870000
+
+        Best regards,
+        BT Router Services Team
+        """,
+                contactForm.getName(),
+                contactForm.getCompanyName(),
+                contactForm.getEnquiryType(),
+                contactForm.getOrderReference()
+        );
+
+        userMessage.setText(userEmailBody);
 
         try {
-            mailSender.send(message);
-            logger.info("Contact form email sent successfully");
+            // Sends both emails
+            mailSender.send(supportMessage);
+            mailSender.send(userMessage);
+            logger.info("Contact form emails sent successfully");
         } catch (Exception e) {
-            logger.error("Failed to send contact form email", e);
+            logger.error("Failed to send contact form emails", e);
             throw e;
         }
     }
