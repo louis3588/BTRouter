@@ -17,7 +17,6 @@ import {
     People as PeopleIcon,
     Assignment as AssignmentIcon,
     History as HistoryIcon,
-    Analytics as AnalyticsIcon,
     Support as SupportIcon,
     ExitToApp as LogoutIcon,
     LocalShipping as LocalShippingIcon
@@ -75,13 +74,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
             label: 'Order History',
             allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
             path: '/order-history'
-        },
-        {
-            id: 'analytics',
-            icon: AnalyticsIcon,
-            label: 'Analytics',
-            allowedRoles: ['ADMIN'],
-            path: '/analytics'
         },
         {
             id: 'support',

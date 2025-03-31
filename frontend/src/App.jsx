@@ -20,6 +20,7 @@ import NewsEditor from './components/NewsManagement/NewsEditor';
 import NewsPage from './components/UserNews/NewsPage';
 import UserReportPage from './components/UserReports/UserReportPage';
 import AdminReportsPage from './components/Admin/AdminReportView';
+import ContactUs from './components/Contact/ContactUs';
 
 function App() {
   return (
@@ -95,6 +96,19 @@ function App() {
           </ProtectedRoute>
         } />
 
+                {/* 🆕 User News & Announcements */}
+                <Route path="/news" element={
+                    <ProtectedRoute>
+                        <NewsPage />
+                    </ProtectedRoute>
+                } />
+
+                {/* 📞 Contact Us Page */}
+                <Route path="/contact" element={
+                    <ProtectedRoute>
+                        <ContactUs />
+                    </ProtectedRoute>
+                } />
         <Route path="/news" element={
           <ProtectedRoute>
             <NewsPage />

@@ -1,15 +1,16 @@
 import {
+    Menu as MenuIcon,
     Dashboard as DashboardIcon,
     Router as RouterIcon,
     People as PeopleIcon,
     Assignment as AssignmentIcon,
     History as HistoryIcon,
-    Analytics as AnalyticsIcon,
     Support as SupportIcon,
     ExitToApp as LogoutIcon,
-} from '@mui/icons-material';
+    LocalShipping as LocalShippingIcon
+} from "@mui/icons-material";
 
-export const navItems = [
+const navItems = [
     {
         id: 'dashboard',
         icon: DashboardIcon,
@@ -53,23 +54,17 @@ export const navItems = [
         path: '/order-history'
     },
     {
-        id: 'analytics',
-        icon: AnalyticsIcon,
-        label: 'Analytics',
-        allowedRoles: ['ADMIN'],
-        path: '/analytics'
+        id: 'support',
+        icon: SupportIcon,
+        label: 'Support',
+        allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
+        path: '/support'
     },
     {
-        id: 'contact',
-        icon: SupportIcon,
-        label: 'Contact Us',
+        id: 'track-order',
+        icon: LocalShippingIcon,
+        label: 'Track Order',
         allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'],
-        path: '/contact'
+        path: '/track-order'
     }
-];
-
-export const logoutItem = {
-    id: 'logout',
-    icon: LogoutIcon,
-    label: 'Logout',
-};
+]; 

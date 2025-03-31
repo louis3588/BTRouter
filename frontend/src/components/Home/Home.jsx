@@ -22,13 +22,13 @@ import {
   People as PeopleIcon,
   Assignment as AssignmentIcon,
   History as HistoryIcon,
-  Analytics as AnalyticsIcon,
   Hub as RouterManagementIcon,
   Campaign as AdminNewsIcon,
   NotificationsActive as UserNewsIcon,
   ReportProblem as ReportIcon,
   GppMaybe as AdminReportIcon,
-  LocalShipping as LocalShippingIcon
+  LocalShipping as LocalShippingIcon,
+  Support as SupportIcon
 } from '@mui/icons-material';
 import Sidebar from '../Navigation/Sidebar';
 import useAuth from "../Auth/useAuth";
@@ -66,7 +66,7 @@ const Footer = styled(Box)({
 });
 
 const Home = () => {
-  const { userRole, loading, navigate, activeTab, setActiveTab, isAllowed } = useAuth();
+    const { userRole, loading, navigate, activeTab, setActiveTab, isAllowed } = useAuth();
 
   const featureCards = [
     { id: 'routers', title: 'Routers', icon: RouterIcon, allowedRoles: ['ADMIN'], description: 'Manage router configurations and inventory', path: '/routers' },
@@ -75,11 +75,11 @@ const Home = () => {
     { id: 'requests', title: 'Router Request Form', icon: AssignmentIcon, allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'], description: 'Submit new router configuration requests', path: '/router-requests' },
     { id: 'manageRequests', title: 'Router Management', icon: RouterManagementIcon, allowedRoles: ['ADMIN'], description: 'Review and update router request statuses', path: '/manage-router-requests' },
     { id: 'history', title: 'Order History', icon: HistoryIcon, allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'], description: 'View past router requests and their status', path: '/order-history' },
-    { id: 'analytics', title: 'Analytics', icon: AnalyticsIcon, allowedRoles: ['ADMIN'], description: 'View system analytics and reports', path: '/analytics' },
     { id: 'news', title: 'News & Updates', icon: AdminNewsIcon, allowedRoles: ['ADMIN'], description: 'Post updates or announcements', path: '/news-management' },
     { id: 'user-news', title: 'Announcements', icon: UserNewsIcon, allowedRoles: ['USER', 'SUPPORT_AGENT', 'ADMIN'], description: 'View latest news and admin updates', path: '/news' },
     { id: 'user-report', title: 'Submit a Report', icon: ReportIcon, allowedRoles: ['USER', 'SUPPORT_AGENT', 'ADMIN'], description: 'Report an issue or give feedback', path: '/user-report' },
     { id: 'admin-reports', title: 'View User Reports', icon: AdminReportIcon, allowedRoles: ['ADMIN'], description: 'View all user-submitted router issue reports', path: '/admin/reports' },
+    { id: 'contact', title: 'Contact Us', icon: SupportIcon, allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'], description: 'Get in touch with our support team', path: '/contact' },
     { id: 'track-order', title: 'Track Order', icon: LocalShippingIcon, allowedRoles: ['ADMIN', 'SUPPORT_AGENT', 'USER'], description: 'Track the status of your router orders', path: '/track-order' }
   ];
 
